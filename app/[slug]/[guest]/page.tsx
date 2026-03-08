@@ -1,8 +1,13 @@
 import { notFound } from 'next/navigation'
 import Hero from '../components/Hero'
 import Gallery from '../components/Gallery'
-import Wishes from '../components/Wishes'
-import EventInfo from '../components/EventInfo'
+import LocationSection from '../components/LocationSection'
+import Countdown from '../components/Countdown'
+import RsvpSection from '../components/RsvpSection'
+import WishSection from '../components/WishSection'
+import PetalEffect from '../components/PetalEffect'
+import Footer from '../components/Footer'
+import AudioPlayer from '../components/AudioPlayer'
 import { supabase } from '@/lib/supabaseClient'
 
 type Couple = {
@@ -30,6 +35,10 @@ type Couple = {
   groom_location?: string | null
   groom_address?: string | null
   groom_google_map_embed?: string | null
+  music_url?: string | null
+  music_delay?: number | null
+  music_volume?: number | null
+  music_autoplay?: boolean | null
 }
 
 type GalleryItem = {
@@ -51,6 +60,15 @@ type Guest = {
   guest_name: string
   guest_slug: string
   couple_id: number
+}
+
+const extractMapSrc = (value?: string | null) => {
+  if (!value) return null
+  const iframeMatch = value.match(/<iframe[^>]*src=["']([^"']+)["']/i)
+  if (iframeMatch?.[1]) return iframeMatch[1].trim()
+  const trimmed = value.trim()
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  return null
 }
 
 export default async function GuestInvitePage({
@@ -96,13 +114,16 @@ export default async function GuestInvitePage({
       .returns<Wish[]>(),
   ])
 
+  const mapLink =
+    extractMapSrc(couple.bride_google_map_embed || undefined) ||
+    extractMapSrc(couple.groom_google_map_embed || undefined) ||
+    null
+
+  const heroBackground = gallery?.[0]?.image_url || couple.bride_avatar || couple.groom_avatar || undefined
+
   return (
-    <main className="min-h-screen text-slate-900">
-      <div className="bg-gradient-to-b from-[#fff8ef] via-[#fff3e3] to-white py-8 px-4 text-center">
-        <p className="text-xs uppercase tracking-[0.26em] text-[#b17b4c]">Thân gửi</p>
-        <h2 className="text-2xl md:text-3xl font-semibold text-[#4a3326]">{guestRow.guest_name}</h2>
-        <p className="text-sm text-[#7b5e4b] mt-2">Rất hân hạnh được đón tiếp bạn trong ngày vui của chúng tôi.</p>
-      </div>
+    <main className="bg-[#f8f4ef] text-[#5b3a29] overflow-hidden">
+      <PetalEffect />
 
       <Hero
         brideName={couple.bride_name}
@@ -110,33 +131,50 @@ export default async function GuestInvitePage({
         introDescription={couple.intro_description}
         weddingDate={couple.wedding_date}
         weddingTime={couple.wedding_time}
-        location={couple.location}
-        address={couple.address}
-        backgroundImage={couple.bride_avatar || couple.groom_avatar || undefined}
+        backgroundImage={heroBackground}
+        guestName={guestRow.guest_name}
       />
 
-      <EventInfo
-        bride={{
-          eventTitle: couple.bride_event_title,
+      <LocationSection
+        brideInfo={{
+          title: couple.bride_event_title,
           date: couple.bride_event_date,
           time: couple.bride_event_time,
           location: couple.bride_location,
           address: couple.bride_address,
-          mapEmbed: couple.bride_google_map_embed,
+          mapEmbedUrl: couple.bride_google_map_embed,
         }}
-        groom={{
-          eventTitle: couple.groom_event_title,
+        groomInfo={{
+          title: couple.groom_event_title,
           date: couple.groom_event_date,
           time: couple.groom_event_time,
           location: couple.groom_location,
           address: couple.groom_address,
-          mapEmbed: couple.groom_google_map_embed,
+          mapEmbedUrl: couple.groom_google_map_embed,
         }}
       />
 
+      <Countdown weddingDate={couple.wedding_date} weddingTime={couple.wedding_time} />
+
       <Gallery images={gallery || []} />
 
-      <Wishes coupleId={couple.id} initialWishes={wishes || []} />
+      <RsvpSection
+        coupleId={couple.id}
+        guestName={guestRow.guest_name}
+        brideAvatar={gallery?.[1]?.image_url || couple.bride_avatar}
+        groomAvatar={gallery?.[0]?.image_url || couple.groom_avatar}
+      />
+
+      <WishSection coupleId={couple.id} initialWishes={wishes || []} guestName={guestRow.guest_name} />
+
+      <Footer bride={couple.bride_name} groom={couple.groom_name} date={couple.wedding_date} />
+
+      <AudioPlayer
+        musicUrl={couple.music_url}
+        delay={couple.music_delay}
+        volume={couple.music_volume}
+        autoplay={couple.music_autoplay}
+      />
     </main>
   )
 }

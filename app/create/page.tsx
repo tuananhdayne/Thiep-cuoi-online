@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
+const BUCKET_NAME = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || 'wedding-images'
+
 type CouplePayload = {
   bride_name: string
   groom_name: string
@@ -41,29 +43,6 @@ const slugify = (bride: string, groom: string) => {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/--+/g, '-') || 'wedding'
-}
-
-const findAvailableSlug = async (preferred: string) => {
-  const { data } = await supabase
-    .from('couples')
-    .select('id')
-    .eq('slug', preferred)
-    .maybeSingle()
-
-  if (!data) return preferred
-
-  const randomSuffix = Math.random().toString(36).slice(2, 6)
-  const candidate = `${preferred}-${randomSuffix}`
-
-  const { data: data2 } = await supabase
-    .from('couples')
-    .select('id')
-    .eq('slug', candidate)
-    .maybeSingle()
-
-  if (!data2) return candidate
-
-  return `${preferred}-${Date.now()}`
 }
 
 const extractMapSrc = (value: string) => {
@@ -179,7 +158,7 @@ export default function CreatePage() {
 
       const { error: uploadError } = await supabase
         .storage
-        .from('wedding-images')
+        .from(BUCKET_NAME)
         .upload(filePath, file, {
           upsert: true,
           cacheControl: '3600',
@@ -187,12 +166,15 @@ export default function CreatePage() {
         })
 
       if (uploadError) {
+        if ((uploadError as { message?: string })?.message?.includes('Bucket not found')) {
+          throw new Error('BUCKET_NOT_FOUND')
+        }
         throw uploadError
       }
 
       const { data } = supabase
         .storage
-        .from('wedding-images')
+        .from(BUCKET_NAME)
         .getPublicUrl(filePath)
 
       uploads.push({ url: data.publicUrl, path: filePath })
@@ -213,11 +195,9 @@ export default function CreatePage() {
 
     setLoading(true)
 
-    const finalSlug = await findAvailableSlug(slug)
-
     const payload: CouplePayload = {
       ...form,
-      slug: finalSlug,
+      slug,
       bride_google_map_embed: brideMap,
       groom_google_map_embed: groomMap,
     }
@@ -261,12 +241,16 @@ export default function CreatePage() {
         }
       }
     } catch (err) {
-      setError('Upload ảnh thất bại. Vui lòng thử lại.')
+      if ((err as Error)?.message === 'BUCKET_NOT_FOUND') {
+        setError(`Bucket ${BUCKET_NAME} chưa tồn tại. Tạo bucket (public) và policy cho insert/select.`)
+      } else {
+        setError('Upload ảnh thất bại. Vui lòng thử lại.')
+      }
       setLoading(false)
       return
     }
 
-    router.push(`/${payload.slug}`)
+    router.push(`/${slug}`)
   }
 
   return (

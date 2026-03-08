@@ -20,6 +20,7 @@ const formatDate = (value: string) =>
   new Intl.DateTimeFormat('vi-VN', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: 'Asia/Ho_Chi_Minh',
   }).format(new Date(value))
 
 export default function Wishes({ coupleId, initialWishes }: WishesProps) {

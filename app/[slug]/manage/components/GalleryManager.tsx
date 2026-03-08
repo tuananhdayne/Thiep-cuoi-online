@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
+const BUCKET_NAME = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || 'wedding-images'
+
 type GalleryItem = {
   id: number
   image_url: string
@@ -83,7 +85,7 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
 
       const { error: uploadError } = await supabase
         .storage
-        .from('wedding-images')
+        .from(BUCKET_NAME)
         .upload(filePath, file, {
           upsert: true,
           cacheControl: '3600',
@@ -91,12 +93,15 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
         })
 
       if (uploadError) {
+        if ((uploadError as { message?: string })?.message?.includes('Bucket not found')) {
+          throw new Error('BUCKET_NOT_FOUND')
+        }
         throw uploadError
       }
 
       const { data } = supabase
         .storage
-        .from('wedding-images')
+        .from(BUCKET_NAME)
         .getPublicUrl(filePath)
 
       uploads.push({ url: data.publicUrl, path: filePath })
@@ -130,7 +135,11 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
         await loadGallery()
       }
     } catch (err) {
-      setError('Tải ảnh thất bại. Vui lòng thử lại.')
+      if ((err as Error)?.message === 'BUCKET_NOT_FOUND') {
+        setError(`Bucket ${BUCKET_NAME} chưa tồn tại. Tạo bucket (public) và policy cho insert/select.`)
+      } else {
+        setError('Tải ảnh thất bại. Vui lòng thử lại.')
+      }
     } finally {
       setUploading(false)
     }

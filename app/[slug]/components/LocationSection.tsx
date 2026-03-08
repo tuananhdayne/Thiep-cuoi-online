@@ -1,0 +1,171 @@
+'use client'
+
+import { useState } from 'react'
+import Reveal from './Reveal'
+
+export type LocationInfo = {
+    title?: string | null
+    date?: string | null
+    time?: string | null
+    location?: string | null
+    address?: string | null
+    mapEmbedUrl?: string | null
+}
+
+export type LocationSectionProps = {
+    brideInfo: LocationInfo
+    groomInfo: LocationInfo
+}
+
+const formatDate = (value?: string | null) => {
+    if (!value) return ''
+    return new Intl.DateTimeFormat('vi-VN', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'Asia/Ho_Chi_Minh',
+    }).format(new Date(value))
+}
+
+const formatTime = (value?: string | null) => {
+    if (!value) return ''
+    return new Intl.DateTimeFormat('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Ho_Chi_Minh',
+    }).format(new Date(`1970-01-01T${value}+07:00`))
+}
+
+const extractMapSrc = (value?: string | null) => {
+    if (!value) return null
+    const iframeMatch = value.match(/<iframe[^>]*src=["']([^"']+)["']/i)
+    if (iframeMatch?.[1]) return iframeMatch[1].trim()
+    const trimmed = value.trim()
+    if (/^https?:\/\//i.test(trimmed)) return trimmed
+    return null
+}
+
+export default function LocationSection({ brideInfo, groomInfo }: LocationSectionProps) {
+    const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('bride')
+
+    const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
+    const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
+
+    return (
+        <section className="py-16 px-6 bg-[#fffaf3]" id="location">
+            <div className="max-w-4xl mx-auto">
+                <Reveal className="space-y-10">
+                    <div className="text-center space-y-3">
+                        <p className="text-xs uppercase tracking-[0.32em] text-[#c08a4b]">Địa điểm tổ chức</p>
+                        <h2 className="font-display text-4xl md:text-5xl text-[#5b3a29]">Sự kiện Cưới</h2>
+                        <p className="text-sm text-[#7b5e4b]">Sự hiện diện của bạn là vinh hạnh cho chúng tôi.</p>
+                    </div>
+
+                    <div className="flex justify-center">
+                        <div className="bg-white p-1.5 rounded-full inline-flex border border-amber-100 shadow-sm relative overflow-hidden">
+                            <div
+                                className={`absolute inset-y-1.5 w-[120px] rounded-full bg-gradient-to-r from-[#c08a4b] to-[#e6b877] shadow-md transition-all duration-300 ease-out`}
+                                style={{ left: activeTab === 'bride' ? '6px' : 'calc(100% - 126px)' }}
+                            />
+                            <button
+                                onClick={() => setActiveTab('bride')}
+                                className={`relative z-10 w-[120px] py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === 'bride'
+                                    ? 'text-white'
+                                    : 'text-[#7b5e4b] hover:text-[#5b3a29]'
+                                    }`}
+                            >
+                                Nhà Gái
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('groom')}
+                                className={`relative z-10 w-[120px] py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === 'groom'
+                                    ? 'text-white'
+                                    : 'text-[#7b5e4b] hover:text-[#5b3a29]'
+                                    }`}
+                            >
+                                Nhà Trai
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-[32px] shadow-[0_20px_50px_rgba(91,58,41,0.06)] border border-amber-50 overflow-hidden">
+                        <div className="grid md:grid-cols-2">
+                            <div className="p-8 md:p-12 flex flex-col justify-center space-y-8 bg-gradient-to-br from-white to-amber-50/30">
+                                <div>
+                                    <h3 className="font-display text-3xl text-[#5b3a29] mb-3">
+                                        {currentInfo.title || (activeTab === 'groom' ? 'Tiệc cưới nhà Trai' : 'Tiệc cưới nhà Gái')}
+                                    </h3>
+                                    <div className="h-0.5 w-16 bg-[#c08a4b] mb-6 rounded-full"></div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex gap-4 items-start">
+                                        <div className="w-12 h-12 rounded-full bg-amber-50/80 flex items-center justify-center shrink-0 border border-amber-100/50 text-[#c08a4b]">
+                                            <span className="text-xl">📅</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-[11px] uppercase tracking-wider text-[#c08a4b] mb-1 font-semibold">Thời gian</p>
+                                            <p className="font-medium text-[#5b3a29] text-base">{formatDate(currentInfo.date) || 'Đang cập nhật'}</p>
+                                            {currentInfo.time && <p className="text-sm text-[#7b5e4b] mt-1">{formatTime(currentInfo.time)}</p>}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4 items-start">
+                                        <div className="w-12 h-12 rounded-full bg-amber-50/80 flex items-center justify-center shrink-0 border border-amber-100/50 text-[#c08a4b]">
+                                            <span className="text-xl">📍</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-[11px] uppercase tracking-wider text-[#c08a4b] mb-1 font-semibold">Địa điểm</p>
+                                            <p className="font-medium text-[#5b3a29] text-base">{currentInfo.location || 'Đang cập nhật'}</p>
+                                            {currentInfo.address && <p className="text-sm text-[#7b5e4b] mt-1 leading-relaxed">{currentInfo.address}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {mapUrl && (
+                                    <div className="pt-4">
+                                        <a
+                                            href={mapUrl}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex items-center justify-center gap-2 w-full md:w-auto text-sm font-semibold text-white bg-gradient-to-r from-[#c08a4b] to-[#e6b877] px-8 py-3.5 rounded-full shadow-[0_8px_20px_rgba(192,138,75,0.3)] transition-all hover:-translate-y-0.5"
+                                        >
+                                            Xem trên Google Maps
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="h-[350px] md:h-auto bg-amber-50 relative">
+                                {mapUrl ? (
+                                    <iframe
+                                        src={mapUrl}
+                                        width="100%"
+                                        height="100%"
+                                        style={{ border: 0 }}
+                                        allowFullScreen
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        className="absolute inset-0 w-full h-full object-cover"
+                                    ></iframe>
+                                ) : (
+                                    <div className="absolute inset-0 flex items-center justify-center text-[#c08a4b] bg-amber-50/50">
+                                        <div className="text-center space-y-3">
+                                            <span className="text-4xl">🗺️</span>
+                                            <p className="text-sm font-medium">Chưa có bản đồ</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </Reveal>
+            </div>
+        </section>
+    )
+}

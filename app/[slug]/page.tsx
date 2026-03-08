@@ -1,8 +1,13 @@
 import { notFound } from 'next/navigation'
 import Gallery from './components/Gallery'
 import Hero from './components/Hero'
-import Wishes from './components/Wishes'
-import EventInfo from './components/EventInfo'
+import LocationSection from './components/LocationSection'
+import RsvpSection from './components/RsvpSection'
+import Countdown from './components/Countdown'
+import WishSection from './components/WishSection'
+import PetalEffect from './components/PetalEffect'
+import Footer from './components/Footer'
+import AudioPlayer from './components/AudioPlayer'
 import { supabase } from '@/lib/supabaseClient'
 
 type Couple = {
@@ -30,6 +35,10 @@ type Couple = {
   groom_location?: string | null
   groom_address?: string | null
   groom_google_map_embed?: string | null
+  music_url?: string | null
+  music_delay?: number | null
+  music_volume?: number | null
+  music_autoplay?: boolean | null
 }
 
 type GalleryItem = {
@@ -44,6 +53,15 @@ type Wish = {
   name: string | null
   message: string
   created_at: string
+}
+
+const extractMapSrc = (value?: string | null) => {
+  if (!value) return null
+  const iframeMatch = value.match(/<iframe[^>]*src=["']([^"']+)["']/i)
+  if (iframeMatch?.[1]) return iframeMatch[1].trim()
+  const trimmed = value.trim()
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  return null
 }
 
 export default async function Page({
@@ -78,41 +96,60 @@ export default async function Page({
       .returns<Wish[]>(),
   ])
 
+  const heroBackground = gallery?.[0]?.image_url || couple.bride_avatar || couple.groom_avatar || undefined
+
   return (
-    <main className="min-h-screen text-slate-900">
+    <main className="bg-[#f8f4ef] text-[#5b3a29] overflow-hidden">
+      <PetalEffect />
+
       <Hero
         brideName={couple.bride_name}
         groomName={couple.groom_name}
         introDescription={couple.intro_description}
         weddingDate={couple.wedding_date}
         weddingTime={couple.wedding_time}
-        location={couple.location}
-        address={couple.address}
-        backgroundImage={couple.bride_avatar || couple.groom_avatar || undefined}
+        backgroundImage={heroBackground}
       />
 
-      <EventInfo
-        bride={{
-          eventTitle: couple.bride_event_title,
+      <LocationSection
+        brideInfo={{
+          title: couple.bride_event_title,
           date: couple.bride_event_date,
           time: couple.bride_event_time,
           location: couple.bride_location,
           address: couple.bride_address,
-          mapEmbed: couple.bride_google_map_embed,
+          mapEmbedUrl: couple.bride_google_map_embed,
         }}
-        groom={{
-          eventTitle: couple.groom_event_title,
+        groomInfo={{
+          title: couple.groom_event_title,
           date: couple.groom_event_date,
           time: couple.groom_event_time,
           location: couple.groom_location,
           address: couple.groom_address,
-          mapEmbed: couple.groom_google_map_embed,
+          mapEmbedUrl: couple.groom_google_map_embed,
         }}
       />
 
+      <Countdown weddingDate={couple.wedding_date} weddingTime={couple.wedding_time} />
+
       <Gallery images={gallery || []} />
 
-      <Wishes coupleId={couple.id} initialWishes={wishes || []} />
+      <RsvpSection
+        coupleId={couple.id}
+        brideAvatar={gallery?.[1]?.image_url || couple.bride_avatar}
+        groomAvatar={gallery?.[0]?.image_url || couple.groom_avatar}
+      />
+
+      <WishSection coupleId={couple.id} initialWishes={wishes || []} />
+
+      <Footer bride={couple.bride_name} groom={couple.groom_name} date={couple.wedding_date} />
+
+      <AudioPlayer
+        musicUrl={couple.music_url}
+        delay={couple.music_delay}
+        volume={couple.music_volume}
+        autoplay={couple.music_autoplay}
+      />
     </main>
   )
 }
