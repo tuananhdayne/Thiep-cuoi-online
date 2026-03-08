@@ -3,6 +3,7 @@ import InviteInput from './components/InviteInput'
 import GuestsTable from './components/GuestsTable'
 import WishesList from './components/WishesList'
 import GalleryManager from './components/GalleryManager'
+import MusicManager from './components/MusicManager'
 import { supabase } from '@/lib/supabaseClient'
 
 async function getCouple(slug: string) {
@@ -73,6 +74,14 @@ export default async function ManagePage({
         </div>
 
         <GalleryManager coupleId={couple.id} slug={slug} />
+
+        <MusicManager
+          coupleId={couple.id}
+          initialMusicUrl={couple.music_url}
+          initialMusicDelay={couple.music_delay}
+          initialMusicVolume={couple.music_volume}
+          initialMusicAutoplay={couple.music_autoplay}
+        />
 
         <WishesList wishes={wishes} />
       </div>

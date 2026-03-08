@@ -1,10 +1,9 @@
 'use client'
 
-import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-
-const BUCKET_NAME = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || 'wedding-images'
+import ImageUploader from '@/components/ImageUploader'
 
 type CouplePayload = {
   bride_name: string
@@ -100,8 +99,7 @@ export default function CreatePage() {
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [files, setFiles] = useState<File[]>([])
-  const [previews, setPreviews] = useState<string[]>([])
+  const [uploadedImages, setUploadedImages] = useState<{ original: string }[]>([])
 
   const slug = useMemo(
     () => slugify(form.bride_name, form.groom_name),
@@ -121,19 +119,10 @@ export default function CreatePage() {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleFiles = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return
-    const selected = Array.from(event.target.files)
-    setFiles(selected)
+  const handleUploadSuccess = (results: { original: string }[]) => {
+    // Append the new uploads
+    setUploadedImages((prev) => [...prev, ...results])
   }
-
-  useEffect(() => {
-    const urls = files.map((file) => URL.createObjectURL(file))
-    setPreviews(urls)
-    return () => {
-      urls.forEach((url) => URL.revokeObjectURL(url))
-    }
-  }, [files])
 
   const validate = () => {
     const missing = requiredFields.filter((field) => !form[field]?.trim())
@@ -141,46 +130,6 @@ export default function CreatePage() {
       return 'Vui lòng điền đầy đủ thông tin bắt buộc.'
     }
     return null
-  }
-
-  const uploadImages = async (fileList: File[], slugValue: string) => {
-    if (!fileList.length) return [] as UploadedImage[]
-
-    const uploads: UploadedImage[] = []
-
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i]
-      const safeName = file.name.replace(/\s+/g, '-').toLowerCase()
-      const uniqueId = typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(16).slice(2)}`
-      const filePath = `${slugValue}/${uniqueId}-${safeName}`
-
-      const { error: uploadError } = await supabase
-        .storage
-        .from(BUCKET_NAME)
-        .upload(filePath, file, {
-          upsert: true,
-          cacheControl: '3600',
-          contentType: file.type,
-        })
-
-      if (uploadError) {
-        if ((uploadError as { message?: string })?.message?.includes('Bucket not found')) {
-          throw new Error('BUCKET_NOT_FOUND')
-        }
-        throw uploadError
-      }
-
-      const { data } = supabase
-        .storage
-        .from(BUCKET_NAME)
-        .getPublicUrl(filePath)
-
-      uploads.push({ url: data.publicUrl, path: filePath })
-    }
-
-    return uploads
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -221,12 +170,10 @@ export default function CreatePage() {
     }
 
     try {
-      const uploaded = await uploadImages(files, slug)
-
-      if (uploaded.length) {
-        const galleryPayload = uploaded.map((item, index) => ({
+      if (uploadedImages.length) {
+        const galleryPayload = uploadedImages.map((item, index) => ({
           couple_id: coupleRow.id,
-          image_url: item.url,
+          image_url: item.original,
           sort_order: index + 1,
         }))
 
@@ -235,17 +182,14 @@ export default function CreatePage() {
           .insert(galleryPayload)
 
         if (galleryError) {
-          setError('Tải ảnh lên album thất bại. Vui lòng thử lại.')
+          setError('Tạo thiệp thành công nhưng lỗi lưu album ảnh. Bạn có thể vào phần Quản lý để thử lại.')
           setLoading(false)
           return
         }
       }
     } catch (err) {
-      if ((err as Error)?.message === 'BUCKET_NOT_FOUND') {
-        setError(`Bucket ${BUCKET_NAME} chưa tồn tại. Tạo bucket (public) và policy cho insert/select.`)
-      } else {
-        setError('Upload ảnh thất bại. Vui lòng thử lại.')
-      }
+      console.error(err)
+      setError('Lỗi lưu album ảnh.')
       setLoading(false)
       return
     }
@@ -475,36 +419,14 @@ export default function CreatePage() {
             </section>
 
             <section className="space-y-3">
-              <label className="text-sm text-[#7b5e4b]">Album ảnh</label>
-              <div className="rounded-xl border border-[#eedfcc] bg-[#fffaf3] px-4 py-4 text-sm text-[#5b3a29] shadow-sm">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleFiles}
-                  className="w-full text-sm text-[#5b3a29]"
-                />
-                <p className="text-xs text-[#9a7d68] mt-2">
-                  Chọn nhiều ảnh để hiển thị trong album. Bạn sẽ thấy preview ngay bên dưới.
+              <label className="text-sm text-[#7b5e4b]">Album ảnh (Tải lên trước, Lấy link gán vào sau)</label>
+              <div className="rounded-xl border border-[#eedfcc] bg-[#fffaf3] px-1 py-1 text-sm text-[#5b3a29] shadow-sm">
+                <ImageUploader weddingId={slug} onUploadSuccess={handleUploadSuccess} />
+                <p className="text-xs text-[#9a7d68] mt-2 px-4 pb-2">
+                  Bạn có thể tải ảnh lên trước, hệ thống sẽ tự động ghép ảnh vào album thiệp.
+                  (Đã tải lên {uploadedImages.length} ảnh)
                 </p>
               </div>
-
-              {previews.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {previews.map((src, idx) => (
-                    <div
-                      key={src}
-                      className="aspect-[4/5] overflow-hidden rounded-2xl bg-[#f8f1e6] shadow-sm"
-                    >
-                      <img
-                        src={src}
-                        alt={`Preview ${idx + 1}`}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
             </section>
 
             <div className="bg-[#fff4e0] border border-[#f6d9a7] rounded-xl px-4 py-3 text-sm text-[#b9772b] flex items-center justify-between flex-wrap gap-2">

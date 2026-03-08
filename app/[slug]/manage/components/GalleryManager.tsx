@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-
-const BUCKET_NAME = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || 'wedding-images'
+import ImageUploader from '@/components/ImageUploader'
 
 type GalleryItem = {
   id: number
@@ -26,10 +25,7 @@ const formatOrder = (value: number | null) => (value ?? 0)
 export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) {
   const [items, setItems] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [files, setFiles] = useState<File[]>([])
-  const [previews, setPreviews] = useState<string[]>([])
   const [actingId, setActingId] = useState<number | null>(null)
 
   const sortedItems = useMemo(
@@ -58,90 +54,23 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
     loadGallery()
   }, [])
 
-  useEffect(() => {
-    const urls = files.map((f) => URL.createObjectURL(f))
-    setPreviews(urls)
-    return () => {
-      urls.forEach((u) => URL.revokeObjectURL(u))
-    }
-  }, [files])
-
-  const handleFiles = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) return
-    const selected = Array.from(event.target.files)
-    setFiles(selected)
-  }
-
-  const uploadImages = async (fileList: File[]) => {
-    if (!fileList.length) return [] as UploadedImage[]
-    const uploads: UploadedImage[] = []
-
-    for (const file of fileList) {
-      const safeName = file.name.replace(/\s+/g, '-').toLowerCase()
-      const uniqueId = typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(16).slice(2)}`
-      const filePath = `${slug}/${uniqueId}-${safeName}`
-
-      const { error: uploadError } = await supabase
-        .storage
-        .from(BUCKET_NAME)
-        .upload(filePath, file, {
-          upsert: true,
-          cacheControl: '3600',
-          contentType: file.type,
-        })
-
-      if (uploadError) {
-        if ((uploadError as { message?: string })?.message?.includes('Bucket not found')) {
-          throw new Error('BUCKET_NOT_FOUND')
-        }
-        throw uploadError
-      }
-
-      const { data } = supabase
-        .storage
-        .from(BUCKET_NAME)
-        .getPublicUrl(filePath)
-
-      uploads.push({ url: data.publicUrl, path: filePath })
-    }
-
-    return uploads
-  }
-
-  const handleUpload = async () => {
-    if (!files.length) return
-    setError(null)
-    setUploading(true)
-
+  const handleUploadSuccess = async (results: { original: string }[]) => {
     try {
-      const uploaded = await uploadImages(files)
-      if (uploaded.length) {
-        const currentMax = Math.max(0, ...items.map((i) => formatOrder(i.sort_order)))
-        const payload = uploaded.map((item, idx) => ({
-          couple_id: coupleId,
-          image_url: item.url,
-          sort_order: currentMax + idx + 1,
-        }))
-        const { error: insertError } = await supabase
-          .from('gallery')
-          .insert(payload)
-        if (insertError) {
-          throw insertError
-        }
-        setFiles([])
-        setPreviews([])
-        await loadGallery()
-      }
+      const currentMax = Math.max(0, ...items.map((i) => formatOrder(i.sort_order)))
+      const payload = results.map((item, idx) => ({
+        couple_id: coupleId,
+        image_url: item.original,
+        sort_order: currentMax + idx + 1,
+      }))
+      const { error: insertError } = await supabase
+        .from('gallery')
+        .insert(payload)
+
+      if (insertError) throw insertError
+      await loadGallery()
     } catch (err) {
-      if ((err as Error)?.message === 'BUCKET_NOT_FOUND') {
-        setError(`Bucket ${BUCKET_NAME} chưa tồn tại. Tạo bucket (public) và policy cho insert/select.`)
-      } else {
-        setError('Tải ảnh thất bại. Vui lòng thử lại.')
-      }
-    } finally {
-      setUploading(false)
+      console.error(err)
+      setError('Tải ảnh thành công nhưng không lưu được vào Database.')
     }
   }
 
@@ -207,33 +136,7 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
       </div>
 
       <div className="space-y-3">
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={(e) => handleFiles(e)}
-          className="w-full rounded-xl border border-[#eedfcc] bg-[#fffaf3] px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c] focus:border-[#f2c87c] transition"
-        />
-        {previews.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {previews.map((src, idx) => (
-              <div key={src} className="relative rounded-2xl overflow-hidden bg-[#f8f1e6] shadow-sm">
-                <div className="absolute top-2 left-2 bg-white/80 text-xs font-semibold text-[#5b3a29] px-2 py-1 rounded-full">
-                  {idx + 1}
-                </div>
-                <img src={src} alt={`Preview ${idx + 1}`} className="h-full w-full object-cover" />
-              </div>
-            ))}
-          </div>
-        )}
-        <button
-          type="button"
-          onClick={handleUpload}
-          disabled={uploading || !files.length}
-          className="w-full sm:w-auto rounded-full bg-gradient-to-r from-[#f0b45b] via-[#ee9c47] to-[#e6873f] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-200/70 transition hover:brightness-105 hover:-translate-y-0.5 disabled:opacity-60"
-        >
-          {uploading ? 'Đang tải ảnh...' : 'Tải ảnh lên'}
-        </button>
+        <ImageUploader weddingId={slug} onUploadSuccess={handleUploadSuccess} />
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
