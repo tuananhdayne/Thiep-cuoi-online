@@ -59,24 +59,24 @@ export default function Countdown({ weddingDate, weddingTime }: CountdownProps) 
   ]
 
   return (
-    <section className="py-14 px-6 bg-[#f8f4ef]" id="countdown">
+    <section className="py-14 px-6 bg-bg-main" id="countdown">
       <div className="max-w-5xl mx-auto">
         <Reveal className="space-y-6">
           <div className="text-center space-y-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#c08a4b]">Countdown</p>
-            <h2 className="font-display text-3xl md:text-4xl text-[#5b3a29]">Ngày trọng đại sắp đến</h2>
+            <p className="text-xs uppercase tracking-[0.3em] text-accent">Countdown</p>
+            <h2 className="font-display text-3xl md:text-4xl text-primary">Ngày trọng đại sắp đến</h2>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {items.map((item) => (
               <div
                 key={item.label}
-                className="bg-white rounded-2xl shadow-[0_18px_40px_rgba(91,58,41,0.06)] border border-amber-50 py-5 px-4 text-center transition-transform duration-500 ease-out"
+                className="bg-white rounded-2xl shadow-[0_18px_40px_rgba(91,58,41,0.06)] border border-border-light py-5 px-4 text-center transition-transform duration-500 ease-out"
               >
-                <p className="text-3xl md:text-4xl font-semibold text-[#5b3a29] animate-pulse">
+                <p className="text-3xl md:text-4xl font-semibold text-primary animate-pulse">
                   {item.value.toString().padStart(2, '0')}
                 </p>
-                <p className="text-sm text-[#7b5e4b] mt-1">{item.label}</p>
+                <p className="text-sm text-primary-light mt-1">{item.label}</p>
               </div>
             ))}
           </div>

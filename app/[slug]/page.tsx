@@ -39,6 +39,7 @@ type Couple = {
   music_delay?: number | null
   music_volume?: number | null
   music_autoplay?: boolean | null
+  theme?: string | null
 }
 
 type GalleryItem = {
@@ -98,8 +99,10 @@ export default async function Page({
 
   const heroBackground = gallery?.[0]?.image_url || couple.bride_avatar || couple.groom_avatar || undefined
 
+  const themeClass = couple.theme && couple.theme !== 'classic' ? `theme-${couple.theme}` : ''
+
   return (
-    <main className="bg-[#f8f4ef] text-[#5b3a29] overflow-hidden">
+    <main className={`bg-bg-main text-primary overflow-hidden ${themeClass}`}>
       <PetalEffect />
 
       <Hero

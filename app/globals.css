@@ -1,27 +1,70 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdf8f3;
+  /* Common variables */
   --foreground: #3c2f2f;
+  
+  /* Classic Theme (Default) */
+  --bg-main: #fdf8f3;
+  --bg-alt: #fffaf3;
+  --primary: #5b3a29; /* Dark brown text */
+  --primary-light: #7b5e4b; /* Lighter brown text */
+  --accent: #c08a4b; /* Gold */
+  --accent-light: #e6b877; /* Light Gold */
+  --accent-pale: #eedfcc; /* Very light gold border/bg */
+  --accent-bg: #fff7ed; /* Card backgrounds */
+  --border-light: #f3e7d9;
+}
+
+/* Rose Theme */
+.theme-rose {
+  --bg-main: #fff0f5; /* Lavender blush */
+  --bg-alt: #fff5f8;
+  --primary: #5c3a4f; /* Deep rose */
+  --primary-light: #8a5a76;
+  --accent: #d4819d; /* Rose pink */
+  --accent-light: #ebb3c6;
+  --accent-pale: #fce1ea;
+  --accent-bg: #fff2f6;
+  --border-light: #f5dae3;
+}
+
+/* Ocean Theme */
+.theme-ocean {
+  --bg-main: #f0f4f8; /* Alice blue */
+  --bg-alt: #f5f8fb;
+  --primary: #2c3e50; /* Deep blue */
+  --primary-light: #526f8c;
+  --accent: #5ab1bb; /* Teal blue */
+  --accent-light: #9ad6dd;
+  --accent-pale: #d6eff2;
+  --accent-bg: #f2f9fa;
+  --border-light: #dae8ed;
 }
 
 @theme inline {
-  --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-bg-main: var(--bg-main);
+  --color-bg-alt: var(--bg-alt);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-pale: var(--accent-pale);
+  --color-accent-bg: var(--accent-bg);
+  --color-border-light: var(--border-light);
+  
   --font-sans: var(--font-body);
   --font-mono: var(--font-body);
   --font-display: var(--font-display);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* We will keep the default themes solid for now, or you can implement dark mode versions later */
 }
 
 body {
-  background: var(--background);
+  background: var(--bg-main);
   color: var(--foreground);
   font-family: var(--font-body), "Segoe UI", system-ui, -apple-system, sans-serif;
   line-height: 1.6;

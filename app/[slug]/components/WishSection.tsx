@@ -44,20 +44,20 @@ export default function WishSection({ coupleId, initialWishes, guestName }: Wish
   }, [coupleId])
 
   return (
-    <section className="py-16 px-6 bg-gradient-to-b from-[#fdf8f3] to-[#f6ecdf]" id="wishes">
+    <section className="py-16 px-6 bg-gradient-to-b from-bg-main to-accent-bg" id="wishes">
       <div className="max-w-5xl mx-auto grid lg:grid-cols-[1.05fr_0.95fr] gap-8 items-start">
-        <Reveal className="paper-card p-8 space-y-6 bg-white/95 border border-amber-50 shadow-[0_26px_60px_rgba(91,58,41,0.08)]">
+        <Reveal className="paper-card p-8 space-y-6 bg-white/95 border border-border-light shadow-[0_26px_60px_rgba(91,58,41,0.08)]">
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#c08a4b]">Lời chúc</p>
-            <h3 className="font-display text-3xl text-[#5b3a29]">Những lời yêu thương</h3>
-            <p className="text-sm text-[#7b5e4b]">
+            <p className="text-xs uppercase tracking-[0.3em] text-accent">Lời chúc</p>
+            <h3 className="font-display text-3xl text-primary">Những lời yêu thương</h3>
+            <p className="text-sm text-primary-light">
               {guestName ? `Lời chúc từ ${guestName} và bạn bè.` : 'Cảm ơn bạn đã gửi những lời chúc tốt đẹp dành cho chúng tôi.'}
             </p>
           </div>
 
           <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
             {wishes.length === 0 && (
-              <p className="text-sm text-[#7b5e4b]">
+              <p className="text-sm text-primary-light">
                 Chưa có lời chúc nào. Hãy là người đầu tiên gửi lời chúc nhé!
               </p>
             )}
@@ -69,11 +69,11 @@ export default function WishSection({ coupleId, initialWishes, guestName }: Wish
                     key={wish.id}
                     className="rounded-[20px] bg-white/70 backdrop-blur-sm px-6 py-5 shadow-[0_4px_20px_rgba(91,58,41,0.04)] border border-white/60 hover:shadow-[0_8px_30px_rgba(91,58,41,0.08)] transition-shadow duration-300"
                   >
-                    <div className="flex items-center justify-between text-[#5b3a29] mb-2">
+                    <div className="flex items-center justify-between text-primary mb-2">
                       <span className="font-bold text-base">{wish.name || 'Ẩn danh'}</span>
-                      <span className="text-[11px] font-medium text-[#a89689] uppercase tracking-wider">{formatDate(wish.created_at)}</span>
+                      <span className="text-[11px] font-medium text-primary-light opacity-80 uppercase tracking-wider">{formatDate(wish.created_at)}</span>
                     </div>
-                    <p className="text-[15px] text-[#7b5e4b] leading-relaxed">
+                    <p className="text-[15px] text-primary-light leading-relaxed">
                       {wish.message}
                     </p>
                   </div>
@@ -83,7 +83,7 @@ export default function WishSection({ coupleId, initialWishes, guestName }: Wish
           </div>
         </Reveal>
 
-        <Reveal className="paper-card p-8 space-y-4 bg-white/95 border border-amber-50 shadow-[0_26px_60px_rgba(91,58,41,0.08)]">
+        <Reveal className="paper-card p-8 space-y-4 bg-white/95 border border-border-light shadow-[0_26px_60px_rgba(91,58,41,0.08)]">
           <WishForm coupleId={coupleId} guestName={guestName} onSubmitted={() => { window.dispatchEvent(new CustomEvent('wishes-refresh')); }} />
         </Reveal>
       </div>

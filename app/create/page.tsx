@@ -26,6 +26,7 @@ type CouplePayload = {
   groom_location: string
   groom_address: string
   groom_google_map_embed: string
+  theme: string
 }
 
 type UploadedImage = {
@@ -96,6 +97,7 @@ export default function CreatePage() {
     groom_location: '',
     groom_address: '',
     groom_google_map_embed: '',
+    theme: 'classic',
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -419,7 +421,40 @@ export default function CreatePage() {
             </section>
 
             <section className="space-y-3">
-              <label className="text-sm text-[#7b5e4b]">Album ảnh (Tải lên trước, Lấy link gán vào sau)</label>
+              <label className="text-sm text-[#7b5e4b] font-medium">Chọn Mẫu Giao Diện *</label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <label
+                  className={`cursor-pointer rounded-2xl border-2 p-4 text-center transition ${form.theme === 'classic' ? 'border-[#c08a4b] bg-[#fffaf3] shadow-md' : 'border-[#eedfcc] bg-white hover:border-[#c08a4b]/50'
+                    }`}
+                >
+                  <input type="radio" name="theme" value="classic" checked={form.theme === 'classic'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-[#5b3a29] to-[#c08a4b] mb-3 shadow-inner"></div>
+                  <p className="font-semibold text-[#5b3a29]">Classic</p>
+                  <p className="text-xs text-[#7b5e4b] mt-1">Nâu & Vàng truyền thống</p>
+                </label>
+                <label
+                  className={`cursor-pointer rounded-2xl border-2 p-4 text-center transition ${form.theme === 'rose' ? 'border-[#d4819d] bg-[#fff0f5] shadow-md' : 'border-[#eedfcc] bg-white hover:border-[#d4819d]/50'
+                    }`}
+                >
+                  <input type="radio" name="theme" value="rose" checked={form.theme === 'rose'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-[#5c3a4f] to-[#d4819d] mb-3 shadow-inner"></div>
+                  <p className="font-semibold text-[#5c3a4f]">Rose</p>
+                  <p className="text-xs text-[#8a5a76] mt-1">Hồng lãng mạn</p>
+                </label>
+                <label
+                  className={`cursor-pointer rounded-2xl border-2 p-4 text-center transition ${form.theme === 'ocean' ? 'border-[#5ab1bb] bg-[#f0f4f8] shadow-md' : 'border-[#eedfcc] bg-white hover:border-[#5ab1bb]/50'
+                    }`}
+                >
+                  <input type="radio" name="theme" value="ocean" checked={form.theme === 'ocean'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
+                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-[#2c3e50] to-[#5ab1bb] mb-3 shadow-inner"></div>
+                  <p className="font-semibold text-[#2c3e50]">Ocean</p>
+                  <p className="text-xs text-[#526f8c] mt-1">Xanh biển thanh lịch</p>
+                </label>
+              </div>
+            </section>
+
+            <section className="space-y-3">
+              <label className="text-sm text-[#7b5e4b] font-medium">Album ảnh (Tải lên trước, Lấy link gán vào sau)</label>
               <div className="rounded-xl border border-[#eedfcc] bg-[#fffaf3] px-1 py-1 text-sm text-[#5b3a29] shadow-sm">
                 <ImageUploader weddingId={slug} onUploadSuccess={handleUploadSuccess} />
                 <p className="text-xs text-[#9a7d68] mt-2 px-4 pb-2">

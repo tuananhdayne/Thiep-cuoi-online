@@ -83,7 +83,7 @@ export default function Hero({
             <p className="text-sm md:text-base italic text-white/90 font-serif">
               Thân gửi
             </p>
-            <p className="text-2xl md:text-4xl font-bold text-[#c08a4b] uppercase tracking-wider drop-shadow-md">
+            <p className="text-2xl md:text-4xl font-bold text-accent uppercase tracking-wider drop-shadow-md">
               {guestName}
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function Hero({
           className={`font-display text-5xl md:text-6xl lg:text-7xl drop-shadow-2xl transition-all duration-700 ease-out delay-200 mt-2 ${showTitles ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.97] translate-y-4'
             }`}
         >
-          {brideName} <span className="text-[#e6c18f]">&</span> {groomName}
+          {brideName} <span className="text-accent-light">&</span> {groomName}
         </h1>
         {introDescription && (
           <p

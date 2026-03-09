@@ -54,26 +54,26 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
     const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
 
     return (
-        <section className="py-16 px-6 bg-[#fffaf3]" id="location">
+        <section className="py-16 px-6 bg-bg-alt" id="location">
             <div className="max-w-4xl mx-auto">
                 <Reveal className="space-y-10">
                     <div className="text-center space-y-3">
-                        <p className="text-xs uppercase tracking-[0.32em] text-[#c08a4b]">Địa điểm tổ chức</p>
-                        <h2 className="font-display text-4xl md:text-5xl text-[#5b3a29]">Sự kiện Cưới</h2>
-                        <p className="text-sm text-[#7b5e4b]">Sự hiện diện của bạn là vinh hạnh cho chúng tôi.</p>
+                        <p className="text-xs uppercase tracking-[0.32em] text-accent">Địa điểm tổ chức</p>
+                        <h2 className="font-display text-4xl md:text-5xl text-primary">Sự kiện Cưới</h2>
+                        <p className="text-sm text-primary-light">Sự hiện diện của bạn là vinh hạnh cho chúng tôi.</p>
                     </div>
 
                     <div className="flex justify-center">
                         <div className="bg-white p-1.5 rounded-full inline-flex border border-amber-100 shadow-sm relative overflow-hidden">
                             <div
-                                className={`absolute inset-y-1.5 w-[120px] rounded-full bg-gradient-to-r from-[#c08a4b] to-[#e6b877] shadow-md transition-all duration-300 ease-out`}
+                                className={`absolute inset-y-1.5 w-[120px] rounded-full bg-gradient-to-r from-accent to-accent-light shadow-md transition-all duration-300 ease-out`}
                                 style={{ left: activeTab === 'bride' ? '6px' : 'calc(100% - 126px)' }}
                             />
                             <button
                                 onClick={() => setActiveTab('bride')}
                                 className={`relative z-10 w-[120px] py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === 'bride'
                                     ? 'text-white'
-                                    : 'text-[#7b5e4b] hover:text-[#5b3a29]'
+                                    : 'text-primary-light hover:text-primary'
                                     }`}
                             >
                                 Nhà Gái
@@ -82,7 +82,7 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                                 onClick={() => setActiveTab('groom')}
                                 className={`relative z-10 w-[120px] py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === 'groom'
                                     ? 'text-white'
-                                    : 'text-[#7b5e4b] hover:text-[#5b3a29]'
+                                    : 'text-primary-light hover:text-primary'
                                     }`}
                             >
                                 Nhà Trai
@@ -90,36 +90,36 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-[32px] shadow-[0_20px_50px_rgba(91,58,41,0.06)] border border-amber-50 overflow-hidden">
+                    <div className="bg-white rounded-[32px] shadow-[0_20px_50px_rgba(91,58,41,0.06)] border border-border-light overflow-hidden">
                         <div className="grid md:grid-cols-2">
-                            <div className="p-8 md:p-12 flex flex-col justify-center space-y-8 bg-gradient-to-br from-white to-amber-50/30">
+                            <div className="p-8 md:p-12 flex flex-col justify-center space-y-8 bg-gradient-to-br from-white to-accent-bg/30">
                                 <div>
-                                    <h3 className="font-display text-3xl text-[#5b3a29] mb-3">
+                                    <h3 className="font-display text-3xl text-primary mb-3">
                                         {currentInfo.title || (activeTab === 'groom' ? 'Tiệc cưới nhà Trai' : 'Tiệc cưới nhà Gái')}
                                     </h3>
-                                    <div className="h-0.5 w-16 bg-[#c08a4b] mb-6 rounded-full"></div>
+                                    <div className="h-0.5 w-16 bg-accent mb-6 rounded-full"></div>
                                 </div>
 
                                 <div className="space-y-6">
                                     <div className="flex gap-4 items-start">
-                                        <div className="w-12 h-12 rounded-full bg-amber-50/80 flex items-center justify-center shrink-0 border border-amber-100/50 text-[#c08a4b]">
+                                        <div className="w-12 h-12 rounded-full bg-accent-pale/80 flex items-center justify-center shrink-0 border border-border-light text-accent">
                                             <span className="text-xl">📅</span>
                                         </div>
                                         <div>
-                                            <p className="text-[11px] uppercase tracking-wider text-[#c08a4b] mb-1 font-semibold">Thời gian</p>
-                                            <p className="font-medium text-[#5b3a29] text-base">{formatDate(currentInfo.date) || 'Đang cập nhật'}</p>
-                                            {currentInfo.time && <p className="text-sm text-[#7b5e4b] mt-1">{formatTime(currentInfo.time)}</p>}
+                                            <p className="text-[11px] uppercase tracking-wider text-accent mb-1 font-semibold">Thời gian</p>
+                                            <p className="font-medium text-primary text-base">{formatDate(currentInfo.date) || 'Đang cập nhật'}</p>
+                                            {currentInfo.time && <p className="text-sm text-primary-light mt-1">{formatTime(currentInfo.time)}</p>}
                                         </div>
                                     </div>
 
                                     <div className="flex gap-4 items-start">
-                                        <div className="w-12 h-12 rounded-full bg-amber-50/80 flex items-center justify-center shrink-0 border border-amber-100/50 text-[#c08a4b]">
+                                        <div className="w-12 h-12 rounded-full bg-accent-pale/80 flex items-center justify-center shrink-0 border border-border-light text-accent">
                                             <span className="text-xl">📍</span>
                                         </div>
                                         <div>
-                                            <p className="text-[11px] uppercase tracking-wider text-[#c08a4b] mb-1 font-semibold">Địa điểm</p>
-                                            <p className="font-medium text-[#5b3a29] text-base">{currentInfo.location || 'Đang cập nhật'}</p>
-                                            {currentInfo.address && <p className="text-sm text-[#7b5e4b] mt-1 leading-relaxed">{currentInfo.address}</p>}
+                                            <p className="text-[11px] uppercase tracking-wider text-accent mb-1 font-semibold">Địa điểm</p>
+                                            <p className="font-medium text-primary text-base">{currentInfo.location || 'Đang cập nhật'}</p>
+                                            {currentInfo.address && <p className="text-sm text-primary-light mt-1 leading-relaxed">{currentInfo.address}</p>}
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                                             href={mapUrl}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="inline-flex items-center justify-center gap-2 w-full md:w-auto text-sm font-semibold text-white bg-gradient-to-r from-[#c08a4b] to-[#e6b877] px-8 py-3.5 rounded-full shadow-[0_8px_20px_rgba(192,138,75,0.3)] transition-all hover:-translate-y-0.5"
+                                            className="inline-flex items-center justify-center gap-2 w-full md:w-auto text-sm font-semibold text-white bg-gradient-to-r from-accent to-accent-light px-8 py-3.5 rounded-full shadow-[0_8px_20px_rgba(192,138,75,0.3)] transition-all hover:-translate-y-0.5"
                                         >
                                             Xem trên Google Maps
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,7 +141,7 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                                 )}
                             </div>
 
-                            <div className="h-[350px] md:h-auto bg-amber-50 relative">
+                            <div className="h-[350px] md:h-auto bg-accent-pale relative">
                                 {mapUrl ? (
                                     <iframe
                                         src={mapUrl}
@@ -154,7 +154,7 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                                         className="absolute inset-0 w-full h-full object-cover"
                                     ></iframe>
                                 ) : (
-                                    <div className="absolute inset-0 flex items-center justify-center text-[#c08a4b] bg-amber-50/50">
+                                    <div className="absolute inset-0 flex items-center justify-center text-accent bg-accent-pale/50">
                                         <div className="text-center space-y-3">
                                             <span className="text-4xl">🗺️</span>
                                             <p className="text-sm font-medium">Chưa có bản đồ</p>
