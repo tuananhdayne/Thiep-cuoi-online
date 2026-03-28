@@ -17,35 +17,76 @@ export default function AudioPlayer({
 }: AudioPlayerProps) {
     const [isPlaying, setIsPlaying] = useState(false)
     const [showPlayText, setShowPlayText] = useState(false)
+    const [userManuallyPaused, setUserManuallyPaused] = useState(false)
     const audioRef = useRef<HTMLAudioElement>(null)
 
+    // Handle initial autoplay attempt
     useEffect(() => {
         if (!musicUrl) return
 
         const timer = setTimeout(() => {
-            if (audioRef.current) {
+            if (audioRef.current && autoplay && !userManuallyPaused) {
                 audioRef.current.volume = volume ?? 0.3
-
-                if (autoplay) {
-                    const playPromise = audioRef.current.play()
-                    if (playPromise !== undefined) {
-                        playPromise
-                            .then(() => {
-                                setIsPlaying(true)
-                                setShowPlayText(false)
-                            })
-                            .catch(() => {
-                                // Autoplay was prevented by browser
-                                setIsPlaying(false)
-                                setShowPlayText(true)
-                            })
-                    }
+                
+                const playPromise = audioRef.current.play()
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => {
+                            setIsPlaying(true)
+                            setShowPlayText(false)
+                        })
+                        .catch(() => {
+                            // Autoplay was prevented by browser
+                            setIsPlaying(false)
+                            setShowPlayText(true)
+                        })
                 }
             }
         }, (delay !== null && delay !== undefined ? delay : 15) * 1000)
 
         return () => clearTimeout(timer)
-    }, [musicUrl, delay, volume, autoplay])
+    }, [musicUrl, delay, volume, autoplay, userManuallyPaused])
+
+    // Handle user interaction fallback for blocked autoplay
+    useEffect(() => {
+        if (!musicUrl || isPlaying || userManuallyPaused || !autoplay) return
+
+        const handleInteraction = () => {
+            if (audioRef.current && !isPlaying && !userManuallyPaused) {
+                audioRef.current.volume = volume ?? 0.3
+                const playPromise = audioRef.current.play()
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        setIsPlaying(true)
+                        setShowPlayText(false)
+                        // Clean up listeners on success
+                        removeListeners()
+                    }).catch(() => {
+                        // Still blocked? keep listeners attached.
+                    })
+                }
+            }
+        }
+
+        const addListeners = () => {
+            document.addEventListener('click', handleInteraction)
+            document.addEventListener('touchstart', handleInteraction, { passive: true })
+            document.addEventListener('scroll', handleInteraction, { passive: true })
+        }
+
+        const removeListeners = () => {
+            document.removeEventListener('click', handleInteraction)
+            document.removeEventListener('touchstart', handleInteraction)
+            document.removeEventListener('scroll', handleInteraction)
+        }
+
+        // Only attach if we are likely blocked (showPlayText is true)
+        if (showPlayText) {
+            addListeners()
+        }
+
+        return () => removeListeners()
+    }, [musicUrl, isPlaying, userManuallyPaused, autoplay, showPlayText, volume])
 
     if (!musicUrl) return null
 
@@ -54,12 +95,14 @@ export default function AudioPlayer({
             if (isPlaying) {
                 audioRef.current.pause()
                 setIsPlaying(false)
+                setUserManuallyPaused(true) // DO NOT auto-resume natively
             } else {
                 const playPromise = audioRef.current.play()
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
                         setIsPlaying(true)
                         setShowPlayText(false)
+                        setUserManuallyPaused(false) // Reset manual pause
                     }).catch(err => {
                         console.error("Lỗi phát nhạc:", err)
                     })

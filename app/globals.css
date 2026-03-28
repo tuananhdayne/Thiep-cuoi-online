@@ -4,7 +4,7 @@
   /* Common variables */
   --foreground: #3c2f2f;
   
-  /* Classic Theme (Default) */
+  /* Base variables (App background) */
   --bg-main: #fdf8f3;
   --bg-alt: #fffaf3;
   --primary: #5b3a29; /* Dark brown text */
@@ -13,6 +13,19 @@
   --accent-light: #e6b877; /* Light Gold */
   --accent-pale: #eedfcc; /* Very light gold border/bg */
   --accent-bg: #fff7ed; /* Card backgrounds */
+  --border-light: #f3e7d9;
+}
+
+/* Classic Theme */
+.theme-classic {
+  --bg-main: #ffffff;
+  --bg-alt: #fafafa;
+  --primary: #5b3a29;
+  --primary-light: #7b5e4b;
+  --accent: #c08a4b;
+  --accent-light: #e6b877;
+  --accent-pale: #eedfcc;
+  --accent-bg: #fff7ed;
   --border-light: #f3e7d9;
 }
 
@@ -96,4 +109,19 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

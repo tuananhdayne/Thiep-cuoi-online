@@ -30,13 +30,16 @@ export default function RsvpSection({ coupleId, guestName: initialGuestName = ''
 
         setIsSubmitting(true)
         try {
+            const mappedAttend = attendStatus === 'Có' ? 'yes' : attendStatus === 'Không' ? 'no' : 'maybe'
+            const mappedSide = side === 'Nhà trai' ? 'groom' : 'bride'
+
             const { error } = await supabase.from('rsvp').insert([
                 {
                     couple_id: coupleId,
                     guest_name: guestName.trim(),
-                    attend_status: attendStatus,
+                    attend_status: mappedAttend,
                     guest_count: parseInt(guestCount, 10),
-                    side: side,
+                    side: mappedSide,
                 },
             ])
 

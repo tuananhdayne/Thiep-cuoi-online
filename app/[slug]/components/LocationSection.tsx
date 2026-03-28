@@ -5,8 +5,6 @@ import Reveal from './Reveal'
 
 export type LocationInfo = {
     title?: string | null
-    date?: string | null
-    time?: string | null
     location?: string | null
     address?: string | null
     mapEmbedUrl?: string | null
@@ -15,6 +13,8 @@ export type LocationInfo = {
 export type LocationSectionProps = {
     brideInfo: LocationInfo
     groomInfo: LocationInfo
+    weddingDate?: string | null
+    weddingTime?: string | null
 }
 
 const formatDate = (value?: string | null) => {
@@ -47,7 +47,7 @@ const extractMapSrc = (value?: string | null) => {
     return null
 }
 
-export default function LocationSection({ brideInfo, groomInfo }: LocationSectionProps) {
+export default function LocationSection({ brideInfo, groomInfo, weddingDate, weddingTime }: LocationSectionProps) {
     const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('bride')
 
     const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
@@ -61,6 +61,16 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                         <p className="text-xs uppercase tracking-[0.32em] text-accent">Địa điểm tổ chức</p>
                         <h2 className="font-display text-4xl md:text-5xl text-primary">Sự kiện Cưới</h2>
                         <p className="text-sm text-primary-light">Sự hiện diện của bạn là vinh hạnh cho chúng tôi.</p>
+                        <div className="pt-4 flex flex-col items-center justify-center gap-2">
+                            {(weddingDate || weddingTime) && (
+                                <div className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-white shadow-sm border border-amber-50">
+                                    <span className="text-lg text-accent">📅</span>
+                                    <p className="font-medium text-primary md:text-lg">
+                                        {formatDate(weddingDate)} {weddingTime && <span className="mx-2 text-accent-light">|</span>} {weddingTime && formatTime(weddingTime)}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex justify-center">
@@ -103,17 +113,6 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                                 <div className="space-y-6">
                                     <div className="flex gap-4 items-start">
                                         <div className="w-12 h-12 rounded-full bg-accent-pale/80 flex items-center justify-center shrink-0 border border-border-light text-accent">
-                                            <span className="text-xl">📅</span>
-                                        </div>
-                                        <div>
-                                            <p className="text-[11px] uppercase tracking-wider text-accent mb-1 font-semibold">Thời gian</p>
-                                            <p className="font-medium text-primary text-base">{formatDate(currentInfo.date) || 'Đang cập nhật'}</p>
-                                            {currentInfo.time && <p className="text-sm text-primary-light mt-1">{formatTime(currentInfo.time)}</p>}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex gap-4 items-start">
-                                        <div className="w-12 h-12 rounded-full bg-accent-pale/80 flex items-center justify-center shrink-0 border border-border-light text-accent">
                                             <span className="text-xl">📍</span>
                                         </div>
                                         <div>
@@ -151,6 +150,7 @@ export default function LocationSection({ brideInfo, groomInfo }: LocationSectio
                                         allowFullScreen
                                         loading="lazy"
                                         referrerPolicy="no-referrer-when-downgrade"
+                                        suppressHydrationWarning
                                         className="absolute inset-0 w-full h-full object-cover"
                                     ></iframe>
                                 ) : (

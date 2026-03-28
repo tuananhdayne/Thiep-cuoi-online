@@ -122,7 +122,7 @@ export default async function GuestInvitePage({
 
   const heroBackground = gallery?.[0]?.image_url || couple.bride_avatar || couple.groom_avatar || undefined
 
-  const themeClass = couple.theme && couple.theme !== 'classic' ? `theme-${couple.theme}` : ''
+  const themeClass = couple.theme && couple.theme !== 'classic' ? `theme-${couple.theme}` : 'theme-classic'
 
   return (
     <main className={`bg-bg-main text-primary overflow-hidden ${themeClass}`}>
@@ -139,18 +139,16 @@ export default async function GuestInvitePage({
       />
 
       <LocationSection
+        weddingDate={couple.wedding_date}
+        weddingTime={couple.wedding_time}
         brideInfo={{
           title: couple.bride_event_title,
-          date: couple.bride_event_date,
-          time: couple.bride_event_time,
           location: couple.bride_location,
           address: couple.bride_address,
           mapEmbedUrl: couple.bride_google_map_embed,
         }}
         groomInfo={{
           title: couple.groom_event_title,
-          date: couple.groom_event_date,
-          time: couple.groom_event_time,
           location: couple.groom_location,
           address: couple.groom_address,
           mapEmbedUrl: couple.groom_google_map_embed,

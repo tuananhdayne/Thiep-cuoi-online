@@ -4,6 +4,7 @@ import GuestsTable from './components/GuestsTable'
 import WishesList from './components/WishesList'
 import GalleryManager from './components/GalleryManager'
 import MusicManager from './components/MusicManager'
+import RsvpManager from './components/RsvpManager'
 import { supabase } from '@/lib/supabaseClient'
 
 async function getCouple(slug: string) {
@@ -33,6 +34,15 @@ async function getGuests(coupleId: number) {
   return data || []
 }
 
+async function getRsvps(coupleId: number) {
+  const { data } = await supabase
+    .from('rsvp')
+    .select('*')
+    .eq('couple_id', coupleId)
+    .order('created_at', { ascending: false })
+  return data || []
+}
+
 export default async function ManagePage({
   params,
 }: {
@@ -47,6 +57,7 @@ export default async function ManagePage({
 
   const wishes = await getWishes(couple.id)
   const guests = await getGuests(couple.id)
+  const rsvps = await getRsvps(couple.id)
 
   return (
     <main
@@ -82,6 +93,8 @@ export default async function ManagePage({
           initialMusicVolume={couple.music_volume}
           initialMusicAutoplay={couple.music_autoplay}
         />
+
+        <RsvpManager rsvps={rsvps} />
 
         <WishesList wishes={wishes} />
       </div>

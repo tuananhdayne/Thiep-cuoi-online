@@ -54,54 +54,105 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Template 1: Classic */}
-            <div className="group rounded-[32px] bg-[#fffaf3] border border-amber-50 p-8 transition-all hover:shadow-[0_20px_50px_rgba(91,58,41,0.08)] text-center relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#5b3a29] to-[#c08a4b]"></div>
-              <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#5b3a29] to-[#c08a4b] mb-6 shadow-inner flex items-center justify-center text-white/50 border-4 border-white">
-                <span className="text-3xl font-display">C</span>
+            <div className="group rounded-[32px] bg-[#fffaf3] border border-amber-50 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(91,58,41,0.08)] relative flex flex-col h-full">
+              <div className="relative h-64 w-full overflow-hidden bg-white">
+                <img
+                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800"
+                  alt="Classic Theme"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-4 left-6">
+                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold tracking-wider">Màu Nâu & Vàng</span>
+                </div>
               </div>
-              <h3 className="text-2xl font-display text-[#5b3a29] mb-3">Classic</h3>
-              <p className="text-sm text-[#7b5e4b] mb-8 min-h-[60px]">Nâu và Vàng truyền thống. Mang đến sự ấm áp, sang trọng và thanh lịch tuyệt đối.</p>
-              <Link
-                href="/demo?theme=classic"
-                target="_blank"
-                className="inline-block px-6 py-3 bg-white text-[#5b3a29] border border-amber-100 rounded-full text-sm font-medium hover:border-[#c08a4b] transition-colors"
-              >
-                Xem Trước
-              </Link>
+              <div className="p-8 flex-1 flex flex-col">
+                <h3 className="text-2xl font-display text-[#5b3a29] mb-3">Classic</h3>
+                <p className="text-sm text-[#7b5e4b] mb-8 flex-1">Nâu và Vàng truyền thống. Bố cục dọc chuẩn mực mang đến sự ấm áp, sang trọng và thanh lịch tuyệt đối.</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href="/demo?theme=classic"
+                    target="_blank"
+                    className="flex-1 text-center py-3.5 px-4 bg-white text-[#5b3a29] border border-amber-200 rounded-full font-medium hover:bg-[#fffaf3] hover:border-[#c08a4b] transition-all text-sm"
+                  >
+                    Xem Thử
+                  </Link>
+                  <Link
+                    href="/create?theme=classic"
+                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-[#5b3a29] to-[#c08a4b] text-white rounded-full font-medium hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm"
+                  >
+                    Tạo Thiệp
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* Template 2: Rose */}
-            <div className="group rounded-[32px] bg-[#fff0f5] border border-pink-50 p-8 transition-all hover:shadow-[0_20px_50px_rgba(212,129,157,0.15)] text-center relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#5c3a4f] to-[#d4819d]"></div>
-              <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#5c3a4f] to-[#d4819d] mb-6 shadow-inner flex items-center justify-center text-white/50 border-4 border-white">
-                <span className="text-3xl font-display">R</span>
+            <div className="group rounded-[32px] bg-[#fff0f5] border border-pink-50 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(212,129,157,0.15)] relative flex flex-col h-full">
+              <div className="relative h-64 w-full overflow-hidden bg-white">
+                <img
+                  src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800"
+                  alt="Rose Theme"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-4 left-6">
+                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold tracking-wider">Chia Đôi Màn Hình</span>
+                </div>
               </div>
-              <h3 className="text-2xl font-display text-[#5c3a4f] mb-3">Rose</h3>
-              <p className="text-sm text-[#8a5a76] mb-8 min-h-[60px]">Sắc hồng nữ tính, ngọt ngào và vô cùng lãng mạn. Lựa chọn hoàn hảo cho tình yêu màu hồng.</p>
-              <Link
-                href="/demo?theme=rose"
-                target="_blank"
-                className="inline-block px-6 py-3 bg-white text-[#5c3a4f] border border-pink-100 rounded-full text-sm font-medium hover:border-[#d4819d] transition-colors"
-              >
-                Xem Trước
-              </Link>
+              <div className="p-8 flex-1 flex flex-col">
+                <h3 className="text-2xl font-display text-[#5c3a4f] mb-3">Rose</h3>
+                <p className="text-sm text-[#8a5a76] mb-8 flex-1">Sắc hồng nữ tính, ngọt ngào. Bố cục hiện đại chia đôi màn hình giúp nổi bật ảnh cưới của bạn.</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href="/demo?theme=rose"
+                    target="_blank"
+                    className="flex-1 text-center py-3.5 px-4 bg-white text-[#5c3a4f] border border-pink-200 rounded-full font-medium hover:bg-[#fff0f5] hover:border-[#d4819d] transition-all text-sm"
+                  >
+                    Xem Thử
+                  </Link>
+                  <Link
+                    href="/create?theme=rose"
+                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-[#5c3a4f] to-[#d4819d] text-white rounded-full font-medium hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm"
+                  >
+                    Tạo Thiệp
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* Template 3: Ocean */}
-            <div className="group rounded-[32px] bg-[#f0f4f8] border border-blue-50 p-8 transition-all hover:shadow-[0_20px_50px_rgba(90,177,187,0.15)] text-center relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#2c3e50] to-[#5ab1bb]"></div>
-              <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#2c3e50] to-[#5ab1bb] mb-6 shadow-inner flex items-center justify-center text-white/50 border-4 border-white">
-                <span className="text-3xl font-display">O</span>
+            <div className="group rounded-[32px] bg-[#f0f4f8] border border-blue-50 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(90,177,187,0.15)] relative flex flex-col h-full">
+              <div className="relative h-64 w-full overflow-hidden bg-white">
+                <img
+                  src="https://images.unsplash.com/photo-1544378730-a9254cba7984?auto=format&fit=crop&q=80&w=800"
+                  alt="Ocean Theme"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-4 left-6">
+                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold tracking-wider">Căn Giữa Trang Trọng</span>
+                </div>
               </div>
-              <h3 className="text-2xl font-display text-[#2c3e50] mb-3">Ocean</h3>
-              <p className="text-sm text-[#526f8c] mb-8 min-h-[60px]">Mang hơi thở của đại dương. Tươi mát, phóng khoáng và vô cùng hiện đại.</p>
-              <Link
-                href="/demo?theme=ocean"
-                target="_blank"
-                className="inline-block px-6 py-3 bg-white text-[#2c3e50] border border-blue-100 rounded-full text-sm font-medium hover:border-[#5ab1bb] transition-colors"
-              >
-                Xem Trước
-              </Link>
+              <div className="p-8 flex-1 flex flex-col">
+                <h3 className="text-2xl font-display text-[#2c3e50] mb-3">Ocean</h3>
+                <p className="text-sm text-[#526f8c] mb-8 flex-1">Mang hơi thở của đại dương. Giao diện căn giữa điện ảnh, vô cùng hiện đại và phóng khoáng.</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href="/demo?theme=ocean"
+                    target="_blank"
+                    className="flex-1 text-center py-3.5 px-4 bg-white text-[#2c3e50] border border-blue-200 rounded-full font-medium hover:bg-[#f0f4f8] hover:border-[#5ab1bb] transition-all text-sm"
+                  >
+                    Xem Thử
+                  </Link>
+                  <Link
+                    href="/create?theme=ocean"
+                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-[#2c3e50] to-[#5ab1bb] text-white rounded-full font-medium hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm"
+                  >
+                    Tạo Thiệp
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>

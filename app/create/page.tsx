@@ -1,10 +1,10 @@
 'use client'
 
-import { FormEvent, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { FormEvent, useMemo, useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import ImageUploader from '@/components/ImageUploader'
-
+// ... (keep types and helpers as they are)
 type CouplePayload = {
   bride_name: string
   groom_name: string
@@ -63,19 +63,18 @@ const requiredFields: (keyof CouplePayload)[] = [
   'location',
   'address',
   'bride_event_title',
-  'bride_event_date',
-  'bride_event_time',
   'bride_location',
   'bride_address',
   'groom_event_title',
-  'groom_event_date',
-  'groom_event_time',
   'groom_location',
   'groom_address',
 ]
 
 export default function CreatePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialTheme = searchParams.get('theme') || 'classic'
+
   const [form, setForm] = useState<CouplePayload>({
     bride_name: '',
     groom_name: '',
@@ -86,7 +85,7 @@ export default function CreatePage() {
     address: '',
     slug: '',
     bride_event_title: 'Lễ Vu Quy',
-    bride_event_date: '',
+    bride_event_date: '', // Kept for type backwards compatibility but hidden from UI
     bride_event_time: '',
     bride_location: '',
     bride_address: '',
@@ -97,7 +96,7 @@ export default function CreatePage() {
     groom_location: '',
     groom_address: '',
     groom_google_map_embed: '',
-    theme: 'classic',
+    theme: initialTheme,
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -146,16 +145,22 @@ export default function CreatePage() {
 
     setLoading(true)
 
-    const payload: CouplePayload = {
+    const payload: Record<string, any> = {
       ...form,
       slug,
       bride_google_map_embed: brideMap,
       groom_google_map_embed: groomMap,
     }
 
+    // Clean up empty strings for date/time fields to prevent Postgres 22007 (invalid input syntax for type date "") 400 Payload Invalid
+    if (!payload.bride_event_date) delete payload.bride_event_date
+    if (!payload.bride_event_time) delete payload.bride_event_time
+    if (!payload.groom_event_date) delete payload.groom_event_date
+    if (!payload.groom_event_time) delete payload.groom_event_time
+
     const { data: coupleRow, error: insertError } = await supabase
       .from('couples')
-      .insert(payload)
+      .insert(payload as any)
       .select('id')
       .single()
 
@@ -306,19 +311,8 @@ export default function CreatePage() {
                     placeholder="Tiêu đề buổi lễ (ví dụ: Lễ Vu Quy)"
                     className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
                   />
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="date"
-                      value={form.bride_event_date}
-                      onChange={(e) => handleChange('bride_event_date', e.target.value)}
-                      className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
-                    />
-                    <input
-                      type="time"
-                      value={form.bride_event_time}
-                      onChange={(e) => handleChange('bride_event_time', e.target.value)}
-                      className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
-                    />
+                  <div className="hidden">
+                    {/* Hiding old separate date/time fields visually but not from React State completely in case needed */}
                   </div>
                   <input
                     value={form.bride_location}
@@ -370,19 +364,8 @@ export default function CreatePage() {
                     placeholder="Tiêu đề buổi lễ (ví dụ: Lễ Thành Hôn)"
                     className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
                   />
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="date"
-                      value={form.groom_event_date}
-                      onChange={(e) => handleChange('groom_event_date', e.target.value)}
-                      className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
-                    />
-                    <input
-                      type="time"
-                      value={form.groom_event_time}
-                      onChange={(e) => handleChange('groom_event_time', e.target.value)}
-                      className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
-                    />
+                  <div className="hidden">
+                    {/* Hiding old separate date/time fields visually but not from React State completely in case needed */}
                   </div>
                   <input
                     value={form.groom_location}
@@ -420,35 +403,71 @@ export default function CreatePage() {
               </div>
             </section>
 
-            <section className="space-y-3">
-              <label className="text-sm text-[#7b5e4b] font-medium">Chọn Mẫu Giao Diện *</label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <section className="space-y-4">
+              <label className="text-sm text-[#7b5e4b] font-medium flex items-center justify-between">
+                <span>Chọn Mẫu Giao Diện *</span>
+                <span className="text-xs text-[#9a7d68] font-normal">Cuộn để xem thêm mẫu</span>
+              </label>
+
+              <div className="flex overflow-x-auto pb-4 gap-4 snap-x hide-scrollbar">
+                {/* Classic */}
                 <label
-                  className={`cursor-pointer rounded-2xl border-2 p-4 text-center transition ${form.theme === 'classic' ? 'border-[#c08a4b] bg-[#fffaf3] shadow-md' : 'border-[#eedfcc] bg-white hover:border-[#c08a4b]/50'
+                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'classic'
+                      ? 'border-[#c08a4b] shadow-[0_8px_20px_rgba(192,138,75,0.2)] scale-100'
+                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
                     }`}
                 >
                   <input type="radio" name="theme" value="classic" checked={form.theme === 'classic'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-[#5b3a29] to-[#c08a4b] mb-3 shadow-inner"></div>
-                  <p className="font-semibold text-[#5b3a29]">Classic</p>
-                  <p className="text-xs text-[#7b5e4b] mt-1">Nâu & Vàng truyền thống</p>
+                  <div className="h-32 w-full bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" alt="Classic" className="w-full h-full object-cover" />
+                  </div>
+                  <div className={`p-4 ${form.theme === 'classic' ? 'bg-[#fffaf3]' : 'bg-white'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-semibold text-[#5b3a29]">Classic</p>
+                      {form.theme === 'classic' && <div className="w-4 h-4 rounded-full bg-[#c08a4b] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
+                    </div>
+                    <p className="text-[11px] text-[#7b5e4b] leading-tight">Nâu & Vàng truyền thống. Chuẩn mực, thanh lịch.</p>
+                  </div>
                 </label>
+
+                {/* Rose */}
                 <label
-                  className={`cursor-pointer rounded-2xl border-2 p-4 text-center transition ${form.theme === 'rose' ? 'border-[#d4819d] bg-[#fff0f5] shadow-md' : 'border-[#eedfcc] bg-white hover:border-[#d4819d]/50'
+                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'rose'
+                      ? 'border-[#d4819d] shadow-[0_8px_20px_rgba(212,129,157,0.2)] scale-100'
+                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
                     }`}
                 >
                   <input type="radio" name="theme" value="rose" checked={form.theme === 'rose'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-[#5c3a4f] to-[#d4819d] mb-3 shadow-inner"></div>
-                  <p className="font-semibold text-[#5c3a4f]">Rose</p>
-                  <p className="text-xs text-[#8a5a76] mt-1">Hồng lãng mạn</p>
+                  <div className="h-32 w-full bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=400" alt="Rose" className="w-full h-full object-cover" />
+                  </div>
+                  <div className={`p-4 ${form.theme === 'rose' ? 'bg-[#fff0f5]' : 'bg-white'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-semibold text-[#5c3a4f]">Rose</p>
+                      {form.theme === 'rose' && <div className="w-4 h-4 rounded-full bg-[#d4819d] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
+                    </div>
+                    <p className="text-[11px] text-[#8a5a76] leading-tight">Sắc hồng mơ mộng. Chia đôi màn hình hiện đại.</p>
+                  </div>
                 </label>
+
+                {/* Ocean */}
                 <label
-                  className={`cursor-pointer rounded-2xl border-2 p-4 text-center transition ${form.theme === 'ocean' ? 'border-[#5ab1bb] bg-[#f0f4f8] shadow-md' : 'border-[#eedfcc] bg-white hover:border-[#5ab1bb]/50'
+                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'ocean'
+                      ? 'border-[#5ab1bb] shadow-[0_8px_20px_rgba(90,177,187,0.2)] scale-100'
+                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
                     }`}
                 >
                   <input type="radio" name="theme" value="ocean" checked={form.theme === 'ocean'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-[#2c3e50] to-[#5ab1bb] mb-3 shadow-inner"></div>
-                  <p className="font-semibold text-[#2c3e50]">Ocean</p>
-                  <p className="text-xs text-[#526f8c] mt-1">Xanh biển thanh lịch</p>
+                  <div className="h-32 w-full bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1544378730-a9254cba7984?auto=format&fit=crop&q=80&w=400" alt="Ocean" className="w-full h-full object-cover" />
+                  </div>
+                  <div className={`p-4 ${form.theme === 'ocean' ? 'bg-[#f0f4f8]' : 'bg-white'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-semibold text-[#2c3e50]">Ocean</p>
+                      {form.theme === 'ocean' && <div className="w-4 h-4 rounded-full bg-[#5ab1bb] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
+                    </div>
+                    <p className="text-[11px] text-[#526f8c] leading-tight">Xanh biển thanh lịch. Bố cục trung tâm nổi bật.</p>
+                  </div>
                 </label>
               </div>
             </section>
