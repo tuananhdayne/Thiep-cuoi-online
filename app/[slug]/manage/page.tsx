@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import InviteInput from './components/InviteInput'
 import GuestsTable from './components/GuestsTable'
 import WishesList from './components/WishesList'
+import InfoManager from './components/InfoManager'
 import GalleryManager from './components/GalleryManager'
 import MusicManager from './components/MusicManager'
 import RsvpManager from './components/RsvpManager'
@@ -72,8 +73,10 @@ export default async function ManagePage({
           <h1 className="font-display text-[30px] text-[#5b3a29] leading-tight">
             Quản lý thiệp cưới của {couple.bride_name} &amp; {couple.groom_name}
           </h1>
-          <p className="text-sm text-[#9a7d68]">Tạo link khách mời, quản lý album ảnh và xem lời chúc.</p>
+          <p className="text-sm text-[#9a7d68]">Sửa thông tin, chia sẻ thiệp, quản lý ảnh và nhận lời chúc.</p>
         </div>
+
+        <InfoManager couple={couple} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2">
