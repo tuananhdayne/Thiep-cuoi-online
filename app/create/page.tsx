@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useMemo, useState, useEffect } from 'react'
+import { FormEvent, useMemo, useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import ImageUploader from '@/components/ImageUploader'
@@ -70,7 +70,7 @@ const requiredFields: (keyof CouplePayload)[] = [
   'groom_address',
 ]
 
-export default function CreatePage() {
+function CreateForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const initialTheme = searchParams.get('theme') || 'classic'
@@ -501,5 +501,13 @@ export default function CreatePage() {
         </div>
       </div>
     </main>
+  )
+}
+
+export default function CreatePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-[#9a7d68]">Đang tải...</div>}>
+      <CreateForm />
+    </Suspense>
   )
 }
