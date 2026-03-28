@@ -48,7 +48,7 @@ const extractMapSrc = (value?: string | null) => {
 }
 
 export default function LocationSection({ brideInfo, groomInfo, weddingDate, weddingTime }: LocationSectionProps) {
-    const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('bride')
+    const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('groom')
 
     const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
     const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
@@ -86,17 +86,8 @@ export default function LocationSection({ brideInfo, groomInfo, weddingDate, wed
                         <div className="bg-white p-1.5 rounded-full inline-flex border border-amber-100 shadow-sm relative overflow-hidden">
                             <div
                                 className={`absolute inset-y-1.5 w-[120px] rounded-full bg-gradient-to-r from-accent to-accent-light shadow-md transition-all duration-300 ease-out`}
-                                style={{ left: activeTab === 'bride' ? '6px' : 'calc(100% - 126px)' }}
+                                style={{ left: activeTab === 'groom' ? '6px' : 'calc(100% - 126px)' }}
                             />
-                            <button
-                                onClick={() => setActiveTab('bride')}
-                                className={`relative z-10 w-[120px] py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === 'bride'
-                                    ? 'text-white'
-                                    : 'text-primary-light hover:text-primary'
-                                    }`}
-                            >
-                                Nhà Gái
-                            </button>
                             <button
                                 onClick={() => setActiveTab('groom')}
                                 className={`relative z-10 w-[120px] py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === 'groom'
@@ -105,6 +96,15 @@ export default function LocationSection({ brideInfo, groomInfo, weddingDate, wed
                                     }`}
                             >
                                 Nhà Trai
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('bride')}
+                                className={`relative z-10 w-[120px] py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeTab === 'bride'
+                                    ? 'text-white'
+                                    : 'text-primary-light hover:text-primary'
+                                    }`}
+                            >
+                                Nhà Gái
                             </button>
                         </div>
                     </div>
