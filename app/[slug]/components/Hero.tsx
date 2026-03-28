@@ -25,12 +25,7 @@ const formatDate = (date?: string | null) => {
 
 const formatTime = (time?: string | null) => {
   if (!time) return ''
-  return new Intl.DateTimeFormat('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Ho_Chi_Minh',
-  }).format(new Date(`1970-01-01T${time}+07:00`))
+  return time.slice(0, 5) // "10:30:00" -> "10:30"
 }
 
 export default function Hero({

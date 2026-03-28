@@ -30,12 +30,7 @@ const formatDate = (value?: string | null) => {
 
 const formatTime = (value?: string | null) => {
     if (!value) return ''
-    return new Intl.DateTimeFormat('vi-VN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-        timeZone: 'Asia/Ho_Chi_Minh',
-    }).format(new Date(`1970-01-01T${value}+07:00`))
+    return value.slice(0, 5) // "10:30:00" -> "10:30"
 }
 
 const extractMapSrc = (value?: string | null) => {
