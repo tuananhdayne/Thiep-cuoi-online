@@ -69,14 +69,20 @@ export default function AudioPlayer({
 
         const addListeners = () => {
             document.addEventListener('pointerdown', handleInteraction, { passive: true })
-            document.addEventListener('keydown', handleInteraction)
+            document.addEventListener('touchstart', handleInteraction, { passive: true })
+            document.addEventListener('touchmove', handleInteraction, { passive: true })
+            document.addEventListener('wheel', handleInteraction, { passive: true })
             document.addEventListener('scroll', handleInteraction, { passive: true })
+            document.addEventListener('keydown', handleInteraction)
         }
 
         const removeListeners = () => {
             document.removeEventListener('pointerdown', handleInteraction)
-            document.removeEventListener('keydown', handleInteraction)
+            document.removeEventListener('touchstart', handleInteraction)
+            document.removeEventListener('touchmove', handleInteraction)
+            document.removeEventListener('wheel', handleInteraction)
             document.removeEventListener('scroll', handleInteraction)
+            document.removeEventListener('keydown', handleInteraction)
         }
 
         addListeners()
