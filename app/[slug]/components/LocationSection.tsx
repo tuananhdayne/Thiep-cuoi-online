@@ -52,6 +52,15 @@ export default function LocationSection({ brideInfo, groomInfo, weddingDate, wed
 
     const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
     const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
+    
+    // If it's an embed URL, browsing directly to it will cause "Refused to connect" 
+    // We construct a search query instead to open the native Maps app.
+    const isEmbed = mapUrl?.includes('/embed')
+    const externalMapUrl = isEmbed
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${currentInfo.location || ''} ${currentInfo.address || ''}`.trim()
+        )}`
+        : mapUrl
 
     return (
         <section className="py-16 px-6 bg-bg-alt" id="location">
@@ -126,7 +135,7 @@ export default function LocationSection({ brideInfo, groomInfo, weddingDate, wed
                                 {mapUrl && (
                                     <div className="pt-4">
                                         <a
-                                            href={mapUrl}
+                                            href={externalMapUrl || '#'}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="inline-flex items-center justify-center gap-2 w-full md:w-auto text-sm font-semibold text-white bg-gradient-to-r from-accent to-accent-light px-8 py-3.5 rounded-full shadow-[0_8px_20px_rgba(192,138,75,0.3)] transition-all hover:-translate-y-0.5"
