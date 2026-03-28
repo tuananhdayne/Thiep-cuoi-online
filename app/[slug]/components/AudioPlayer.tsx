@@ -47,7 +47,7 @@ export default function AudioPlayer({
         return () => clearTimeout(timer)
     }, [musicUrl, delay, volume, autoplay, userManuallyPaused])
 
-    // Handle user interaction fallback for blocked autoplay
+    // Handle user interaction fallback for blocked autoplay (first gesture anywhere)
     useEffect(() => {
         if (!musicUrl || isPlaying || userManuallyPaused || !autoplay) return
 
@@ -59,7 +59,6 @@ export default function AudioPlayer({
                     playPromise.then(() => {
                         setIsPlaying(true)
                         setShowPlayText(false)
-                        // Clean up listeners on success
                         removeListeners()
                     }).catch(() => {
                         // Still blocked? keep listeners attached.
@@ -69,24 +68,21 @@ export default function AudioPlayer({
         }
 
         const addListeners = () => {
-            document.addEventListener('click', handleInteraction)
-            document.addEventListener('touchstart', handleInteraction, { passive: true })
+            document.addEventListener('pointerdown', handleInteraction, { passive: true })
+            document.addEventListener('keydown', handleInteraction)
             document.addEventListener('scroll', handleInteraction, { passive: true })
         }
 
         const removeListeners = () => {
-            document.removeEventListener('click', handleInteraction)
-            document.removeEventListener('touchstart', handleInteraction)
+            document.removeEventListener('pointerdown', handleInteraction)
+            document.removeEventListener('keydown', handleInteraction)
             document.removeEventListener('scroll', handleInteraction)
         }
 
-        // Only attach if we are likely blocked (showPlayText is true)
-        if (showPlayText) {
-            addListeners()
-        }
+        addListeners()
 
         return () => removeListeners()
-    }, [musicUrl, isPlaying, userManuallyPaused, autoplay, showPlayText, volume])
+    }, [musicUrl, isPlaying, userManuallyPaused, autoplay, volume])
 
     if (!musicUrl) return null
 
@@ -113,7 +109,7 @@ export default function AudioPlayer({
 
     return (
         <>
-            <audio ref={audioRef} src={musicUrl} loop className="hidden" />
+            <audio ref={audioRef} src={musicUrl} loop className="hidden" playsInline preload="auto" />
 
             <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
                 {showPlayText && !isPlaying && (
