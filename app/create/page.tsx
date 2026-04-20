@@ -60,8 +60,6 @@ const requiredFields: (keyof CouplePayload)[] = [
   'intro_description',
   'wedding_date',
   'wedding_time',
-  'location',
-  'address',
   'bride_event_title',
   'bride_location',
   'bride_address',
@@ -220,7 +218,7 @@ function CreateForm() {
               Nhập thông tin cặp đôi
             </h1>
             <p className="text-sm md:text-base text-[#9a7d68] leading-relaxed">
-              Điền chi tiết buổi lễ của hai bên, kèm địa chỉ Google Map để khách dễ tìm đến.
+              Điền chi tiết buổi lễ của hai bên để tạo thiệp cưới.
             </p>
           </div>
 
@@ -272,24 +270,6 @@ function CreateForm() {
                   type="time"
                   value={form.wedding_time}
                   onChange={(e) => handleChange('wedding_time', e.target.value)}
-                  className="w-full rounded-2xl border border-[#eedfcc] bg-[#fffaf3] px-4 py-3.5 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c] focus:border-[#f2c87c] transition"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-[#7b5e4b]">Địa điểm chung *</label>
-                <input
-                  value={form.location}
-                  onChange={(e) => handleChange('location', e.target.value)}
-                  placeholder="Tên sảnh / nhà hàng"
-                  className="w-full rounded-2xl border border-[#eedfcc] bg-[#fffaf3] px-4 py-3.5 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c] focus:border-[#f2c87c] transition"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-[#7b5e4b]">Địa chỉ chung *</label>
-                <input
-                  value={form.address}
-                  onChange={(e) => handleChange('address', e.target.value)}
-                  placeholder="Số nhà, đường, quận"
                   className="w-full rounded-2xl border border-[#eedfcc] bg-[#fffaf3] px-4 py-3.5 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c] focus:border-[#f2c87c] transition"
                 />
               </div>
