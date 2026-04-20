@@ -55,6 +55,32 @@
   --border-light: #dae8ed;
 }
 
+/* Garden Theme */
+.theme-garden {
+  --bg-main: #f5fbf4;
+  --bg-alt: #eff8ee;
+  --primary: #24412c;
+  --primary-light: #5d7d63;
+  --accent: #5e9b67;
+  --accent-light: #9fc9a5;
+  --accent-pale: #dcefdc;
+  --accent-bg: #f3faf1;
+  --border-light: #dce9d9;
+}
+
+/* Midnight Theme */
+.theme-midnight {
+  --bg-main: #0f1720;
+  --bg-alt: #132030;
+  --primary: #f5efe6;
+  --primary-light: #d4c6b4;
+  --accent: #d4af7a;
+  --accent-light: #e4c69b;
+  --accent-pale: rgba(212, 175, 122, 0.18);
+  --accent-bg: #172131;
+  --border-light: rgba(255, 255, 255, 0.12);
+}
+
 @theme inline {
   --color-foreground: var(--foreground);
   --color-bg-main: var(--bg-main);

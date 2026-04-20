@@ -82,7 +82,10 @@ export default function RsvpManager({ rsvps }: { rsvps: RsvpRecord[] }) {
                                             </span>
                                         </td>
                                         <td className="py-4 px-4 text-[#9a7d68] text-sm hidden md:table-cell">
-                                            {new Date(rsvp.created_at).toLocaleDateString('vi-VN')}
+                                            {new Intl.DateTimeFormat('vi-VN', {
+                                                dateStyle: 'medium',
+                                                timeZone: 'Asia/Ho_Chi_Minh',
+                                            }).format(new Date(rsvp.created_at))}
                                         </td>
                                     </tr>
                                 ))}

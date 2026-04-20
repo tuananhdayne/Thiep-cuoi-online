@@ -42,15 +42,35 @@ const extractMapSrc = (value?: string | null) => {
     return null
 }
 
+const buildEmbedUrl = (mapValue: string | null, location?: string | null, address?: string | null) => {
+        const source = mapValue?.trim() || ''
+
+        if (source.includes('/embed')) {
+            return source
+        }
+
+        const query = `${location || ''} ${address || ''}`.trim()
+        if (query) {
+            return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
+        }
+
+        if (source && /google\.com\/maps|maps\.google/i.test(source)) {
+            return source.includes('output=embed') ? source : `${source}${source.includes('?') ? '&' : '?'}output=embed`
+        }
+
+        return null
+}
+
 export default function LocationSection({ brideInfo, groomInfo, weddingDate, weddingTime }: LocationSectionProps) {
     const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('groom')
 
     const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
     const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
+    const embedMapUrl = buildEmbedUrl(mapUrl, currentInfo.location, currentInfo.address)
     
     // If it's an embed URL, browsing directly to it will cause "Refused to connect" 
     // We construct a search query instead to open the native Maps app.
-    const isEmbed = mapUrl?.includes('/embed')
+    const isEmbed = embedMapUrl?.includes('/embed')
     const externalMapUrl = isEmbed
         ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
             `${currentInfo.location || ''} ${currentInfo.address || ''}`.trim()
@@ -145,9 +165,9 @@ export default function LocationSection({ brideInfo, groomInfo, weddingDate, wed
                             </div>
 
                             <div className="h-[350px] md:h-auto bg-accent-pale relative">
-                                {mapUrl ? (
+                                {embedMapUrl ? (
                                     <iframe
-                                        src={mapUrl}
+                                        src={embedMapUrl}
                                         width="100%"
                                         height="100%"
                                         style={{ border: 0 }}

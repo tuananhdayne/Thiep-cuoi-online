@@ -7,6 +7,7 @@ import Countdown from '../components/Countdown'
 import WishSection from '../components/WishSection'
 import Footer from '../components/Footer'
 import AudioPlayer from '../components/AudioPlayer'
+import OrnamentBackdrop from '../components/OrnamentBackdrop'
 import { TemplateProps } from './types'
 
 export default function ModernTemplate({
@@ -24,9 +25,10 @@ export default function ModernTemplate({
         couple.theme && couple.theme !== 'classic' ? `theme-${couple.theme}` : ''
 
     return (
-        <div className={`bg-bg-main text-primary min-h-screen flex flex-col md:flex-row ${themeClass}`}>
+        <div className={`relative overflow-hidden bg-bg-main text-primary min-h-screen flex flex-col md:flex-row ${themeClass}`}>
+            <OrnamentBackdrop variant="modern" />
             {/* Left side: Sticky Hero */}
-            <div className="md:w-1/2 md:sticky md:top-0 h-[50vh] md:h-screen relative overflow-hidden">
+            <div className="relative z-10 md:w-1/2 md:sticky md:top-0 h-[50vh] md:h-screen overflow-hidden">
                 <Image
                     src={heroBackground}
                     alt={`${couple.bride_name} & ${couple.groom_name}`}
@@ -45,11 +47,11 @@ export default function ModernTemplate({
             </div>
 
             {/* Right side: Scrolling Content */}
-            <div className="md:w-1/2 overflow-y-auto">
+            <div className="relative z-10 md:w-1/2 overflow-y-auto">
                 <div className="p-8 md:p-16 max-w-3xl mx-auto space-y-24">
 
                     {/* Intro Section */}
-                    <section className="text-center">
+                    <section className="text-center rounded-[30px] border border-border-light bg-white/85 p-8 shadow-[0_18px_45px_rgba(91,58,41,0.07)]">
                         <h2 className="font-heading text-3xl mb-6 text-accent">We are getting married</h2>
                         <p className="font-body leading-relaxed text-secondary text-lg">
                             {couple.intro_description || "Join us as we celebrate our love and commitment to each other."}
@@ -83,7 +85,9 @@ export default function ModernTemplate({
                         }}
                     />
 
-                    <Gallery images={gallery || []} />
+                    <div className="rounded-[30px] border border-border-light bg-white shadow-[0_18px_45px_rgba(91,58,41,0.07)] overflow-hidden">
+                        <Gallery images={gallery || []} />
+                    </div>
 
                     <RsvpSection
                         coupleId={couple.id}

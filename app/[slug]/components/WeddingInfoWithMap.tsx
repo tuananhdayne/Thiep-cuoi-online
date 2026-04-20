@@ -47,11 +47,31 @@ const extractMapSrc = (value?: string | null) => {
     return null
 }
 
+const buildEmbedUrl = (mapValue: string | null, location?: string | null, address?: string | null) => {
+    const source = mapValue?.trim() || ''
+
+    if (source.includes('/embed')) {
+        return source
+    }
+
+    const query = `${location || ''} ${address || ''}`.trim()
+    if (query) {
+        return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
+    }
+
+    if (source && /google\.com\/maps|maps\.google/i.test(source)) {
+        return source.includes('output=embed') ? source : `${source}${source.includes('?') ? '&' : '?'}output=embed`
+    }
+
+    return null
+}
+
 export default function WeddingInfoWithMap({ brideInfo, groomInfo }: WeddingInfoWithMapProps) {
     const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('bride')
 
     const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
     const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
+    const embedMapUrl = buildEmbedUrl(mapUrl, currentInfo.location, currentInfo.address)
 
     return (
         <section className="py-16 px-6" id="wedding-info">
@@ -138,9 +158,9 @@ export default function WeddingInfoWithMap({ brideInfo, groomInfo }: WeddingInfo
                             </div>
 
                             <div className="h-[300px] md:h-auto bg-amber-50 relative">
-                                {mapUrl ? (
+                                {embedMapUrl ? (
                                     <iframe
-                                        src={mapUrl}
+                                        src={embedMapUrl}
                                         width="100%"
                                         height="100%"
                                         style={{ border: 0 }}

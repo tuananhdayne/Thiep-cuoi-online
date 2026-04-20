@@ -1,5 +1,5 @@
 import { Couple, GalleryItem, Wish } from '../[slug]/templates/types'
-import ClassicTemplate from '../[slug]/templates/ClassicTemplate'
+import { loadTemplate, supportedThemes } from '../[slug]/templates/templateLoader'
 
 export default async function DemoPage({
     searchParams,
@@ -7,9 +7,12 @@ export default async function DemoPage({
     searchParams: Promise<{ theme?: string }>
 }) {
     const { theme } = await searchParams
+    const requestedTheme = theme || 'classic'
 
     // Validate theme, default to classic
-    const validTheme = (['classic', 'rose', 'ocean'].includes(theme || '') ? theme : 'classic') as string
+    const validTheme = supportedThemes.includes(requestedTheme as (typeof supportedThemes)[number])
+        ? requestedTheme
+        : 'classic'
 
     // Mock Data for Demo
     const mockCouple: Couple = {
@@ -45,15 +48,7 @@ export default async function DemoPage({
         { id: 2, name: 'Đồng nghiệp', message: 'Mãi mãi yêu thương và đồng hành cùng nhau nhé anh chị.', created_at: new Date(Date.now() - 86400000).toISOString() },
     ]
 
-    let TemplateToRender = ClassicTemplate
-
-    if (validTheme === 'rose') {
-        const RoseTemplate = (await import('../[slug]/templates/RoseTemplate')).default
-        TemplateToRender = RoseTemplate
-    } else if (validTheme === 'ocean') {
-        const OceanTemplate = (await import('../[slug]/templates/OceanTemplate')).default
-        TemplateToRender = OceanTemplate
-    }
+    const TemplateToRender = await loadTemplate(validTheme)
 
     return (
         <main className="relative">

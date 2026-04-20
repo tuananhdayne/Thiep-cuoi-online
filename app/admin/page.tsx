@@ -95,6 +95,7 @@ export default function AdminPage() {
     value
       ? new Intl.DateTimeFormat('vi-VN', {
           dateStyle: 'medium',
+          timeZone: 'Asia/Ho_Chi_Minh',
         }).format(new Date(value))
       : '—'
 
@@ -103,6 +104,7 @@ export default function AdminPage() {
       ? new Intl.DateTimeFormat('vi-VN', {
           dateStyle: 'medium',
           timeStyle: 'short',
+          timeZone: 'Asia/Ho_Chi_Minh',
         }).format(new Date(value))
       : '—'
 

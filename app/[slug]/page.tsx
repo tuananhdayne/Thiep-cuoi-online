@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import { Couple, GalleryItem, Wish } from './templates/types'
-import ClassicTemplate from './templates/ClassicTemplate'
+import { loadTemplate } from './templates/templateLoader'
 
 export default async function Page({
   params,
@@ -35,16 +35,7 @@ export default async function Page({
       .returns<Wish[]>(),
   ])
 
-  // Dynamic loading of templates based on couple.theme
-  let TemplateToRender = ClassicTemplate
-
-  if (couple.theme === 'rose') {
-    const RoseTemplate = (await import('./templates/RoseTemplate')).default
-    TemplateToRender = RoseTemplate
-  } else if (couple.theme === 'ocean') {
-    const OceanTemplate = (await import('./templates/OceanTemplate')).default
-    TemplateToRender = OceanTemplate
-  }
+  const TemplateToRender = await loadTemplate(couple.theme)
 
   return (
     <main>

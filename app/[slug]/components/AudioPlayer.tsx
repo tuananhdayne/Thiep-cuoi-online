@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface AudioPlayerProps {
     musicUrl?: string | null
@@ -20,50 +20,50 @@ export default function AudioPlayer({
     const [userManuallyPaused, setUserManuallyPaused] = useState(false)
     const audioRef = useRef<HTMLAudioElement>(null)
 
+    const normalizedVolume = Math.max(0, Math.min(volume ?? 0.3, 1))
+
+    const attemptPlay = async () => {
+        const audio = audioRef.current
+        if (!audio || !musicUrl) return false
+
+        audio.volume = normalizedVolume
+        audio.load()
+
+        try {
+            await audio.play()
+            setIsPlaying(true)
+            setShowPlayText(false)
+            setUserManuallyPaused(false)
+            return true
+        } catch {
+            setIsPlaying(false)
+            setShowPlayText(true)
+            return false
+        }
+    }
+
     // Handle initial autoplay attempt
     useEffect(() => {
         if (!musicUrl) return
 
         const timer = setTimeout(() => {
-            if (audioRef.current && autoplay && !userManuallyPaused) {
-                audioRef.current.volume = volume ?? 0.3
-                
-                const playPromise = audioRef.current.play()
-                if (playPromise !== undefined) {
-                    playPromise
-                        .then(() => {
-                            setIsPlaying(true)
-                            setShowPlayText(false)
-                        })
-                        .catch(() => {
-                            // Autoplay was prevented by browser
-                            setIsPlaying(false)
-                            setShowPlayText(true)
-                        })
-                }
+            if (autoplay && !userManuallyPaused) {
+                void attemptPlay()
             }
         }, (delay !== null && delay !== undefined ? delay : 15) * 1000)
 
         return () => clearTimeout(timer)
-    }, [musicUrl, delay, volume, autoplay, userManuallyPaused])
+    }, [musicUrl, delay, autoplay, userManuallyPaused])
 
     // Handle user interaction fallback for blocked autoplay (first gesture anywhere)
     useEffect(() => {
         if (!musicUrl || isPlaying || userManuallyPaused || !autoplay) return
 
         const handleInteraction = () => {
-            if (audioRef.current && !isPlaying && !userManuallyPaused) {
-                audioRef.current.volume = volume ?? 0.3
-                const playPromise = audioRef.current.play()
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        setIsPlaying(true)
-                        setShowPlayText(false)
-                        removeListeners()
-                    }).catch(() => {
-                        // Still blocked? keep listeners attached.
-                    })
-                }
+            if (!isPlaying && !userManuallyPaused) {
+                void attemptPlay().then((started) => {
+                    if (started) removeListeners()
+                })
             }
         }
 
@@ -88,34 +88,27 @@ export default function AudioPlayer({
         addListeners()
 
         return () => removeListeners()
-    }, [musicUrl, isPlaying, userManuallyPaused, autoplay, volume])
+    }, [musicUrl, isPlaying, userManuallyPaused, autoplay, normalizedVolume])
 
     if (!musicUrl) return null
 
     const togglePlay = () => {
-        if (audioRef.current) {
-            if (isPlaying) {
-                audioRef.current.pause()
-                setIsPlaying(false)
-                setUserManuallyPaused(true) // DO NOT auto-resume natively
-            } else {
-                const playPromise = audioRef.current.play()
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        setIsPlaying(true)
-                        setShowPlayText(false)
-                        setUserManuallyPaused(false) // Reset manual pause
-                    }).catch(err => {
-                        console.error("Lỗi phát nhạc:", err)
-                    })
-                }
-            }
+        if (!audioRef.current) return
+
+        if (isPlaying) {
+            audioRef.current.pause()
+            setIsPlaying(false)
+            setUserManuallyPaused(true)
+        } else {
+            void attemptPlay().catch((err) => {
+                console.error('Lỗi phát nhạc:', err)
+            })
         }
     }
 
     return (
         <>
-            <audio ref={audioRef} src={musicUrl} loop className="hidden" playsInline preload="auto" />
+            <audio ref={audioRef} src={musicUrl} loop className="sr-only" playsInline preload="auto" aria-hidden="true" />
 
             <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
                 {showPlayText && !isPlaying && (

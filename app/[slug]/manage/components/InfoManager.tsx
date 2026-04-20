@@ -78,7 +78,10 @@ export default function InfoManager({ couple }: { couple: any }) {
                         <p className="text-xs uppercase tracking-wider text-[#c08a4b] mb-1">Thời Gian Tổ Chức</p>
                         <p className="font-medium text-[#5b3a29]">
                             {couple.wedding_time && `${couple.wedding_time} | `}
-                            {couple.wedding_date && new Intl.DateTimeFormat('vi-VN', { dateStyle: 'long' }).format(new Date(couple.wedding_date))}
+                            {couple.wedding_date && new Intl.DateTimeFormat('vi-VN', {
+                                dateStyle: 'long',
+                                timeZone: 'Asia/Ho_Chi_Minh',
+                            }).format(new Date(couple.wedding_date))}
                         </p>
                     </div>
                 </div>

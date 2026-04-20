@@ -37,7 +37,7 @@ const securityHeaders = [
   {
     // Content Security Policy - chặn script từ nguồn không uy tín
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co https://images.unsplash.com; frame-ancestors 'none'; object-src 'none';"
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; media-src 'self' https: blob: data:; font-src 'self'; connect-src 'self' https://*.supabase.co https://images.unsplash.com; frame-src 'self' https://www.google.com https://maps.google.com https://www.google.com/maps; frame-ancestors 'none'; object-src 'none';"
   }
 ];
 
