@@ -25,7 +25,7 @@ export default function ClassicTemplate({
         couple.theme && couple.theme !== 'classic' ? `theme-${couple.theme}` : 'theme-classic'
 
     return (
-        <div className={`bg-bg-main text-primary overflow-hidden ${themeClass}`}>
+        <div className={`bg-white text-primary overflow-hidden ${themeClass}`}>
             <PetalEffect />
 
             <Hero
@@ -37,6 +37,7 @@ export default function ClassicTemplate({
                 backgroundImage={heroBackground}
             />
 
+            <div className="bg-white">
             <LocationSection
                 weddingDate={couple.wedding_date}
                 weddingTime={couple.wedding_time}
@@ -74,6 +75,7 @@ export default function ClassicTemplate({
                 groom={couple.groom_name}
                 date={couple.wedding_date}
             />
+            </div>
 
             <AudioPlayer
                 musicUrl={couple.music_url}

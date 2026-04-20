@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import SecurityProvider from "./components/SecurityProvider";
 
 const display = Playfair_Display({
   variable: "--font-display",
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${body.variable} antialiased bg-[#fdf8f3] text-slate-900`}
       >
-        {children}
+        <SecurityProvider>
+          {children}
+        </SecurityProvider>
       </body>
     </html>
   );

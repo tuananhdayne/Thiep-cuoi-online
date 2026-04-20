@@ -15,11 +15,68 @@ interface ImageUploaderProps {
     onUploadSuccess: (results: ImageSizes[]) => void
 }
 
+const compressImage = async (file: File): Promise<File> => {
+    // If it's not an image, return original
+    if (!file.type.startsWith('image/')) return file;
+    
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target?.result as string;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                const MAX_WIDTH = 2500;
+                const MAX_HEIGHT = 2500;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height *= MAX_WIDTH / width));
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width = Math.round((width *= MAX_HEIGHT / height));
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx?.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+                                type: 'image/jpeg',
+                                lastModified: Date.now(),
+                            });
+                            resolve(newFile);
+                        } else {
+                            resolve(file); // fallback
+                        }
+                    },
+                    'image/jpeg',
+                    0.85
+                );
+            };
+            img.onerror = () => resolve(file);
+        };
+        reader.onerror = () => resolve(file);
+    });
+};
+
 export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploaderProps) {
     const [files, setFiles] = useState<File[]>([])
     const [previews, setPreviews] = useState<string[]>([])
     const [uploading, setUploading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [progress, setProgress] = useState<{current: number, total: number} | null>(null)
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return
@@ -33,11 +90,11 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
 
         // Validate file types
         const validFiles = selectedFiles.filter(file =>
-            ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)
+            ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type)
         )
 
         if (validFiles.length !== selectedFiles.length) {
-            setError('Only JPG, JPEG, and PNG files are allowed.')
+            setError('Only JPG, JPEG, PNG, and WebP files are allowed.')
         } else {
             setError(null)
         }
@@ -61,32 +118,52 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
         if (!files.length) return
         setUploading(true)
         setError(null)
-
-        const formData = new FormData()
-        formData.append('weddingId', weddingId.toString())
-        files.forEach(file => {
-            formData.append('images', file)
-        })
+        setProgress({ current: 0, total: files.length })
 
         try {
-            const response = await fetch('/api/upload-images', {
-                method: 'POST',
-                body: formData
-            })
+            const uploadedResults: ImageSizes[] = [];
+            
+            // Upload sequentially to avoid payload size limit & memory crash on server
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                setProgress({ current: i + 1, total: files.length });
+                
+                // Compress client-side
+                const compressedFile = await compressImage(file);
+                
+                const formData = new FormData()
+                formData.append('weddingId', weddingId.toString())
+                formData.append('images', compressedFile)
 
-            const data = await response.json()
+                const response = await fetch('/api/upload-images', {
+                    method: 'POST',
+                    body: formData
+                })
 
-            if (!response.ok) {
-                throw new Error(data.error || 'Upload failed')
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch(e) {
+                    throw new Error(`Server error: ${text.substring(0, 100)}...`);
+                }
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Upload failed')
+                }
+
+                uploadedResults.push(...data.results);
             }
 
-            onUploadSuccess(data.results)
+            onUploadSuccess(uploadedResults)
             // Clear forms
             setFiles([])
             setPreviews([])
+            setProgress(null)
 
         } catch (err: any) {
             setError(err.message)
+            setProgress(null)
         } finally {
             setUploading(false)
         }
@@ -103,19 +180,23 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
                 </div>
 
                 <div className="flex items-center justify-center w-full">
-                    <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                    <label htmlFor="dropzone-file" className={ `flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition ${uploading ? 'bg-gray-100 border-gray-200 cursor-not-allowed' : 'border-gray-300 bg-gray-50 hover:bg-gray-100'}` }>
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <svg className={`w-8 h-8 mb-4 ${uploading ? 'text-gray-300' : 'text-gray-500'}`} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                             </svg>
-                            <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                            {uploading && progress ? (
+                                <p className="mb-2 text-sm text-gray-500 font-medium">Uploading {progress.current} of {progress.total}...</p>
+                            ) : (
+                                <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                            )}
                         </div>
                         <input
                             id="dropzone-file"
                             type="file"
                             className="hidden"
                             multiple
-                            accept="image/jpeg,image/png,image/jpg"
+                            accept="image/jpeg,image/png,image/jpg,image/webp"
                             onChange={handleFileChange}
                             disabled={uploading || files.length >= 15}
                         />
@@ -123,7 +204,7 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
                 </div>
 
                 {error && (
-                    <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                    <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg overflow-hidden text-ellipsis whitespace-nowrap" title={error}>
                         {error}
                     </div>
                 )}
@@ -143,15 +224,25 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
 
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                             {previews.map((src, idx) => (
-                                <div key={src} className="relative group rounded-lg overflow-hidden bg-gray-100 aspect-square">
+                                <div key={src} className={`relative group rounded-lg overflow-hidden bg-gray-100 aspect-square ${uploading && progress && idx < progress.current - 1 ? 'opacity-50 grayscale' : ''}`}>
                                     <img src={src} className="w-full h-full object-cover" alt="Preview" />
-                                    <button
-                                        onClick={() => removeFile(idx)}
-                                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
-                                        aria-label="Remove image"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                                    </button>
+                                    {!uploading && (
+                                        <button
+                                            onClick={() => removeFile(idx)}
+                                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition shadow-sm"
+                                            aria-label="Remove image"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                                        </button>
+                                    )}
+                                    {uploading && progress && idx === progress.current - 1 && (
+                                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                                            <svg className="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

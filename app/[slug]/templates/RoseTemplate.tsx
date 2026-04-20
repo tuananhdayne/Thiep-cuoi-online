@@ -7,6 +7,7 @@ import Countdown from '../components/Countdown'
 import WishSection from '../components/WishSection'
 import Footer from '../components/Footer'
 import AudioPlayer from '../components/AudioPlayer'
+import PetalEffect from '../components/PetalEffect'
 import { TemplateProps } from './types'
 
 export default function RoseTemplate({
@@ -23,9 +24,10 @@ export default function RoseTemplate({
     const themeClass = 'theme-rose'
 
     return (
-        <div className={`bg-bg-main text-primary min-h-screen flex flex-col md:flex-row ${themeClass}`}>
+        <div className={`bg-white text-primary min-h-screen flex flex-col md:flex-row relative ${themeClass}`}>
+            <PetalEffect />
             {/* Left side: Sticky Hero */}
-            <div className="md:w-1/2 md:sticky md:top-0 h-[50vh] md:h-screen relative overflow-hidden">
+            <div className="md:w-1/2 md:sticky md:top-0 h-[50vh] md:h-screen relative overflow-hidden bg-gradient-to-br from-rose-50 to-pink-100">
                 <Image
                     src={heroBackground}
                     alt={`${couple.bride_name} & ${couple.groom_name}`}
@@ -33,7 +35,7 @@ export default function RoseTemplate({
                     className="object-cover"
                     priority
                 />
-                <div className="absolute inset-0 bg-black/30 flex flex-col justify-center items-center text-white p-8 text-center">
+                <div className="absolute inset-0 bg-black/25 flex flex-col justify-center items-center text-white p-8 text-center">
                     <h1 className="font-heading text-5xl md:text-7xl mb-4 italic tracking-wide">
                         {couple.bride_name} <span>&amp;</span> {couple.groom_name}
                     </h1>
@@ -44,11 +46,12 @@ export default function RoseTemplate({
             </div>
 
             {/* Right side: Scrolling Content */}
-            <div className="md:w-1/2 overflow-y-auto">
-                <div className="p-8 md:p-16 max-w-3xl mx-auto space-y-24">
+            <div className="md:w-1/2 overflow-y-auto bg-white relative">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(244,114,182,0.08),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(251,191,36,0.06),transparent_40%)]" />
+                <div className="relative p-8 md:p-16 max-w-3xl mx-auto space-y-24">
 
                     {/* Intro Section */}
-                    <section className="text-center">
+                    <section className="text-center bg-gradient-to-br from-rose-50 via-white to-pink-50 p-8 rounded-3xl shadow-sm">
                         <h2 className="font-heading text-3xl mb-6 text-accent">We are getting married</h2>
                         <p className="font-body leading-relaxed text-secondary text-lg">
                             {couple.intro_description || "Join us as we celebrate our love and commitment to each other."}
@@ -65,24 +68,28 @@ export default function RoseTemplate({
                         weddingTime={couple.wedding_time}
                     />
 
-                    <LocationSection
-                        weddingDate={couple.wedding_date}
-                        weddingTime={couple.wedding_time}
-                        brideInfo={{
-                            title: couple.bride_event_title,
-                            location: couple.bride_location,
-                            address: couple.bride_address,
-                            mapEmbedUrl: couple.bride_google_map_embed,
-                        }}
-                        groomInfo={{
-                            title: couple.groom_event_title,
-                            location: couple.groom_location,
-                            address: couple.groom_address,
-                            mapEmbedUrl: couple.groom_google_map_embed,
-                        }}
-                    />
+                    <div className="bg-gradient-to-br from-white via-rose-50 to-white p-8 rounded-3xl shadow-sm border border-rose-100">
+                        <LocationSection
+                            weddingDate={couple.wedding_date}
+                            weddingTime={couple.wedding_time}
+                            brideInfo={{
+                                title: couple.bride_event_title,
+                                location: couple.bride_location,
+                                address: couple.bride_address,
+                                mapEmbedUrl: couple.bride_google_map_embed,
+                            }}
+                            groomInfo={{
+                                title: couple.groom_event_title,
+                                location: couple.groom_location,
+                                address: couple.groom_address,
+                                mapEmbedUrl: couple.groom_google_map_embed,
+                            }}
+                        />
+                    </div>
 
-                    <Gallery images={gallery || []} />
+                    <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
+                        <Gallery images={gallery || []} />
+                    </div>
 
                     <RsvpSection
                         coupleId={couple.id}

@@ -7,6 +7,7 @@ import Countdown from '../components/Countdown'
 import WishSection from '../components/WishSection'
 import Footer from '../components/Footer'
 import AudioPlayer from '../components/AudioPlayer'
+import PetalEffect from '../components/PetalEffect'
 import { TemplateProps } from './types'
 
 export default function OceanTemplate({
@@ -23,9 +24,10 @@ export default function OceanTemplate({
     const themeClass = 'theme-ocean'
 
     return (
-        <div className={`bg-bg-main text-primary min-h-screen ${themeClass}`}>
+        <div className={`bg-white text-primary min-h-screen relative ${themeClass}`}>
+            <PetalEffect />
             {/* Wave Header / Hero */}
-            <header className="relative h-[70vh] flex flex-col items-center justify-center overflow-hidden">
+            <header className="relative h-[70vh] flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-100">
                 <Image
                     src={heroBackground}
                     alt={`${couple.bride_name} & ${couple.groom_name}`}
@@ -33,7 +35,7 @@ export default function OceanTemplate({
                     className="object-cover opacity-80"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-main/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-white" />
 
                 <div className="relative z-10 text-center px-4 pt-20">
                     <p className="font-body text-accent tracking-[0.3em] uppercase text-sm mb-4">
@@ -52,8 +54,9 @@ export default function OceanTemplate({
             </header>
 
             {/* Main Content with centered layout */}
-            <main className="max-w-4xl mx-auto px-4 py-16 space-y-32">
-                <section className="text-center bg-white/50 backdrop-blur-sm rounded-3xl p-10 md:p-16 shadow-xl shadow-accent/5 border border-white">
+            <main className="max-w-4xl mx-auto px-4 py-16 space-y-32 bg-white relative">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.08),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.07),transparent_40%)]" />
+                <section className="relative text-center bg-gradient-to-br from-cyan-50 via-white to-blue-50 rounded-3xl p-10 md:p-16 shadow-md border border-cyan-100">
                     <h2 className="font-heading text-4xl mb-6 text-primary">Lời ngỏ</h2>
                     <p className="font-body leading-relaxed text-secondary text-lg max-w-2xl mx-auto">
                         {couple.intro_description || "Biển rộng lớn như tình yêu chúng mình. Cùng đến chung vui trong ngày trọng đại nhé!"}
@@ -89,7 +92,7 @@ export default function OceanTemplate({
                     }}
                 />
 
-                <div className="bg-white/40 p-6 md:p-12 rounded-[3rem]">
+                <div className="relative bg-white p-6 md:p-12 rounded-[3rem] shadow-md border border-cyan-100">
                     <Gallery images={gallery || []} />
                 </div>
 

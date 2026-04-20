@@ -16,12 +16,31 @@ type Couple = {
 
 export default function AdminPage() {
   const router = useRouter()
+  // Auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthChecking, setIsAuthChecking] = useState(true)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
+
+  // Data state
   const [couples, setCouples] = useState<Couple[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (sessionStorage.getItem('adminAuth') === 'true') {
+        setIsAuthenticated(true)
+      }
+      setIsAuthChecking(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+
     const fetchCouples = async () => {
       setLoading(true)
       const { data, error: fetchError } = await supabase
@@ -38,7 +57,39 @@ export default function AdminPage() {
     }
 
     fetchCouples()
-  }, [])
+  }, [isAuthenticated])
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoginError('')
+    
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+
+      const data = await res.json()
+
+      if (res.ok && data.success) {
+        setIsAuthenticated(true)
+        sessionStorage.setItem('adminAuth', 'true')
+        setLoginError('')
+      } else {
+        setLoginError(data.error || 'Tài khoản hoặc mật khẩu không chính xác.')
+      }
+    } catch (err) {
+      setLoginError('Đã xảy ra lỗi khi kết nối máy chủ.')
+    }
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    sessionStorage.removeItem('adminAuth')
+  }
 
   const formatDate = (value: string | null) =>
     value
@@ -85,6 +136,68 @@ export default function AdminPage() {
 
   const empty = useMemo(() => !loading && couples.length === 0, [loading, couples])
 
+  if (isAuthChecking) {
+    return (
+      <main
+        className="min-h-screen px-4 py-12 bg-[#f8f4ef] flex items-center justify-center"
+        style={{
+          background: `radial-gradient(circle at 50% 35%, rgba(240, 221, 200, 0.18), transparent 45%), #f8f4ef`,
+        }}
+      >
+        <p className="text-[#8c6f5a] font-medium animate-pulse">Đang kiểm tra...</p>
+      </main>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <main
+        className="min-h-screen px-4 py-12 bg-[#f8f4ef] flex items-center justify-center"
+        style={{
+          background: `radial-gradient(circle at 50% 35%, rgba(240, 221, 200, 0.18), transparent 45%), #f8f4ef`,
+        }}
+      >
+        <div className="bg-white rounded-3xl shadow-2xl shadow-amber-100/50 border border-amber-50 p-8 w-full max-w-sm space-y-6">
+          <div className="text-center">
+            <h1 className="font-display text-[26px] text-[#5b3a29] leading-tight mb-2">Admin</h1>
+            <p className="text-sm text-[#9a7d68]">Đăng nhập để quản lý thiệp.</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-4 text-[#5b3a29]">
+            <div>
+              <label className="block text-sm font-semibold mb-1" htmlFor="username">Tài khoản</label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full rounded-xl border border-[#eedfcc] bg-[#fffaf3]/60 px-4 py-2.5 outline-none focus:border-[#b9772b] focus:ring-1 focus:ring-[#b9772b] transition"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold mb-1" htmlFor="password">Mật khẩu</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl border border-[#eedfcc] bg-[#fffaf3]/60 px-4 py-2.5 outline-none focus:border-[#b9772b] focus:ring-1 focus:ring-[#b9772b] transition"
+                required
+              />
+            </div>
+            {loginError && <p className="text-sm text-red-600 font-medium">{loginError}</p>}
+            <button
+              type="submit"
+              className="w-full rounded-xl bg-[#b9772b] px-4 py-3 text-sm font-bold text-white hover:bg-[#9a6323] transition shadow-lg shadow-amber-900/20"
+            >
+              Đăng nhập
+            </button>
+          </form>
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main
       className="min-h-screen px-4 py-12 bg-[#f8f4ef]"
@@ -100,6 +213,12 @@ export default function AdminPage() {
               <h1 className="font-display text-[28px] text-[#5b3a29] leading-tight">Quản lý thiệp cưới</h1>
               <p className="text-sm text-[#9a7d68]">Danh sách tất cả các thiệp đã tạo.</p>
             </div>
+            <button
+              onClick={handleLogout}
+              className="mt-2 md:mt-0 w-fit rounded-full bg-[#fbe9e3] px-4 py-2 text-xs font-semibold text-[#b44b3d] hover:bg-[#f6d8cf] transition shadow-sm shadow-red-900/10"
+            >
+              Đăng xuất
+            </button>
           </div>
 
           <div className="overflow-hidden rounded-2xl border border-[#eedfcc] bg-[#fffaf3]/60">

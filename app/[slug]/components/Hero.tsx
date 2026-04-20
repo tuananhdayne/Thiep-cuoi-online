@@ -25,7 +25,12 @@ const formatDate = (date?: string | null) => {
 
 const formatTime = (time?: string | null) => {
   if (!time) return ''
-  return time.slice(0, 5) // "10:30:00" -> "10:30"
+  return new Intl.DateTimeFormat('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Ho_Chi_Minh',
+  }).format(new Date(`1970-01-01T${time}+07:00`))
 }
 
 export default function Hero({
@@ -69,30 +74,26 @@ export default function Hero({
       </div>
 
       <div className="relative z-10 max-w-3xl space-y-6 text-white">
-        {!guestName ? (
-          <p className={`text-xs uppercase tracking-[0.35em] text-white/90 transition-all duration-700 ${showTitles ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-            Trân trọng kính mời
+        <p className={`text-xs uppercase tracking-[0.35em] text-white/80 transition-all duration-700 ${showTitles ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
+          Trân trọng kính mời
+        </p>
+        {guestName && (
+          <p className={`text-sm font-medium text-white/90 transition-all duration-700 delay-100 ${showTitles ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
+            {guestName}
           </p>
-        ) : (
-          <div className={`space-y-3 transition-all duration-700 delay-100 ${showTitles ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-            <p className="text-sm md:text-base italic text-white/90 font-serif">
-              Thân gửi
-            </p>
-            <p className="text-2xl md:text-4xl font-bold text-accent uppercase tracking-wider drop-shadow-md">
-              {guestName}
-            </p>
-          </div>
         )}
         <h1
-          className={`font-display text-5xl md:text-6xl lg:text-7xl drop-shadow-2xl transition-all duration-700 ease-out delay-200 mt-2 ${showTitles ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.97] translate-y-4'
-            }`}
+          className={`font-display text-5xl md:text-6xl lg:text-7xl drop-shadow-2xl transition-all duration-700 ease-out ${
+            showTitles ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.97] translate-y-4'
+          }`}
         >
-          {brideName} <span className="text-accent-light">&</span> {groomName}
+          {brideName} <span className="text-[#e6c18f]">&</span> {groomName}
         </h1>
         {introDescription && (
           <p
-            className={`text-base md:text-lg text-white/85 leading-relaxed transition-all duration-700 ease-out ${showSubtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
-              }`}
+            className={`text-base md:text-lg text-white/85 leading-relaxed transition-all duration-700 ease-out ${
+              showSubtitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
+            }`}
           >
             {introDescription}
           </p>
