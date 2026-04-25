@@ -29,8 +29,8 @@ const compressImage = async (file: File): Promise<File> => {
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                const MAX_WIDTH = 2500;
-                const MAX_HEIGHT = 2500;
+                const MAX_WIDTH = 3200;
+                const MAX_HEIGHT = 3200;
 
                 if (width > height) {
                     if (width > MAX_WIDTH) {
@@ -62,7 +62,7 @@ const compressImage = async (file: File): Promise<File> => {
                         }
                     },
                     'image/jpeg',
-                    0.85
+                    0.95
                 );
             };
             img.onerror = () => resolve(file);

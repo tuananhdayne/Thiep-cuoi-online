@@ -29,43 +29,17 @@
   --border-light: #f3e7d9;
 }
 
-/* Rose Theme */
-.theme-rose {
-  --bg-main: #fff0f5; /* Lavender blush */
-  --bg-alt: #fff5f8;
-  --primary: #5c3a4f; /* Deep rose */
-  --primary-light: #8a5a76;
-  --accent: #d4819d; /* Rose pink */
-  --accent-light: #ebb3c6;
-  --accent-pale: #fce1ea;
-  --accent-bg: #fff2f6;
-  --border-light: #f5dae3;
-}
-
-/* Ocean Theme */
-.theme-ocean {
-  --bg-main: #f0f4f8; /* Alice blue */
-  --bg-alt: #f5f8fb;
-  --primary: #2c3e50; /* Deep blue */
-  --primary-light: #526f8c;
-  --accent: #5ab1bb; /* Teal blue */
-  --accent-light: #9ad6dd;
-  --accent-pale: #d6eff2;
-  --accent-bg: #f2f9fa;
-  --border-light: #dae8ed;
-}
-
-/* Garden Theme */
-.theme-garden {
-  --bg-main: #f5fbf4;
-  --bg-alt: #eff8ee;
-  --primary: #24412c;
-  --primary-light: #5d7d63;
-  --accent: #5e9b67;
-  --accent-light: #9fc9a5;
-  --accent-pale: #dcefdc;
-  --accent-bg: #f3faf1;
-  --border-light: #dce9d9;
+/* Vietnamese Heritage Theme */
+.theme-heritage {
+  --bg-main: #eef6f2;
+  --bg-alt: #f6fbf8;
+  --primary: #174a43;
+  --primary-light: #3f6b64;
+  --accent: #0f766e;
+  --accent-light: #2a9d8f;
+  --accent-pale: #d9eee8;
+  --accent-bg: #eef7f4;
+  --border-light: #cde3dd;
 }
 
 /* Midnight Theme */
@@ -79,6 +53,19 @@
   --accent-pale: rgba(212, 175, 122, 0.18);
   --accent-bg: #172131;
   --border-light: rgba(255, 255, 255, 0.12);
+}
+
+/* Elegance Theme – Minimalist Neoclassical */
+.theme-elegance {
+  --bg-main: #f8f6f1;
+  --bg-alt: #f3f0e8;
+  --primary: #2d2a26;
+  --primary-light: #4a453d;
+  --accent: #b39a6a;
+  --accent-light: #d4c5a9;
+  --accent-pale: rgba(179, 154, 106, 0.15);
+  --accent-bg: #faf8f4;
+  --border-light: rgba(179, 154, 106, 0.25);
 }
 
 @theme inline {

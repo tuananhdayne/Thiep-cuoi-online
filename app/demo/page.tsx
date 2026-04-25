@@ -1,5 +1,5 @@
 import { Couple, GalleryItem, Wish } from '../[slug]/templates/types'
-import { loadTemplate, supportedThemes } from '../[slug]/templates/templateLoader'
+import { getThemeDisplayName, loadTemplate, supportedThemes } from '../[slug]/templates/templateLoader'
 
 export default async function DemoPage({
     searchParams,
@@ -57,7 +57,7 @@ export default async function DemoPage({
                 <div className="bg-primary text-bg-main px-6 py-2 rounded-full shadow-2xl flex items-center gap-3">
                     <span className="text-xl">✨</span>
                     <p className="text-sm font-semibold tracking-wide">
-                        Bản Xem Thử (Mẫu: {validTheme.charAt(0).toUpperCase() + validTheme.slice(1)})
+                        Bản Xem Thử (Mẫu: {getThemeDisplayName(validTheme)})
                     </p>
                 </div>
                 <a

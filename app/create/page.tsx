@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import ImageUploader from '@/components/ImageUploader'
-// ... (keep types and helpers as they are)
+import { getThemeDisplayName, supportedThemes } from '../[slug]/templates/templateLoader'
 type CouplePayload = {
   bride_name: string
   groom_name: string
@@ -71,7 +71,11 @@ const requiredFields: (keyof CouplePayload)[] = [
 function CreateForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const initialTheme = searchParams.get('theme') || 'classic'
+  const requestedTheme = searchParams.get('theme')
+  const initialTheme =
+    requestedTheme && supportedThemes.includes(requestedTheme as (typeof supportedThemes)[number])
+      ? requestedTheme
+      : 'classic'
 
   const [form, setForm] = useState<CouplePayload>({
     bride_name: '',
@@ -399,94 +403,34 @@ function CreateForm() {
                 >
                   <input type="radio" name="theme" value="classic" checked={form.theme === 'classic'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
                   <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" alt="Classic" className="w-full h-full object-cover" />
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" alt="Cổ Điển Hoàng Kim" className="w-full h-full object-cover" />
                   </div>
                   <div className={`p-4 ${form.theme === 'classic' ? 'bg-[#fffaf3]' : 'bg-white'}`}>
                     <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-[#5b3a29]">Classic</p>
+                      <p className="font-semibold text-[#5b3a29]">{getThemeDisplayName('classic')}</p>
                       {form.theme === 'classic' && <div className="w-4 h-4 rounded-full bg-[#c08a4b] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
                     </div>
-                    <p className="text-[11px] text-[#7b5e4b] leading-tight">Nâu & Vàng truyền thống. Chuẩn mực, thanh lịch.</p>
+                    <p className="text-[11px] text-[#7b5e4b] leading-tight">Bố cục ấm áp, sang trọng và thanh lịch.</p>
                   </div>
                 </label>
 
-                {/* Rose */}
+                {/* Heritage */}
                 <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'rose'
-                      ? 'border-[#d4819d] shadow-[0_8px_20px_rgba(212,129,157,0.2)] scale-100'
+                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'heritage'
+                      ? 'border-[#0f766e] shadow-[0_8px_20px_rgba(15,118,110,0.2)] scale-100'
                       : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
                     }`}
                 >
-                  <input type="radio" name="theme" value="rose" checked={form.theme === 'rose'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
+                  <input type="radio" name="theme" value="heritage" checked={form.theme === 'heritage'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
                   <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=400" alt="Rose" className="w-full h-full object-cover" />
+                    <img src="https://images.unsplash.com/photo-1513279922550-250c2129b13a?auto=format&fit=crop&q=80&w=400" alt="Hỷ Sắc Cổ Truyền" className="w-full h-full object-cover" />
                   </div>
-                  <div className={`p-4 ${form.theme === 'rose' ? 'bg-[#fff0f5]' : 'bg-white'}`}>
+                  <div className={`p-4 ${form.theme === 'heritage' ? 'bg-[#eef7f4]' : 'bg-white'}`}>
                     <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-[#5c3a4f]">Rose</p>
-                      {form.theme === 'rose' && <div className="w-4 h-4 rounded-full bg-[#d4819d] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
+                      <p className="font-semibold text-[#174a43]">{getThemeDisplayName('heritage')}</p>
+                      {form.theme === 'heritage' && <div className="w-4 h-4 rounded-full bg-[#0f766e] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
                     </div>
-                    <p className="text-[11px] text-[#8a5a76] leading-tight">Sắc hồng mơ mộng. Chia đôi màn hình hiện đại.</p>
-                  </div>
-                </label>
-
-                {/* Ocean */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'ocean'
-                      ? 'border-[#5ab1bb] shadow-[0_8px_20px_rgba(90,177,187,0.2)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="ocean" checked={form.theme === 'ocean'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1544378730-a9254cba7984?auto=format&fit=crop&q=80&w=400" alt="Ocean" className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'ocean' ? 'bg-[#f0f4f8]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-[#2c3e50]">Ocean</p>
-                      {form.theme === 'ocean' && <div className="w-4 h-4 rounded-full bg-[#5ab1bb] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className="text-[11px] text-[#526f8c] leading-tight">Xanh biển thanh lịch. Bố cục trung tâm nổi bật.</p>
-                  </div>
-                </label>
-
-                {/* Modern */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'modern'
-                      ? 'border-[#8c6f5a] shadow-[0_8px_20px_rgba(140,111,90,0.18)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="modern" checked={form.theme === 'modern'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=400" alt="Modern" className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'modern' ? 'bg-[#f7f4ef]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-[#5b3a29]">Modern</p>
-                      {form.theme === 'modern' && <div className="w-4 h-4 rounded-full bg-[#8c6f5a] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className="text-[11px] text-[#7b5e4b] leading-tight">Cân đối, tinh gọn, hiện đại.</p>
-                  </div>
-                </label>
-
-                {/* Garden */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'garden'
-                      ? 'border-[#5e9b67] shadow-[0_8px_20px_rgba(94,155,103,0.18)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="garden" checked={form.theme === 'garden'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1464965911861-746a04b4bca9?auto=format&fit=crop&q=80&w=400" alt="Garden" className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'garden' ? 'bg-[#f5fbf4]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-[#24412c]">Garden</p>
-                      {form.theme === 'garden' && <div className="w-4 h-4 rounded-full bg-[#5e9b67] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className="text-[11px] text-[#5d7d63] leading-tight">Lá xanh, mềm mại, thủ công.</p>
+                    <p className="text-[11px] text-[#3f6b64] leading-tight">Hoa văn Việt cổ, tông ngọc cổ trang nhã và cảm giác trang trọng.</p>
                   </div>
                 </label>
 
@@ -499,14 +443,14 @@ function CreateForm() {
                 >
                   <input type="radio" name="theme" value="midnight" checked={form.theme === 'midnight'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
                   <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&q=80&w=400" alt="Midnight" className="w-full h-full object-cover" />
+                    <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&q=80&w=400" alt="Dạ Tiệc Ánh Kim" className="w-full h-full object-cover" />
                   </div>
                   <div className={`p-4 ${form.theme === 'midnight' ? 'bg-[#0f1720]' : 'bg-white'}`}>
                     <div className="flex items-center justify-between mb-1">
-                      <p className={`font-semibold ${form.theme === 'midnight' ? 'text-[#f5efe6]' : 'text-[#5b3a29]'}`}>Midnight</p>
+                      <p className={`font-semibold ${form.theme === 'midnight' ? 'text-[#f5efe6]' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('midnight')}</p>
                       {form.theme === 'midnight' && <div className="w-4 h-4 rounded-full bg-[#d4af7a] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
                     </div>
-                    <p className={`text-[11px] leading-tight ${form.theme === 'midnight' ? 'text-[#d4c6b4]' : 'text-[#7b5e4b]'}`}>Tối màu sang trọng, ánh vàng.</p>
+                    <p className={`text-[11px] leading-tight ${form.theme === 'midnight' ? 'text-[#d4c6b4]' : 'text-[#7b5e4b]'}`}>Tối màu sang trọng, ánh kim.</p>
                   </div>
                 </label>
               </div>

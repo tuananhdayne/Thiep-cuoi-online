@@ -1,30 +1,16 @@
 'use client'
 
 type OrnamentBackdropProps = {
-  variant: 'garden' | 'midnight' | 'modern'
+  variant: 'midnight'
 }
 
 const palettes = {
-  garden: {
-    wash: 'from-emerald-50 via-white to-lime-50',
-    glowA: 'bg-emerald-200/35',
-    glowB: 'bg-lime-200/30',
-    glowC: 'bg-amber-100/35',
-    border: 'border-emerald-100/70',
-  },
   midnight: {
     wash: 'from-[#0b1320] via-[#111827] to-[#101a2e]',
     glowA: 'bg-amber-300/20',
     glowB: 'bg-sky-400/15',
     glowC: 'bg-white/10',
     border: 'border-white/10',
-  },
-  modern: {
-    wash: 'from-stone-50 via-white to-amber-50',
-    glowA: 'bg-amber-200/25',
-    glowB: 'bg-rose-200/20',
-    glowC: 'bg-slate-200/20',
-    border: 'border-amber-100/60',
   },
 }
 

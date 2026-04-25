@@ -58,13 +58,13 @@ export async function POST(req: Request) {
                 if (width) {
                     imageBuffer = await sharp(buffer as any)
                         .resize(width, null, { withoutEnlargement: true })
-                        .webp({ quality: 75 })
+                        .webp({ quality: 85 })
                         .toBuffer()
                 } else {
-                    // For original, still convert to WebP to save space and cap width at 1600 as requested
+                    // For original, still convert to WebP to save space while preserving more detail for the gallery
                     imageBuffer = await sharp(buffer as any)
-                        .resize(1600, null, { withoutEnlargement: true })
-                        .webp({ quality: 75 })
+                        .resize(2400, null, { withoutEnlargement: true })
+                        .webp({ quality: 88 })
                         .toBuffer()
                 }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Reveal from './Reveal'
 
 type GalleryImage = {
@@ -50,12 +51,14 @@ export default function Gallery({ images }: GalleryProps) {
                 className="group h-full relative overflow-hidden rounded-[20px] md:rounded-[28px] shadow-[0_10px_30px_rgba(91,58,41,0.08)] bg-white cursor-pointer"
                 onClick={() => openLightbox(index)}
               >
-                <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
-                  <img
+                <div className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden">
+                  <Image
                     src={img.image_url}
                     alt={img.caption || 'Ảnh cưới'}
-                    className="h-full w-full object-cover transition-transform duration-[800ms] group-hover:scale-110 ease-out"
-                    loading="lazy"
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    quality={92}
+                    className="object-cover transition-transform duration-[800ms] group-hover:scale-110 ease-out"
                   />
                 </div>
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
@@ -125,10 +128,13 @@ export default function Gallery({ images }: GalleryProps) {
               key={selectedIndex}
               className="relative w-full h-[75vh] md:h-[85vh] flex items-center justify-center mt-8 animate-fade-in-scale"
             >
-              <img
+              <Image
                 src={images[selectedIndex].image_url}
                 alt={images[selectedIndex].caption || 'Ảnh cưới phóng to'}
-                className="w-full h-full object-contain drop-shadow-2xl"
+                fill
+                sizes="100vw"
+                quality={98}
+                className="object-contain drop-shadow-2xl"
               />
             </div>
             {images[selectedIndex].caption && (
