@@ -97,7 +97,7 @@ export default async function DemoPage({
                 gallery={mockGallery}
                 wishes={mockWishes}
                 weddingGift={mockGift}
-                locations={mockLocations as any}
+                locations={mockLocations}
             />
         </main>
     )

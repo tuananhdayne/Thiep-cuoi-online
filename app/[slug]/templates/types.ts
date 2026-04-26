@@ -68,5 +68,5 @@ export interface TemplateProps {
     gallery: GalleryItem[]
     wishes: Wish[]
     weddingGift?: WeddingGift | null
-    locations?: Location[] | null
+    locations?: Location | null
 }
