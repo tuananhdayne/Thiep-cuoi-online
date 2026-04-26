@@ -45,7 +45,7 @@ function Ornament({ className = '' }: { className?: string }) {
   )
 }
 
-const getDirectMapLink = (mapUrl: string | null, location?: string | null, address?: string | null) => {
+const getDirectMapLink = (mapUrl: string | null | undefined, location?: string | null, address?: string | null) => {
     if (!mapUrl) {
         const query = `${location || ''} ${address || ''}`.trim()
         return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '#'
