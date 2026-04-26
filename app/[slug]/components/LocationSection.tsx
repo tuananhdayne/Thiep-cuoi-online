@@ -61,21 +61,38 @@ const buildEmbedUrl = (mapValue: string | null, location?: string | null, addres
         return null
 }
 
+const getDirectMapLink = (mapUrl: string | null, location?: string | null, address?: string | null) => {
+    if (!mapUrl) {
+        const query = `${location || ''} ${address || ''}`.trim()
+        return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '#'
+    }
+    
+    const isEmbed = mapUrl.includes('/embed') || mapUrl.includes('output=embed')
+    if (!isEmbed) return mapUrl
+
+    // If it's an embed URL, try to extract exact coordinates from pb parameter
+    const pbMatch = mapUrl.match(/[?&]pb=([^&]+)/)
+    if (pbMatch) {
+        const pb = pbMatch[1]
+        const lngMatch = pb.match(/!2d([0-9.-]+)/)
+        const latMatch = pb.match(/!3d([0-9.-]+)/)
+        if (latMatch && lngMatch) {
+            return `https://www.google.com/maps/search/?api=1&query=${latMatch[1]},${lngMatch[1]}`
+        }
+    }
+
+    // Fallback if parsing fails
+    const query = `${location || ''} ${address || ''}`.trim()
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+}
+
 export default function LocationSection({ brideInfo, groomInfo, weddingDate, weddingTime }: LocationSectionProps) {
     const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('groom')
 
     const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
     const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
     const embedMapUrl = buildEmbedUrl(mapUrl, currentInfo.location, currentInfo.address)
-    
-    // If it's an embed URL, browsing directly to it will cause "Refused to connect" 
-    // We construct a search query instead to open the native Maps app.
-    const isEmbed = embedMapUrl?.includes('/embed')
-    const externalMapUrl = isEmbed
-        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            `${currentInfo.location || ''} ${currentInfo.address || ''}`.trim()
-        )}`
-        : mapUrl
+    const externalMapUrl = getDirectMapLink(mapUrl, currentInfo.location, currentInfo.address)
 
     return (
         <section className="py-16 px-6 bg-bg-alt" id="location">

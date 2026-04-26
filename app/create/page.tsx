@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import ImageUploader from '@/components/ImageUploader'
+import SingleImageUploader from '@/components/SingleImageUploader'
 import { getThemeDisplayName, supportedThemes } from '../[slug]/templates/templateLoader'
 type CouplePayload = {
   bride_name: string
@@ -168,30 +169,67 @@ function CreateForm() {
     const payload: Record<string, any> = {
       ...form,
       slug,
-      bride_google_map_embed: brideMap,
-      groom_google_map_embed: groomMap,
     }
 
-    // Clean up empty gift fields
-    if (!payload.gift_enabled) {
-      delete payload.groom_bank_name
-      delete payload.groom_bank_holder
-      delete payload.groom_bank_account
-      delete payload.groom_bank_qr
-      delete payload.bride_bank_name
-      delete payload.bride_bank_holder
-      delete payload.bride_bank_account
-      delete payload.bride_bank_qr
-    } else {
-      if (!payload.groom_bank_qr) delete payload.groom_bank_qr
-      if (!payload.bride_bank_qr) delete payload.bride_bank_qr
+    // Clean up empty strings for date/time fields to prevent Postgres errors
+    if (!payload.wedding_date) delete payload.wedding_date
+    if (!payload.wedding_time) delete payload.wedding_time
+
+    // Extract gift fields from payload to insert into wedding_gifts table separately
+    const giftEnabled = payload.gift_enabled
+    const weddingGiftPayload = {
+      is_enabled: giftEnabled,
+      groom_bank_name: payload.groom_bank_name || null,
+      groom_bank_holder: payload.groom_bank_holder || null,
+      groom_bank_account: payload.groom_bank_account || null,
+      groom_bank_qr: payload.groom_bank_qr || null,
+      bride_bank_name: payload.bride_bank_name || null,
+      bride_bank_holder: payload.bride_bank_holder || null,
+      bride_bank_account: payload.bride_bank_account || null,
+      bride_bank_qr: payload.bride_bank_qr || null,
     }
 
-    // Clean up empty strings for date/time fields to prevent Postgres 22007 (invalid input syntax for type date "") 400 Payload Invalid
-    if (!payload.bride_event_date) delete payload.bride_event_date
-    if (!payload.bride_event_time) delete payload.bride_event_time
-    if (!payload.groom_event_date) delete payload.groom_event_date
-    if (!payload.groom_event_time) delete payload.groom_event_time
+    // Extract locations fields
+    const locationPayload = {
+      bride_event_title: payload.bride_event_title || null,
+      bride_location: payload.bride_location || null,
+      bride_address: payload.bride_address || null,
+      bride_google_map_embed: brideMap || null,
+      bride_event_date: payload.bride_event_date || null,
+      bride_event_time: payload.bride_event_time || null,
+      groom_event_title: payload.groom_event_title || null,
+      groom_location: payload.groom_location || null,
+      groom_address: payload.groom_address || null,
+      groom_google_map_embed: groomMap || null,
+      groom_event_date: payload.groom_event_date || null,
+      groom_event_time: payload.groom_event_time || null,
+    }
+
+    // Remove gift fields from couple payload
+    delete payload.gift_enabled
+    delete payload.groom_bank_name
+    delete payload.groom_bank_holder
+    delete payload.groom_bank_account
+    delete payload.groom_bank_qr
+    delete payload.bride_bank_name
+    delete payload.bride_bank_holder
+    delete payload.bride_bank_account
+    delete payload.bride_bank_qr
+
+    // Remove location fields from couple payload
+    delete payload.bride_event_title
+    delete payload.bride_location
+    delete payload.bride_address
+    delete payload.bride_event_date
+    delete payload.bride_event_time
+    delete payload.bride_google_map_embed
+    delete payload.groom_event_title
+    delete payload.groom_location
+    delete payload.groom_address
+    delete payload.groom_event_date
+    delete payload.groom_event_time
+    delete payload.groom_google_map_embed
+
 
     const { data: coupleRow, error: insertError } = await supabase
       .from('couples')
@@ -207,6 +245,27 @@ function CreateForm() {
 
     if (!coupleRow?.id) {
       setError('Không lấy được thông tin thiệp vừa tạo.')
+      setLoading(false)
+      return
+    }
+
+    // Insert into locations table
+    const { error: locationsError } = await supabase
+      .from('locations')
+      .insert({ couple_id: coupleRow.id, ...locationPayload })
+
+    if (locationsError) {
+      console.error('Lỗi lưu locations:', locationsError)
+    }
+
+    // Insert into wedding_gifts table
+    const { error: giftError } = await supabase
+      .from('wedding_gifts')
+      .insert({ couple_id: coupleRow.id, ...weddingGiftPayload })
+
+    if (giftError) {
+      console.error(giftError)
+      setError('Tạo thiệp thành công nhưng lỗi lưu hộp mừng cưới.')
       setLoading(false)
       return
     }
@@ -486,6 +545,68 @@ function CreateForm() {
                     <p className={`text-[11px] leading-tight ${form.theme === 'midnight' ? 'text-[#d4c6b4]' : 'text-[#7b5e4b]'}`}>Tối màu sang trọng, ánh kim.</p>
                   </div>
                 </label>
+
+                {/* Elegance */}
+                <label
+                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'elegance'
+                      ? 'border-[#b39a6a] shadow-[0_8px_20px_rgba(179,154,106,0.18)] scale-100'
+                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
+                    }`}
+                >
+                  <input type="radio" name="theme" value="elegance" checked={form.theme === 'elegance'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
+                  <div className="h-32 w-full bg-gray-100">
+                    <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=400" alt="Thanh Lịch Tân Cổ Điển" className="w-full h-full object-cover" />
+                  </div>
+                  <div className={`p-4 ${form.theme === 'elegance' ? 'bg-[#f8f6f1]' : 'bg-white'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className={`font-semibold ${form.theme === 'elegance' ? 'text-[#2d2a26]' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('elegance')}</p>
+                      {form.theme === 'elegance' && <div className="w-4 h-4 rounded-full bg-[#b39a6a] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
+                    </div>
+                    <p className={`text-[11px] leading-tight ${form.theme === 'elegance' ? 'text-[#4a453d]' : 'text-[#7b5e4b]'}`}>Tối giản kết hợp tân cổ điển sang trọng.</p>
+                  </div>
+                </label>
+
+                {/* Romance (Midnight Glassmorphism) */}
+                <label
+                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'romance'
+                      ? 'border-[#f43f5e] shadow-[0_8px_20px_rgba(244,63,94,0.18)] scale-100'
+                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
+                    }`}
+                >
+                  <input type="radio" name="theme" value="romance" checked={form.theme === 'romance'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
+                  <div className="h-32 w-full bg-[#0B132B]">
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" alt="Đêm Lãng Mạn" className="w-full h-full object-cover opacity-70" />
+                  </div>
+                  <div className={`p-4 ${form.theme === 'romance' ? 'bg-[#1a1120]' : 'bg-white'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className={`font-semibold ${form.theme === 'romance' ? 'text-rose-300' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('romance')}</p>
+                      {form.theme === 'romance' && <div className="w-4 h-4 rounded-full bg-rose-400 flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
+                    </div>
+                    <p className={`text-[11px] leading-tight ${form.theme === 'romance' ? 'text-rose-200/70' : 'text-[#7b5e4b]'}`}>Glassmorphism với hiệu ứng hạt ánh sáng lãng mạn.</p>
+                  </div>
+                </label>
+
+                {/* Minimalist Neoclassical (Typography Focus) */}
+                <label
+                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'minimalist'
+                      ? 'border-[#BFA054] shadow-[0_8px_20px_rgba(191,160,84,0.18)] scale-100'
+                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
+                    }`}
+                >
+                  <input type="radio" name="theme" value="minimalist" checked={form.theme === 'minimalist'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
+                  <div className="h-32 w-full bg-[#FDFBF7]">
+                    <div className="w-full h-full flex flex-col items-center justify-center border-b border-[#E5DFD3]">
+                        <span className="font-signora text-3xl text-gray-800">Wedding</span>
+                    </div>
+                  </div>
+                  <div className={`p-4 ${form.theme === 'minimalist' ? 'bg-[#F9F6F0]' : 'bg-white'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className={`font-semibold ${form.theme === 'minimalist' ? 'text-gray-900' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('minimalist')}</p>
+                      {form.theme === 'minimalist' && <div className="w-4 h-4 rounded-full bg-[#BFA054] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
+                    </div>
+                    <p className={`text-[11px] leading-tight ${form.theme === 'minimalist' ? 'text-gray-600' : 'text-[#7b5e4b]'}`}>Sang trọng, căn giữa, tập trung vào font chữ thư pháp cổ điển.</p>
+                  </div>
+                </label>
               </div>
             </section>
 
@@ -531,15 +652,16 @@ function CreateForm() {
                       placeholder="Số tài khoản"
                       className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
                     />
-                    <input
-                      value={form.groom_bank_qr}
-                      onChange={(e) => handleChange('groom_bank_qr', e.target.value)}
-                      placeholder="Link ảnh QR chuyển khoản (không bắt buộc)"
-                      className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
-                    />
-                    {form.groom_bank_qr && (
-                      <div className="flex justify-center">
+                    {!form.groom_bank_qr ? (
+                      <SingleImageUploader 
+                        weddingId={slug || 'new-wedding'} 
+                        label="Tải ảnh QR chú rể" 
+                        onUploadSuccess={(url) => handleChange('groom_bank_qr', url)} 
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
                         <img src={form.groom_bank_qr} alt="QR chú rể" className="w-32 h-32 object-contain rounded-xl border border-[#eddcf3]" />
+                        <button type="button" onClick={() => handleChange('groom_bank_qr', '')} className="text-xs text-red-500 hover:underline">Xoá ảnh</button>
                       </div>
                     )}
                   </div>
@@ -568,15 +690,16 @@ function CreateForm() {
                       placeholder="Số tài khoản"
                       className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
                     />
-                    <input
-                      value={form.bride_bank_qr}
-                      onChange={(e) => handleChange('bride_bank_qr', e.target.value)}
-                      placeholder="Link ảnh QR chuyển khoản (không bắt buộc)"
-                      className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
-                    />
-                    {form.bride_bank_qr && (
-                      <div className="flex justify-center">
+                    {!form.bride_bank_qr ? (
+                      <SingleImageUploader 
+                        weddingId={slug || 'new-wedding'} 
+                        label="Tải ảnh QR cô dâu" 
+                        onUploadSuccess={(url) => handleChange('bride_bank_qr', url)} 
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
                         <img src={form.bride_bank_qr} alt="QR cô dâu" className="w-32 h-32 object-contain rounded-xl border border-[#eedfcc]" />
+                        <button type="button" onClick={() => handleChange('bride_bank_qr', '')} className="text-xs text-red-500 hover:underline">Xoá ảnh</button>
                       </div>
                     )}
                   </div>

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
-export default function InfoManager({ couple }: { couple: any }) {
+export default function InfoManager({ couple, locations }: { couple: any, locations: any }) {
     const router = useRouter()
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
@@ -18,15 +18,15 @@ export default function InfoManager({ couple }: { couple: any }) {
         wedding_time: couple.wedding_time || '',
         intro_description: couple.intro_description || '',
 
-        bride_event_title: couple.bride_event_title || 'Lễ Vu Quy',
-        bride_location: couple.bride_location || '',
-        bride_address: couple.bride_address || '',
-        bride_google_map_embed: couple.bride_google_map_embed || '',
+        bride_event_title: locations.bride_event_title || 'Lễ Vu Quy',
+        bride_location: locations.bride_location || '',
+        bride_address: locations.bride_address || '',
+        bride_google_map_embed: locations.bride_google_map_embed || '',
 
-        groom_event_title: couple.groom_event_title || 'Lễ Thành Hôn',
-        groom_location: couple.groom_location || '',
-        groom_address: couple.groom_address || '',
-        groom_google_map_embed: couple.groom_google_map_embed || '',
+        groom_event_title: locations.groom_event_title || 'Lễ Thành Hôn',
+        groom_location: locations.groom_location || '',
+        groom_address: locations.groom_address || '',
+        groom_google_map_embed: locations.groom_google_map_embed || '',
     })
 
     const handleChange = (field: keyof typeof form, value: string) => {
@@ -38,12 +38,38 @@ export default function InfoManager({ couple }: { couple: any }) {
         setError(null)
 
         try {
+            const couplePayload = {
+                bride_name: form.bride_name,
+                groom_name: form.groom_name,
+                wedding_date: form.wedding_date,
+                wedding_time: form.wedding_time,
+                intro_description: form.intro_description,
+            }
+
+            const locationsPayload = {
+                bride_event_title: form.bride_event_title,
+                bride_location: form.bride_location,
+                bride_address: form.bride_address,
+                bride_google_map_embed: form.bride_google_map_embed,
+                groom_event_title: form.groom_event_title,
+                groom_location: form.groom_location,
+                groom_address: form.groom_address,
+                groom_google_map_embed: form.groom_google_map_embed,
+            }
+
             const { error: updateError } = await supabase
                 .from('couples')
-                .update(form)
+                .update(couplePayload)
                 .eq('id', couple.id)
 
             if (updateError) throw updateError
+
+            const { error: locError } = await supabase
+                .from('locations')
+                .update(locationsPayload)
+                .eq('couple_id', couple.id)
+
+            if (locError) throw locError
 
             setIsEditing(false)
             router.refresh() // Refresh the page to reflect new generic data

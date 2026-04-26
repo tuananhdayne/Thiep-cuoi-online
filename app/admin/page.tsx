@@ -12,6 +12,7 @@ type Couple = {
   wedding_date: string | null
   location: string | null
   created_at: string
+  expires_at: string | null
 }
 
 export default function AdminPage() {
@@ -116,6 +117,33 @@ export default function AdminPage() {
 
   const handleView = (slug: string) => {
     router.push(`/${slug}`)
+  }
+
+  const handleSetExpiry = async (id: number) => {
+    const daysStr = window.prompt('Nhập số ngày thiệp sẽ tồn tại kể từ hôm nay (ví dụ: 30):', '30')
+    if (daysStr === null) return // User cancelled
+    
+    const days = parseInt(daysStr, 10)
+    if (isNaN(days) || days <= 0) {
+      alert('Vui lòng nhập một số dương hợp lệ.')
+      return
+    }
+
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + days)
+    const expiresIso = expiresAt.toISOString()
+
+    const { error: updateError } = await supabase
+      .from('couples')
+      .update({ expires_at: expiresIso })
+      .eq('id', id)
+
+    if (updateError) {
+      alert('Thiết lập hạn sử dụng thất bại. Vui lòng thử lại.')
+    } else {
+      setCouples((prev) => prev.map((c) => c.id === id ? { ...c, expires_at: expiresIso } : c))
+      alert(`Đã thiết lập thiệp sẽ tự động xoá vào: ${expiresAt.toLocaleDateString('vi-VN')}`)
+    }
   }
 
   const handleDelete = async (id: number, slug: string) => {
@@ -259,9 +287,14 @@ export default function AdminPage() {
                       <td className="px-4 py-3">{formatDate(c.wedding_date)}</td>
                       <td className="px-4 py-3 text-[#7b5e4b]">{c.location || '—'}</td>
                       <td className="px-4 py-3 text-[#b9772b] font-medium">/{c.slug}</td>
-                      <td className="px-4 py-3 text-[#7b5e4b]">{formatDateTime(c.created_at)}</td>
+                      <td className="px-4 py-3 text-[#7b5e4b]">
+                        {formatDateTime(c.created_at)}
+                        <div className="mt-1 text-xs text-red-500 font-medium">
+                          {c.expires_at ? `Hết hạn: ${formatDate(c.expires_at)}` : 'Không hết hạn'}
+                        </div>
+                      </td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex flex-wrap items-center justify-end gap-2">
                           <button
                             onClick={() => handleView(c.slug)}
                             className="rounded-full bg-[#f3e6d8] px-3 py-2 text-xs font-semibold text-[#5b3a29] hover:bg-[#e9d8c3] transition"
@@ -273,6 +306,12 @@ export default function AdminPage() {
                             className="rounded-full bg-[#f9eddc] px-3 py-2 text-xs font-semibold text-[#b9772b] hover:bg-[#f3e0c5] transition"
                           >
                             Copy link
+                          </button>
+                          <button
+                            onClick={() => handleSetExpiry(c.id)}
+                            className="rounded-full bg-[#e3f0d8] px-3 py-2 text-xs font-semibold text-[#3a5b29] hover:bg-[#d4e9c3] transition"
+                          >
+                            Đặt hạn
                           </button>
                           <button
                             onClick={() => handleDelete(c.id, c.slug)}

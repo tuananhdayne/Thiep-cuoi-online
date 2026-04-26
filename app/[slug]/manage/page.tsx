@@ -56,6 +56,12 @@ export default async function ManagePage({
     return notFound()
   }
 
+  const { data: locations } = await supabase
+    .from('locations')
+    .select('*')
+    .eq('couple_id', couple.id)
+    .maybeSingle()
+
   const wishes = await getWishes(couple.id)
   const guests = await getGuests(couple.id)
   const rsvps = await getRsvps(couple.id)
@@ -76,7 +82,7 @@ export default async function ManagePage({
           <p className="text-sm text-[#9a7d68]">Sửa thông tin, chia sẻ thiệp, quản lý ảnh và nhận lời chúc.</p>
         </div>
 
-        <InfoManager couple={couple} />
+        <InfoManager couple={couple} locations={locations || {}} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2">

@@ -189,6 +189,70 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Template 5: Romance */}
+            <div className="group rounded-[32px] bg-[#1a1120] border border-rose-500/20 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(244,63,94,0.15)] relative flex flex-col h-full">
+              <div className="relative h-64 w-full overflow-hidden bg-[#0B132B]">
+                <img
+                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800"
+                  alt="Đêm Lãng Mạn Glassmorphism"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1120] via-transparent to-transparent"></div>
+                <div className="absolute bottom-4 left-6">
+                  <span className="px-3 py-1 bg-rose-500/20 backdrop-blur-md rounded-full text-rose-300 border border-rose-400/30 text-xs font-semibold tracking-wider">{getThemeDisplayName('romance')}</span>
+                </div>
+              </div>
+              <div className="p-8 flex-1 flex flex-col bg-[#1a1120]">
+                <h3 className="text-2xl font-display text-rose-300 mb-3">{getThemeDisplayName('romance')}</h3>
+                <p className="text-sm text-rose-200/70 mb-8 flex-1">Dark mode huyền bí với hiệu ứng Kính mờ (Glassmorphism), hạt sáng li ti lơ lửng và chuyển động Framer Motion siêu mượt mà.</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href="/demo?theme=romance"
+                    target="_blank"
+                    className="flex-1 text-center py-3.5 px-4 bg-white/5 text-rose-200 border border-rose-500/30 rounded-full font-medium hover:bg-white/10 transition-all text-sm backdrop-blur-md"
+                  >
+                    Xem Thử
+                  </Link>
+                  <Link
+                    href="/create?theme=romance"
+                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-rose-500 to-rose-400 text-white rounded-full font-medium hover:shadow-lg hover:shadow-rose-500/25 transition-all hover:-translate-y-0.5 text-sm"
+                  >
+                    Tạo Thiệp
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Template 6: Minimalist Typography */}
+            <div className="group rounded-[32px] bg-[#FDFBF7] border border-gray-200 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative flex flex-col h-full">
+              <div className="relative h-64 w-full overflow-hidden bg-[#F9F6F0] flex items-center justify-center border-b border-gray-200">
+                <span className="font-signora text-6xl text-gray-800 transition-transform duration-700 group-hover:scale-110">Wedding</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent opacity-80"></div>
+                <div className="absolute bottom-4 left-6">
+                  <span className="px-3 py-1 bg-white/50 backdrop-blur-md rounded-full text-gray-800 border border-gray-300 text-xs font-semibold tracking-wider">{getThemeDisplayName('minimalist')}</span>
+                </div>
+              </div>
+              <div className="p-8 flex-1 flex flex-col bg-[#FDFBF7]">
+                <h3 className="text-2xl font-display text-gray-900 mb-3">{getThemeDisplayName('minimalist')}</h3>
+                <p className="text-sm text-gray-600 mb-8 flex-1">Phong cách Tân Cổ Điển Tối Giản. Phân cấp Typography tinh tế với các font chữ ký bay bổng, Serif sang trọng và căn giữa hoàn toàn.</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href="/demo?theme=minimalist"
+                    target="_blank"
+                    className="flex-1 text-center py-3.5 px-4 bg-white text-gray-800 border border-gray-300 rounded-full font-medium hover:bg-gray-50 hover:border-gray-400 transition-all text-sm"
+                  >
+                    Xem Thử
+                  </Link>
+                  <Link
+                    href="/create?theme=minimalist"
+                    className="flex-1 text-center py-3.5 px-4 bg-[#2D3748] text-white rounded-full font-medium hover:shadow-lg hover:bg-[#1A202C] transition-all hover:-translate-y-0.5 text-sm"
+                  >
+                    Tạo Thiệp
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

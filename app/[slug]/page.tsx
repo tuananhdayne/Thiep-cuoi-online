@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
-import { Couple, GalleryItem, Wish } from './templates/types'
+import { Couple, GalleryItem, Wish, WeddingGift, Location } from './templates/types'
 import { loadTemplate } from './templates/templateLoader'
 
 export default async function Page({
@@ -20,7 +20,7 @@ export default async function Page({
     return notFound()
   }
 
-  const [{ data: gallery }, { data: wishes }] = await Promise.all([
+  const [{ data: gallery }, { data: wishes }, { data: weddingGift }, { data: locations }] = await Promise.all([
     supabase
       .from('gallery')
       .select('*')
@@ -33,6 +33,16 @@ export default async function Page({
       .eq('couple_id', couple.id)
       .order('created_at', { ascending: false })
       .returns<Wish[]>(),
+    supabase
+      .from('wedding_gifts')
+      .select('*')
+      .eq('couple_id', couple.id)
+      .maybeSingle<WeddingGift>(),
+    supabase
+      .from('locations')
+      .select('*')
+      .eq('couple_id', couple.id)
+      .maybeSingle<Location>(),
   ])
 
   const TemplateToRender = await loadTemplate(couple.theme)
@@ -43,6 +53,8 @@ export default async function Page({
         couple={couple}
         gallery={gallery || []}
         wishes={wishes || []}
+        weddingGift={weddingGift}
+        locations={locations}
       />
     </main>
   )

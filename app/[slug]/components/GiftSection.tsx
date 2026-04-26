@@ -1,15 +1,16 @@
 'use client'
 
 import React from 'react'
-import type { Couple } from '../templates/types'
+import type { Couple, WeddingGift } from '../templates/types'
 
 interface GiftSectionProps {
   couple: Couple
+  weddingGift?: WeddingGift | null
 }
 
-export default function GiftSection({ couple }: GiftSectionProps) {
-  if (!couple.gift_enabled) return null
-  if (!couple.groom_bank_account && !couple.bride_bank_account) return null
+export default function GiftSection({ couple, weddingGift }: GiftSectionProps) {
+  if (!weddingGift?.is_enabled) return null
+  if (!weddingGift?.groom_bank_account && !weddingGift?.bride_bank_account) return null
 
   return (
     <section
@@ -30,55 +31,55 @@ export default function GiftSection({ couple }: GiftSectionProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Groom bank card */}
-        {couple.groom_bank_account && (
+        {weddingGift?.groom_bank_account && (
           <div className="rounded-2xl border border-border-light bg-bg-alt p-6 text-center shadow-sm">
             <p className="text-[0.65rem] uppercase tracking-[0.4em] text-accent mb-4">
               ❀ Mừng cưới đến chú rể
             </p>
-            {couple.groom_bank_qr && (
+            {weddingGift?.groom_bank_qr && (
               <div className="flex justify-center mb-4">
                 <img
-                  src={couple.groom_bank_qr}
+                  src={weddingGift?.groom_bank_qr}
                   alt="QR chú rể"
                   className="w-36 h-36 object-contain rounded-xl border border-border-light"
                 />
               </div>
             )}
             <div className="space-y-1 text-sm text-primary-light">
-              {couple.groom_bank_name && (
-                <p>Ngân hàng: <strong className="text-primary">{couple.groom_bank_name}</strong></p>
+              {weddingGift?.groom_bank_name && (
+                <p>Ngân hàng: <strong className="text-primary">{weddingGift?.groom_bank_name}</strong></p>
               )}
-              {couple.groom_bank_holder && (
-                <p>Tên: <strong className="text-primary">{couple.groom_bank_holder}</strong></p>
+              {weddingGift?.groom_bank_holder && (
+                <p>Tên: <strong className="text-primary">{weddingGift?.groom_bank_holder}</strong></p>
               )}
-              <p>STK: <strong className="text-primary">{couple.groom_bank_account}</strong></p>
+              <p>STK: <strong className="text-primary">{weddingGift?.groom_bank_account}</strong></p>
             </div>
           </div>
         )}
 
         {/* Bride bank card */}
-        {couple.bride_bank_account && (
+        {weddingGift?.bride_bank_account && (
           <div className="rounded-2xl border border-border-light bg-bg-alt p-6 text-center shadow-sm">
             <p className="text-[0.65rem] uppercase tracking-[0.4em] text-accent mb-4">
               ❀ Mừng cưới đến cô dâu
             </p>
-            {couple.bride_bank_qr && (
+            {weddingGift?.bride_bank_qr && (
               <div className="flex justify-center mb-4">
                 <img
-                  src={couple.bride_bank_qr}
+                  src={weddingGift?.bride_bank_qr}
                   alt="QR cô dâu"
                   className="w-36 h-36 object-contain rounded-xl border border-border-light"
                 />
               </div>
             )}
             <div className="space-y-1 text-sm text-primary-light">
-              {couple.bride_bank_name && (
-                <p>Ngân hàng: <strong className="text-primary">{couple.bride_bank_name}</strong></p>
+              {weddingGift?.bride_bank_name && (
+                <p>Ngân hàng: <strong className="text-primary">{weddingGift?.bride_bank_name}</strong></p>
               )}
-              {couple.bride_bank_holder && (
-                <p>Tên: <strong className="text-primary">{couple.bride_bank_holder}</strong></p>
+              {weddingGift?.bride_bank_holder && (
+                <p>Tên: <strong className="text-primary">{weddingGift?.bride_bank_holder}</strong></p>
               )}
-              <p>STK: <strong className="text-primary">{couple.bride_bank_account}</strong></p>
+              <p>STK: <strong className="text-primary">{weddingGift?.bride_bank_account}</strong></p>
             </div>
           </div>
         )}

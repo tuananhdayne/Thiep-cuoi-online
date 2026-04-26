@@ -37,6 +37,8 @@ export default function HeritageTemplate({
   couple,
   gallery,
   wishes,
+  weddingGift,
+  locations,
 }: TemplateProps) {
   const heroBackground =
     gallery?.[0]?.image_url ||
@@ -117,29 +119,33 @@ export default function HeritageTemplate({
         </section>
 
         <section className="rounded-[24px] border border-border-light bg-bg-alt p-3 md:rounded-[30px] md:p-8">
-          <LocationSection
-            weddingDate={couple.wedding_date}
-            weddingTime={couple.wedding_time}
-            brideInfo={{
-              title: couple.bride_event_title,
-              location: couple.bride_location,
-              address: couple.bride_address,
-              mapEmbedUrl: couple.bride_google_map_embed,
-            }}
-            groomInfo={{
-              title: couple.groom_event_title,
-              location: couple.groom_location,
-              address: couple.groom_address,
-              mapEmbedUrl: couple.groom_google_map_embed,
-            }}
-          />
+          {(() => {
+            return (
+              <LocationSection
+                weddingDate={couple.wedding_date}
+                weddingTime={couple.wedding_time}
+                brideInfo={{
+                  title: locations?.bride_event_title,
+                  location: locations?.bride_location,
+                  address: locations?.bride_address,
+                  mapEmbedUrl: locations?.bride_google_map_embed,
+                }}
+                groomInfo={{
+                  title: locations?.groom_event_title,
+                  location: locations?.groom_location,
+                  address: locations?.groom_address,
+                  mapEmbedUrl: locations?.groom_google_map_embed,
+                }}
+              />
+            )
+          })()}
         </section>
 
         <section className="rounded-[24px] border border-border-light bg-bg-alt p-3 md:rounded-[30px] md:p-8">
           <Gallery images={gallery || []} />
         </section>
 
-        <GiftSection couple={couple} />
+        <GiftSection couple={couple} weddingGift={weddingGift} />
 
         <RsvpSection
           coupleId={couple.id}

@@ -186,7 +186,7 @@ function FloatingAudioOrb({
   )
 }
 
-export default function MidnightTemplate({ couple, gallery, wishes }: TemplateProps) {
+export default function MidnightTemplate({ couple, gallery, wishes, weddingGift, locations }: TemplateProps) {
   const heroImage =
     gallery?.[0]?.image_url ||
     couple.bride_avatar ||
@@ -324,16 +324,48 @@ export default function MidnightTemplate({ couple, gallery, wishes }: TemplatePr
           </FadeIn>
 
           <FadeIn className="col-span-12 md:col-span-4 md:col-start-6 lg:col-span-3 lg:col-start-6 lg:pt-2" delay={0.24}>
-            <div className="space-y-4 border-t border-[#2C2A29]/12 pt-5">
-              <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[#2C2A29]/55">
-                Địa điểm
-              </p>
-              <div className="space-y-3">
-                <p className="max-w-sm text-sm leading-7 text-[#2C2A29]/76 md:text-base">
-                  {venueName}
-                </p>
-                <p className="max-w-sm text-sm leading-7 text-[#2C2A29]/68">{venueAddress}</p>
-              </div>
+            <div className="space-y-8 border-t border-[#2C2A29]/12 pt-5">
+              
+              {/* Địa điểm Nhà Gái */}
+              {(locations?.bride_location || locations?.bride_address) && (
+                  <div className="space-y-4">
+                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[#2C2A29]/55">
+                      {locations.bride_event_title || 'Nhà Gái'}
+                    </p>
+                    <div className="space-y-3">
+                      <p className="max-w-sm text-sm leading-7 text-[#2C2A29]/76 md:text-base font-medium">
+                        {locations.bride_location}
+                      </p>
+                      <p className="max-w-sm text-sm leading-7 text-[#2C2A29]/68">{locations.bride_address}</p>
+                      {locations.bride_google_map_embed && (
+                          <a href={locations.bride_google_map_embed} target="_blank" rel="noreferrer" className="inline-block border-b border-[#2C2A29]/50 pb-0.5 text-xs uppercase tracking-widest text-[#2C2A29]/80 hover:text-[#2C2A29]">
+                              Xem Bản Đồ
+                          </a>
+                      )}
+                    </div>
+                  </div>
+              )}
+
+              {/* Địa điểm Nhà Trai */}
+              {(locations?.groom_location || locations?.groom_address) && (
+                  <div className="space-y-4">
+                    <p className="text-[0.7rem] uppercase tracking-[0.5em] text-[#2C2A29]/55">
+                      {locations.groom_event_title || 'Nhà Trai'}
+                    </p>
+                    <div className="space-y-3">
+                      <p className="max-w-sm text-sm leading-7 text-[#2C2A29]/76 md:text-base font-medium">
+                        {locations.groom_location}
+                      </p>
+                      <p className="max-w-sm text-sm leading-7 text-[#2C2A29]/68">{locations.groom_address}</p>
+                      {locations.groom_google_map_embed && (
+                          <a href={locations.groom_google_map_embed} target="_blank" rel="noreferrer" className="inline-block border-b border-[#2C2A29]/50 pb-0.5 text-xs uppercase tracking-widest text-[#2C2A29]/80 hover:text-[#2C2A29]">
+                              Xem Bản Đồ
+                          </a>
+                      )}
+                    </div>
+                  </div>
+              )}
+
             </div>
           </FadeIn>
 
@@ -411,7 +443,7 @@ export default function MidnightTemplate({ couple, gallery, wishes }: TemplatePr
           ) : null}
 
           {/* ── Hộp Mừng Cưới ── */}
-          {couple.gift_enabled && (couple.groom_bank_account || couple.bride_bank_account) ? (
+          {weddingGift?.is_enabled && (weddingGift?.groom_bank_account || weddingGift?.bride_bank_account) ? (
             <FadeIn className="col-span-12 md:col-span-10 md:col-start-2" delay={0.43}>
               <div className="space-y-5">
                 <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55">
@@ -421,53 +453,53 @@ export default function MidnightTemplate({ couple, gallery, wishes }: TemplatePr
                   Nếu có thể, bạn hãy tới tham dự Đám cưới, chung vui và Mừng cưới trực tiếp cho chúng mình nha. Cảm ơn bạn rất nhiều!
                 </p>
                 <div className="grid gap-4 md:grid-cols-2">
-                  {couple.groom_bank_account && (
+                  {weddingGift?.groom_bank_account && (
                     <div className="border border-[#2C2A29]/10 bg-[#F2EFE9] px-5 py-5 text-center flex flex-col h-full">
                       <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55 mb-4">
                         ❀ Mừng cưới đến chú rể
                       </p>
-                      {couple.groom_bank_qr && (
+                      {weddingGift?.groom_bank_qr && (
                         <div className="flex justify-center mb-4 flex-grow items-center">
                           <img
-                            src={couple.groom_bank_qr}
+                            src={weddingGift?.groom_bank_qr}
                             alt="QR chú rể"
                             className="w-32 h-32 object-contain border border-[#2C2A29]/10"
                           />
                         </div>
                       )}
                       <div className="space-y-1 text-sm leading-7 text-[#2C2A29]/76 mt-auto pt-2">
-                        {couple.groom_bank_name && (
-                          <p>NH: <strong className="text-[#2C2A29]">{couple.groom_bank_name}</strong></p>
+                        {weddingGift?.groom_bank_name && (
+                          <p>NH: <strong className="text-[#2C2A29]">{weddingGift?.groom_bank_name}</strong></p>
                         )}
-                        {couple.groom_bank_holder && (
-                          <p>Tên: <strong className="text-[#2C2A29]">{couple.groom_bank_holder}</strong></p>
+                        {weddingGift?.groom_bank_holder && (
+                          <p>Tên: <strong className="text-[#2C2A29]">{weddingGift?.groom_bank_holder}</strong></p>
                         )}
-                        <p>STK: <strong className="text-[#2C2A29]">{couple.groom_bank_account}</strong></p>
+                        <p>STK: <strong className="text-[#2C2A29]">{weddingGift?.groom_bank_account}</strong></p>
                       </div>
                     </div>
                   )}
-                  {couple.bride_bank_account && (
+                  {weddingGift?.bride_bank_account && (
                     <div className="border border-[#2C2A29]/10 bg-[#F2EFE9] px-5 py-5 text-center flex flex-col h-full">
                       <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55 mb-4">
                         ❀ Mừng cưới đến cô dâu
                       </p>
-                      {couple.bride_bank_qr && (
+                      {weddingGift?.bride_bank_qr && (
                         <div className="flex justify-center mb-4 flex-grow items-center">
                           <img
-                            src={couple.bride_bank_qr}
+                            src={weddingGift?.bride_bank_qr}
                             alt="QR cô dâu"
                             className="w-32 h-32 object-contain border border-[#2C2A29]/10"
                           />
                         </div>
                       )}
                       <div className="space-y-1 text-sm leading-7 text-[#2C2A29]/76 mt-auto pt-2">
-                        {couple.bride_bank_name && (
-                          <p>NH: <strong className="text-[#2C2A29]">{couple.bride_bank_name}</strong></p>
+                        {weddingGift?.bride_bank_name && (
+                          <p>NH: <strong className="text-[#2C2A29]">{weddingGift?.bride_bank_name}</strong></p>
                         )}
-                        {couple.bride_bank_holder && (
-                          <p>Tên: <strong className="text-[#2C2A29]">{couple.bride_bank_holder}</strong></p>
+                        {weddingGift?.bride_bank_holder && (
+                          <p>Tên: <strong className="text-[#2C2A29]">{weddingGift?.bride_bank_holder}</strong></p>
                         )}
-                        <p>STK: <strong className="text-[#2C2A29]">{couple.bride_bank_account}</strong></p>
+                        <p>STK: <strong className="text-[#2C2A29]">{weddingGift?.bride_bank_account}</strong></p>
                       </div>
                     </div>
                   )}

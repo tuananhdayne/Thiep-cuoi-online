@@ -23,18 +23,33 @@ export default async function DemoPage({
         intro_description: 'Cùng nhau bắt đầu một chương mới của cuộc đời. Sự hiện diện của bạn là niềm vinh hạnh của chúng tôi.',
         wedding_date: '2025-12-25',
         wedding_time: '18:00',
+        location: 'Trung tâm Tiệc cưới The Grand',
+        address: 'Quận 1, TP. HCM',
+        theme: validTheme,
+        created_at: new Date().toISOString()
+    }
+
+    const mockLocations = {
+        id: '1',
+        couple_id: '0',
         bride_event_title: 'Lễ Vu Quy',
         bride_event_date: '2025-12-24',
         bride_event_time: '09:00',
         bride_location: 'Tư Gia Nhà Gái',
         bride_address: '123 Đường Hoa Hồng, Quận 1, TP. HCM',
+        bride_google_map_embed: '',
         groom_event_title: 'Tiệc Cưới',
         groom_event_date: '2025-12-25',
         groom_event_time: '18:00',
         groom_location: 'Trung tâm Hội nghị The Grand',
         groom_address: '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM',
-        theme: validTheme,
-        gift_enabled: true,
+        groom_google_map_embed: ''
+    }
+
+    const mockGift = {
+        id: 1,
+        couple_id: 0,
+        is_enabled: true,
         groom_bank_name: 'Vietcombank',
         groom_bank_holder: 'NGUYEN MINH KHANG',
         groom_bank_account: '9948240614',
@@ -81,6 +96,8 @@ export default async function DemoPage({
                 couple={mockCouple}
                 gallery={mockGallery}
                 wishes={mockWishes}
+                weddingGift={mockGift}
+                locations={mockLocations as any}
             />
         </main>
     )

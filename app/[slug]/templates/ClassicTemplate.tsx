@@ -15,6 +15,8 @@ export default function ClassicTemplate({
     couple,
     gallery,
     wishes,
+    weddingGift,
+    locations,
 }: TemplateProps) {
     const heroBackground =
         gallery?.[0]?.image_url ||
@@ -39,22 +41,26 @@ export default function ClassicTemplate({
             />
 
             <div className="bg-white">
-            <LocationSection
-                weddingDate={couple.wedding_date}
-                weddingTime={couple.wedding_time}
-                brideInfo={{
-                    title: couple.bride_event_title,
-                    location: couple.bride_location,
-                    address: couple.bride_address,
-                    mapEmbedUrl: couple.bride_google_map_embed,
-                }}
-                groomInfo={{
-                    title: couple.groom_event_title,
-                    location: couple.groom_location,
-                    address: couple.groom_address,
-                    mapEmbedUrl: couple.groom_google_map_embed,
-                }}
-            />
+            {(() => {
+                return (
+                    <LocationSection
+                        weddingDate={couple.wedding_date}
+                        weddingTime={couple.wedding_time}
+                        brideInfo={{
+                            title: locations?.bride_event_title,
+                            location: locations?.bride_location,
+                            address: locations?.bride_address,
+                            mapEmbedUrl: locations?.bride_google_map_embed,
+                        }}
+                        groomInfo={{
+                            title: locations?.groom_event_title,
+                            location: locations?.groom_location,
+                            address: locations?.groom_address,
+                            mapEmbedUrl: locations?.groom_google_map_embed,
+                        }}
+                    />
+                )
+            })()}
 
             <Countdown
                 weddingDate={couple.wedding_date}
@@ -63,7 +69,7 @@ export default function ClassicTemplate({
 
             <Gallery images={gallery || []} />
 
-            <GiftSection couple={couple} />
+            <GiftSection couple={couple} weddingGift={weddingGift} />
 
             <RsvpSection
                 coupleId={couple.id}

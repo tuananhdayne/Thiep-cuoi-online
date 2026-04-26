@@ -45,11 +45,36 @@ function Ornament({ className = '' }: { className?: string }) {
   )
 }
 
+const getDirectMapLink = (mapUrl: string | null, location?: string | null, address?: string | null) => {
+    if (!mapUrl) {
+        const query = `${location || ''} ${address || ''}`.trim()
+        return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '#'
+    }
+    
+    const isEmbed = mapUrl.includes('/embed') || mapUrl.includes('output=embed')
+    if (!isEmbed) return mapUrl
+
+    // If it's an embed URL, try to extract exact coordinates from pb parameter
+    const pbMatch = mapUrl.match(/[?&]pb=([^&]+)/)
+    if (pbMatch) {
+        const pb = pbMatch[1]
+        const lngMatch = pb.match(/!2d([0-9.-]+)/)
+        const latMatch = pb.match(/!3d([0-9.-]+)/)
+        if (latMatch && lngMatch) {
+            return `https://www.google.com/maps/search/?api=1&query=${latMatch[1]},${lngMatch[1]}`
+        }
+    }
+
+    // Fallback if parsing fails
+    const query = `${location || ''} ${address || ''}`.trim()
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+}
+
 /* ─── event card ─── */
-function EventCard({ title, date, time, venue, address, side }: {
-  title: string; date: string; time: string; venue: string; address: string; side: 'bride' | 'groom'
+function EventCard({ title, date, time, venue, address, side, mapLink }: {
+  title: string; date: string; time: string; venue: string; address: string; side: 'bride' | 'groom'; mapLink?: string | null
 }) {
-  const mapQuery = encodeURIComponent(`${venue} ${address}`)
+  const mapHref = getDirectMapLink(mapLink, venue, address)
   return (
     <div className="rounded-2xl border border-[#d4c5a9]/40 bg-white/70 backdrop-blur-sm p-6 md:p-8 shadow-sm">
       <p className="text-[0.65rem] uppercase tracking-[0.4em] text-[#b39a6a] mb-3">
@@ -71,7 +96,7 @@ function EventCard({ title, date, time, venue, address, side }: {
         </p>
       </div>
       <a
-        href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+        href={mapHref}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-full border border-[#b39a6a]/50 text-[#b39a6a] text-xs uppercase tracking-[0.2em] hover:bg-[#b39a6a] hover:text-white transition-all duration-300"
@@ -179,24 +204,26 @@ function RsvpForm({ coupleId }: { coupleId: number }) {
 /* ══════════════════════════════════════════
    MAIN TEMPLATE
    ══════════════════════════════════════════ */
-export default function EleganceTemplate({ couple, gallery, wishes }: TemplateProps) {
+export default function EleganceTemplate({ couple, gallery, wishes, weddingGift, locations }: TemplateProps) {
   const heroImg = gallery?.[0]?.image_url || couple.bride_avatar || couple.groom_avatar
     || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1600'
   const date = formatDate(couple.wedding_date)
   const introText = couple.intro_description
     || 'Trân trọng kính mời quý khách đến chung vui cùng gia đình chúng tôi trong ngày trọng đại. Sự hiện diện của quý khách là niềm vinh hạnh lớn lao.'
 
-  const brideTitle = couple.bride_event_title || 'Lễ Vu Quy'
-  const brideDate = formatDate(couple.bride_event_date || couple.wedding_date)
-  const brideTime = couple.bride_event_time || couple.wedding_time || '09:00'
-  const brideVenue = couple.bride_location || 'Tư Gia Nhà Gái'
-  const brideAddr = couple.bride_address || '123 Đường Hoa Hồng, Quận 1, TP. HCM'
+  const brideTitle = locations?.bride_event_title || 'Lễ Vu Quy'
+  const brideDate = formatDate(locations?.bride_event_date || couple.wedding_date)
+  const brideTime = locations?.bride_event_time || couple.wedding_time || '09:00'
+  const brideVenue = locations?.bride_location || 'Tư Gia Nhà Gái'
+  const brideAddr = locations?.bride_address || '123 Đường Hoa Hồng, Quận 1, TP. HCM'
+  const brideMapLink = locations?.bride_google_map_embed
 
-  const groomTitle = couple.groom_event_title || 'Lễ Thành Hôn'
-  const groomDate = formatDate(couple.groom_event_date || couple.wedding_date)
-  const groomTime = couple.groom_event_time || couple.wedding_time || '18:00'
-  const groomVenue = couple.groom_location || 'Trung tâm Hội nghị The Grand'
-  const groomAddr = couple.groom_address || '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM'
+  const groomTitle = locations?.groom_event_title || 'Lễ Thành Hôn'
+  const groomDate = formatDate(locations?.groom_event_date || couple.wedding_date)
+  const groomTime = locations?.groom_event_time || couple.wedding_time || '18:00'
+  const groomVenue = locations?.groom_location || 'Trung tâm Hội nghị The Grand'
+  const groomAddr = locations?.groom_address || '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM'
+  const groomMapLink = locations?.groom_google_map_embed
 
   const wishList = wishes.slice(0, 8)
 
@@ -256,10 +283,10 @@ export default function EleganceTemplate({ couple, gallery, wishes }: TemplatePr
 
         <div className="max-w-2xl mx-auto space-y-6">
           <FadeIn delay={0.1}>
-            <EventCard title={brideTitle} date={brideDate} time={brideTime} venue={brideVenue} address={brideAddr} side="bride" />
+            <EventCard title={brideTitle} date={brideDate} time={brideTime} venue={brideVenue} address={brideAddr} side="bride" mapLink={brideMapLink} />
           </FadeIn>
           <FadeIn delay={0.2}>
-            <EventCard title={groomTitle} date={groomDate} time={groomTime} venue={groomVenue} address={groomAddr} side="groom" />
+            <EventCard title={groomTitle} date={groomDate} time={groomTime} venue={groomVenue} address={groomAddr} side="groom" mapLink={groomMapLink} />
           </FadeIn>
         </div>
       </section>
@@ -297,7 +324,7 @@ export default function EleganceTemplate({ couple, gallery, wishes }: TemplatePr
       )}
 
       {/* ════════ SECTION — HỘP MỪNG CƯỚI ════════ */}
-      {couple.gift_enabled && (couple.groom_bank_account || couple.bride_bank_account) && (
+      {weddingGift?.is_enabled && (weddingGift?.groom_bank_account || weddingGift?.bride_bank_account) && (
         <section className="py-16 md:py-24 px-6 bg-[#f3f0e8]/60">
           <FadeIn className="max-w-xl mx-auto text-center mb-10">
             <Ornament className="w-24 mx-auto text-[#b39a6a] mb-4" />
@@ -310,46 +337,46 @@ export default function EleganceTemplate({ couple, gallery, wishes }: TemplatePr
 
           <div className="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Groom bank card */}
-            {couple.groom_bank_account && (
+            {weddingGift?.groom_bank_account && (
               <FadeIn delay={0.1}>
-                <div className="rounded-2xl border border-[#d4c5a9]/40 bg-white/80 backdrop-blur-sm p-6 text-center shadow-sm">
+                <div className="rounded-2xl border border-[#d4c5a9]/40 bg-white/80 backdrop-blur-sm p-6 text-center shadow-sm h-full flex flex-col">
                   <p className="text-[0.65rem] uppercase tracking-[0.4em] text-[#b39a6a] mb-2">❀ Mừng cưới đến chú rể</p>
-                  {couple.groom_bank_qr && (
-                    <div className="flex justify-center my-4">
-                      <img src={couple.groom_bank_qr} alt="QR chú rể" className="w-36 h-36 object-contain rounded-xl border border-[#d4c5a9]/30" />
+                  {weddingGift?.groom_bank_qr && (
+                    <div className="flex justify-center my-4 flex-grow items-center">
+                      <img src={weddingGift?.groom_bank_qr} alt="QR chú rể" className="w-36 h-36 object-contain rounded-xl border border-[#d4c5a9]/30" />
                     </div>
                   )}
-                  <div className="space-y-1 text-sm text-[#4a453d]">
-                    {couple.groom_bank_name && (
-                      <p>Ngân hàng: <strong>{couple.groom_bank_name}</strong></p>
+                  <div className="space-y-1 text-sm text-[#4a453d] mt-auto">
+                    {weddingGift?.groom_bank_name && (
+                      <p>Ngân hàng: <strong>{weddingGift?.groom_bank_name}</strong></p>
                     )}
-                    {couple.groom_bank_holder && (
-                      <p>Tên: <strong>{couple.groom_bank_holder}</strong></p>
+                    {weddingGift?.groom_bank_holder && (
+                      <p>Tên: <strong>{weddingGift?.groom_bank_holder}</strong></p>
                     )}
-                    <p>STK: <strong>{couple.groom_bank_account}</strong></p>
+                    <p>STK: <strong>{weddingGift?.groom_bank_account}</strong></p>
                   </div>
                 </div>
               </FadeIn>
             )}
 
             {/* Bride bank card */}
-            {couple.bride_bank_account && (
+            {weddingGift?.bride_bank_account && (
               <FadeIn delay={0.2}>
-                <div className="rounded-2xl border border-[#d4c5a9]/40 bg-white/80 backdrop-blur-sm p-6 text-center shadow-sm">
+                <div className="rounded-2xl border border-[#d4c5a9]/40 bg-white/80 backdrop-blur-sm p-6 text-center shadow-sm h-full flex flex-col">
                   <p className="text-[0.65rem] uppercase tracking-[0.4em] text-[#b39a6a] mb-2">❀ Mừng cưới đến cô dâu</p>
-                  {couple.bride_bank_qr && (
-                    <div className="flex justify-center my-4">
-                      <img src={couple.bride_bank_qr} alt="QR cô dâu" className="w-36 h-36 object-contain rounded-xl border border-[#d4c5a9]/30" />
+                  {weddingGift?.bride_bank_qr && (
+                    <div className="flex justify-center my-4 flex-grow items-center">
+                      <img src={weddingGift?.bride_bank_qr} alt="QR cô dâu" className="w-36 h-36 object-contain rounded-xl border border-[#d4c5a9]/30" />
                     </div>
                   )}
-                  <div className="space-y-1 text-sm text-[#4a453d]">
-                    {couple.bride_bank_name && (
-                      <p>Ngân hàng: <strong>{couple.bride_bank_name}</strong></p>
+                  <div className="space-y-1 text-sm text-[#4a453d] mt-auto">
+                    {weddingGift?.bride_bank_name && (
+                      <p>Ngân hàng: <strong>{weddingGift?.bride_bank_name}</strong></p>
                     )}
-                    {couple.bride_bank_holder && (
-                      <p>Tên: <strong>{couple.bride_bank_holder}</strong></p>
+                    {weddingGift?.bride_bank_holder && (
+                      <p>Tên: <strong>{weddingGift?.bride_bank_holder}</strong></p>
                     )}
-                    <p>STK: <strong>{couple.bride_bank_account}</strong></p>
+                    <p>STK: <strong>{weddingGift?.bride_bank_account}</strong></p>
                   </div>
                 </div>
               </FadeIn>
