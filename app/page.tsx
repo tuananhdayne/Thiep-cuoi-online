@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import PetalEffect from './[slug]/components/PetalEffect'
 import { getThemeDisplayName } from './[slug]/templates/templateLoader'
+import AutoScrollTemplatePreview from './components/AutoScrollTemplatePreview'
 
 export default function Home() {
   return (
@@ -45,26 +46,24 @@ export default function Home() {
 
       {/* Templates Section */}
       <section id="templates" className="py-24 px-6 bg-white relative">
-        <div className="max-w-6xl mx-auto space-y-16">
+        <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center space-y-4">
             <h2 className="font-display text-4xl md:text-5xl text-[#5b3a29]">Bộ Sưu Tập Giao Diện</h2>
             <p className="text-[#7b5e4b] max-w-xl mx-auto">
               Lựa chọn từ các phong cách thiết kế độc đáo và tinh tế, được tùy chỉnh để phù hợp với câu chuyện tình yêu của riêng bạn.
             </p>
+            <p className="text-sm uppercase tracking-[0.2em] text-[#c08a4b]">Live Demo Tu Dong Cuon Toan Trang</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Template 1: Classic */}
-            <div className="group rounded-[32px] bg-[#fffaf3] border border-amber-50 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(91,58,41,0.08)] relative flex flex-col h-full">
-              <div className="relative h-64 w-full overflow-hidden bg-white">
-                <img
-                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800"
-                  alt="Cổ Điển Hoàng Kim"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute bottom-4 left-6">
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold tracking-wider">{getThemeDisplayName('classic')}</span>
+            <div className="group rounded-[36px] bg-[#fffaf3] border border-amber-100 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(91,58,41,0.14)] relative flex flex-col h-full">
+              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#fffaf3] to-[#f8efe2] flex items-center justify-center">
+                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#5b3a29]/15 bg-black/5 shadow-[0_16px_40px_rgba(91,58,41,0.2)] overflow-hidden">
+                  <AutoScrollTemplatePreview src="/demo?theme=classic&embedded=1" title="Cổ Điển Hoàng Kim preview" />
+                </div>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1.5 bg-[#5b3a29]/10 backdrop-blur-md rounded-full text-[#5b3a29] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('classic')}</span>
                 </div>
               </div>
               <div className="p-8 flex-1 flex flex-col">
@@ -89,16 +88,13 @@ export default function Home() {
             </div>
 
             {/* Template 2: Heritage */}
-            <div className="group rounded-[32px] bg-[#eef6f2] border border-[#cde3dd] overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(23,74,67,0.14)] relative flex flex-col h-full">
-              <div className="relative h-64 w-full overflow-hidden bg-white">
-                <img
-                  src="https://images.unsplash.com/photo-1513279922550-250c2129b13a?auto=format&fit=crop&q=80&w=800"
-                  alt="Hỷ Sắc Cổ Truyền"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0c2d29]/60 to-transparent"></div>
-                <div className="absolute bottom-4 left-6">
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold tracking-wider">{getThemeDisplayName('heritage')}</span>
+            <div className="group rounded-[36px] bg-[#eef6f2] border border-[#cde3dd] overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(23,74,67,0.14)] relative flex flex-col h-full">
+              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#eef6f2] to-[#dbeee8] flex items-center justify-center">
+                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#174a43]/15 bg-black/5 shadow-[0_16px_40px_rgba(23,74,67,0.18)] overflow-hidden">
+                  <AutoScrollTemplatePreview src="/demo?theme=heritage&embedded=1" title="Hỷ Sắc Cổ Truyền preview" />
+                </div>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1.5 bg-[#174a43]/10 backdrop-blur-md rounded-full text-[#174a43] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('heritage')}</span>
                 </div>
               </div>
               <div className="p-8 flex-1 flex flex-col bg-[#eef6f2]">
@@ -123,16 +119,13 @@ export default function Home() {
             </div>
 
             {/* Template 3: Midnight */}
-            <div className="group rounded-[32px] bg-[#0f1720] border border-white/10 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(0,0,0,0.35)] relative flex flex-col h-full">
-              <div className="relative h-64 w-full overflow-hidden bg-white">
-                <img
-                  src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&q=80&w=800"
-                  alt="Dạ Tiệc Ánh Kim"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                <div className="absolute bottom-4 left-6">
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold tracking-wider">{getThemeDisplayName('midnight')}</span>
+            <div className="group rounded-[36px] bg-[#0f1720] border border-white/10 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(0,0,0,0.45)] relative flex flex-col h-full">
+              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#0f1720] to-[#1f2a36] flex items-center justify-center">
+                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#d4af7a]/25 bg-black/10 shadow-[0_16px_40px_rgba(0,0,0,0.4)] overflow-hidden">
+                  <AutoScrollTemplatePreview src="/demo?theme=midnight&embedded=1" title="Dạ Tiệc Ánh Kim preview" />
+                </div>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-[#f5efe6] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('midnight')}</span>
                 </div>
               </div>
               <div className="p-8 flex-1 flex flex-col bg-[#0f1720]">
@@ -157,16 +150,13 @@ export default function Home() {
             </div>
 
             {/* Template 4: Elegance */}
-            <div className="group rounded-[32px] bg-[#f8f6f1] border border-[#d4c5a9]/30 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(45,42,38,0.1)] relative flex flex-col h-full">
-              <div className="relative h-64 w-full overflow-hidden bg-white">
-                <img
-                  src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=800"
-                  alt="Thanh Lịch Tân Cổ Điển"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2d2a26]/60 to-transparent"></div>
-                <div className="absolute bottom-4 left-6">
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold tracking-wider">{getThemeDisplayName('elegance')}</span>
+            <div className="group rounded-[36px] bg-[#f8f6f1] border border-[#d4c5a9]/30 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(45,42,38,0.12)] relative flex flex-col h-full">
+              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#f8f6f1] to-[#efe7da] flex items-center justify-center">
+                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#b39a6a]/20 bg-black/5 shadow-[0_16px_40px_rgba(45,42,38,0.16)] overflow-hidden">
+                  <AutoScrollTemplatePreview src="/demo?theme=elegance&embedded=1" title="Thanh Lịch Tân Cổ Điển preview" />
+                </div>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1.5 bg-[#2d2a26]/10 backdrop-blur-md rounded-full text-[#2d2a26] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('elegance')}</span>
                 </div>
               </div>
               <div className="p-8 flex-1 flex flex-col bg-[#f8f6f1]">
@@ -191,16 +181,13 @@ export default function Home() {
             </div>
 
             {/* Template 5: Romance */}
-            <div className="group rounded-[32px] bg-[#1a1120] border border-rose-500/20 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(244,63,94,0.15)] relative flex flex-col h-full">
-              <div className="relative h-64 w-full overflow-hidden bg-[#0B132B]">
-                <img
-                  src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800"
-                  alt="Đêm Lãng Mạn Glassmorphism"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1120] via-transparent to-transparent"></div>
-                <div className="absolute bottom-4 left-6">
-                  <span className="px-3 py-1 bg-rose-500/20 backdrop-blur-md rounded-full text-rose-300 border border-rose-400/30 text-xs font-semibold tracking-wider">{getThemeDisplayName('romance')}</span>
+            <div className="group rounded-[36px] bg-[#1a1120] border border-rose-500/20 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(244,63,94,0.2)] relative flex flex-col h-full">
+              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#1a1120] to-[#2b1836] flex items-center justify-center">
+                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-rose-400/20 bg-black/10 shadow-[0_16px_40px_rgba(244,63,94,0.25)] overflow-hidden">
+                  <AutoScrollTemplatePreview src="/demo?theme=romance&embedded=1" title="Đêm Lãng Mạn Glassmorphism preview" />
+                </div>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1.5 bg-rose-500/20 backdrop-blur-md rounded-full text-rose-200 border border-rose-400/30 text-[11px] font-semibold tracking-wider">{getThemeDisplayName('romance')}</span>
                 </div>
               </div>
               <div className="p-8 flex-1 flex flex-col bg-[#1a1120]">
@@ -225,12 +212,13 @@ export default function Home() {
             </div>
 
             {/* Template 6: Minimalist Typography */}
-            <div className="group rounded-[32px] bg-[#FDFBF7] border border-gray-200 overflow-hidden transition-all hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative flex flex-col h-full">
-              <div className="relative h-64 w-full overflow-hidden bg-[#F9F6F0] flex items-center justify-center border-b border-gray-200">
-                <span className="font-signora text-6xl text-gray-800 transition-transform duration-700 group-hover:scale-110">Wedding</span>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7] via-transparent to-transparent opacity-80"></div>
-                <div className="absolute bottom-4 left-6">
-                  <span className="px-3 py-1 bg-white/50 backdrop-blur-md rounded-full text-gray-800 border border-gray-300 text-xs font-semibold tracking-wider">{getThemeDisplayName('minimalist')}</span>
+            <div className="group rounded-[36px] bg-[#FDFBF7] border border-gray-200 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(0,0,0,0.08)] relative flex flex-col h-full">
+              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#FDFBF7] to-[#f2eee8] flex items-center justify-center border-b border-gray-200">
+                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-gray-300/60 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.12)] overflow-hidden">
+                  <AutoScrollTemplatePreview src="/demo?theme=minimalist&embedded=1" title="Tối Giản Tân Cổ Điển preview" />
+                </div>
+                <div className="absolute top-4 left-1/2 -translate-x-1/2">
+                  <span className="px-3 py-1.5 bg-white/70 backdrop-blur-md rounded-full text-gray-800 border border-gray-300 text-[11px] font-semibold tracking-wider">{getThemeDisplayName('minimalist')}</span>
                 </div>
               </div>
               <div className="p-8 flex-1 flex flex-col bg-[#FDFBF7]">
@@ -253,6 +241,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>

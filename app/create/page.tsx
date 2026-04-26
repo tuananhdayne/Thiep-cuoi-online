@@ -611,6 +611,7 @@ function CreateForm() {
                     <p className={`text-[11px] leading-tight ${form.theme === 'minimalist' ? 'text-gray-600' : 'text-[#7b5e4b]'}`}>Sang trọng, căn giữa, tập trung vào font chữ thư pháp cổ điển.</p>
                   </div>
                 </label>
+
               </div>
             </section>
 

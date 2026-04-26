@@ -10,9 +10,9 @@ const securityHeaders = [
     value: 'max-age=63072000; includeSubDomains; preload'
   },
   {
-    // Chống clickjacking - không cho phép nhúng vào iframe
+    // Chống clickjacking nhưng vẫn cho phép self-embed để hiển thị preview mẫu nội bộ
     key: 'X-Frame-Options',
-    value: 'DENY'
+    value: 'SAMEORIGIN'
   },
   {
     // Chống MIME sniffing attacks
@@ -37,7 +37,7 @@ const securityHeaders = [
   {
     // Content Security Policy - chặn script từ nguồn không uy tín
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; media-src 'self' https: blob: data:; font-src 'self'; connect-src 'self' https://*.supabase.co https://images.unsplash.com; frame-src 'self' https://www.google.com https://maps.google.com https://www.google.com/maps; frame-ancestors 'none'; object-src 'none';"
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; media-src 'self' https: blob: data:; font-src 'self'; connect-src 'self' https://*.supabase.co https://images.unsplash.com; frame-src 'self' https://www.google.com https://maps.google.com https://www.google.com/maps; frame-ancestors 'self'; object-src 'none';"
   }
 ];
 

@@ -4,10 +4,11 @@ import { getThemeDisplayName, loadTemplate, supportedThemes } from '../[slug]/te
 export default async function DemoPage({
     searchParams,
 }: {
-    searchParams: Promise<{ theme?: string }>
+    searchParams: Promise<{ theme?: string; embedded?: string }>
 }) {
-    const { theme } = await searchParams
+    const { theme, embedded } = await searchParams
     const requestedTheme = theme || 'classic'
+    const isEmbedded = embedded === '1'
 
     // Validate theme, default to classic
     const validTheme = supportedThemes.includes(requestedTheme as (typeof supportedThemes)[number])
@@ -76,20 +77,22 @@ export default async function DemoPage({
     return (
         <main className="relative">
             {/* Floating Notice pointing back to Home or Create */}
-            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] animate-fade-in-up flex flex-col items-center gap-2">
-                <div className="bg-primary text-bg-main px-6 py-2 rounded-full shadow-2xl flex items-center gap-3">
-                    <span className="text-xl">✨</span>
-                    <p className="text-sm font-semibold tracking-wide">
-                        Bản Xem Thử (Mẫu: {getThemeDisplayName(validTheme)})
-                    </p>
+            {!isEmbedded && (
+                <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] animate-fade-in-up flex flex-col items-center gap-2">
+                    <div className="bg-primary text-bg-main px-6 py-2 rounded-full shadow-2xl flex items-center gap-3">
+                        <span className="text-xl">✨</span>
+                        <p className="text-sm font-semibold tracking-wide">
+                            Bản Xem Thử (Mẫu: {getThemeDisplayName(validTheme)})
+                        </p>
+                    </div>
+                    <a
+                        href={`/create?theme=${validTheme}`}
+                        className="bg-white/90 backdrop-blur-sm text-primary px-5 py-2 rounded-full shadow-lg text-xs font-bold hover:bg-white hover:scale-105 transition-all flex items-center gap-2"
+                    >
+                        Tạo Thiệp Với Mẫu này ➔
+                    </a>
                 </div>
-                <a
-                    href={`/create?theme=${validTheme}`}
-                    className="bg-white/90 backdrop-blur-sm text-primary px-5 py-2 rounded-full shadow-lg text-xs font-bold hover:bg-white hover:scale-105 transition-all flex items-center gap-2"
-                >
-                    Tạo Thiệp Với Mẫu này ➔
-                </a>
-            </div>
+            )}
 
             <TemplateToRender
                 couple={mockCouple}
