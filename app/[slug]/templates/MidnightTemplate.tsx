@@ -247,7 +247,7 @@ export default function MidnightTemplate({ couple, gallery, wishes, weddingGift,
               <p className="text-[0.7rem] uppercase tracking-[0.55em] text-[#2C2A29]/55">
                 {ceremonyDate}
               </p>
-              <h1 className="max-w-md font-display text-5xl leading-[0.88] tracking-[0.32em] text-[#2C2A29] md:text-6xl lg:text-7xl">
+              <h1 className="max-w-md break-words font-display text-[clamp(2rem,6.8vw,4.6rem)] leading-[0.9] tracking-[clamp(0.1em,0.45vw,0.28em)] text-[#2C2A29]">
                 {couple.groom_name}
                 <span className="mt-4 block text-sm tracking-[0.8em] text-[#E34234] md:text-base">●</span>
                 <span className="mt-5 block text-[0.7em] tracking-[0.55em] text-[#2C2A29]/75">&</span>
