@@ -7,6 +7,7 @@ import Countdown from '../components/Countdown'
 import WishSection from '../components/WishSection'
 import Footer from '../components/Footer'
 import AudioPlayer from '../components/AudioPlayer'
+import GiftSection from '../components/GiftSection'
 import { TemplateProps } from './types'
 
 function PatternBand() {
@@ -137,6 +138,8 @@ export default function HeritageTemplate({
         <section className="rounded-[24px] border border-border-light bg-bg-alt p-3 md:rounded-[30px] md:p-8">
           <Gallery images={gallery || []} />
         </section>
+
+        <GiftSection couple={couple} />
 
         <RsvpSection
           coupleId={couple.id}

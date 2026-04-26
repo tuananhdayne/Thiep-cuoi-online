@@ -28,6 +28,15 @@ export type Couple = {
     music_volume?: number | null
     music_autoplay?: boolean | null
     theme?: string | null
+    gift_enabled?: boolean | null
+    groom_bank_name?: string | null
+    groom_bank_holder?: string | null
+    groom_bank_account?: string | null
+    groom_bank_qr?: string | null
+    bride_bank_name?: string | null
+    bride_bank_holder?: string | null
+    bride_bank_account?: string | null
+    bride_bank_qr?: string | null
 }
 
 export type GalleryItem = {

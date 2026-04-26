@@ -1,6 +1,8 @@
 -- ============================================
 -- SQL SETUP FOR ADMIN TABLE WITH SECURITY
 -- ============================================
+-- Lưu ý: File migration-gift-box.sql chứa ALTER TABLE để thêm cột
+-- gift box vào bảng couples (nếu bảng couples đã tồn tại).
 -- Sao chép và chạy trong Supabase SQL Editor
 
 -- ============================================

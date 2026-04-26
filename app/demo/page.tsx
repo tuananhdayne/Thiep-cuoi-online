@@ -34,6 +34,15 @@ export default async function DemoPage({
         groom_location: 'Trung tâm Hội nghị The Grand',
         groom_address: '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM',
         theme: validTheme,
+        gift_enabled: true,
+        groom_bank_name: 'Vietcombank',
+        groom_bank_holder: 'NGUYEN MINH KHANG',
+        groom_bank_account: '9948240614',
+        groom_bank_qr: 'https://img.vietqr.io/image/VCB-9948240614-compact.png',
+        bride_bank_name: 'Vietcombank',
+        bride_bank_holder: 'TRAN NGOC LAN',
+        bride_bank_account: '1062395400',
+        bride_bank_qr: 'https://img.vietqr.io/image/VCB-1062395400-compact.png',
     }
 
     const mockGallery: GalleryItem[] = [

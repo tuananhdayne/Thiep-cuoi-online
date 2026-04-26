@@ -296,6 +296,68 @@ export default function EleganceTemplate({ couple, gallery, wishes }: TemplatePr
         </section>
       )}
 
+      {/* ════════ SECTION — HỘP MỪNG CƯỚI ════════ */}
+      {couple.gift_enabled && (couple.groom_bank_account || couple.bride_bank_account) && (
+        <section className="py-16 md:py-24 px-6 bg-[#f3f0e8]/60">
+          <FadeIn className="max-w-xl mx-auto text-center mb-10">
+            <Ornament className="w-24 mx-auto text-[#b39a6a] mb-4" />
+            <p className="text-[0.65rem] uppercase tracking-[0.45em] text-[#b39a6a] mb-3">Wedding Gift</p>
+            <h2 className="font-display text-3xl md:text-4xl text-[#2d2a26]">Hộp Mừng Cưới</h2>
+            <p className="mt-3 text-sm text-[#4a453d]/70 italic max-w-md mx-auto">
+              Nếu có thể, bạn hãy tới tham dự Đám cưới, chung vui và Mừng cưới trực tiếp cho chúng mình nha. Cảm ơn bạn rất nhiều!
+            </p>
+          </FadeIn>
+
+          <div className="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Groom bank card */}
+            {couple.groom_bank_account && (
+              <FadeIn delay={0.1}>
+                <div className="rounded-2xl border border-[#d4c5a9]/40 bg-white/80 backdrop-blur-sm p-6 text-center shadow-sm">
+                  <p className="text-[0.65rem] uppercase tracking-[0.4em] text-[#b39a6a] mb-2">❀ Mừng cưới đến chú rể</p>
+                  {couple.groom_bank_qr && (
+                    <div className="flex justify-center my-4">
+                      <img src={couple.groom_bank_qr} alt="QR chú rể" className="w-36 h-36 object-contain rounded-xl border border-[#d4c5a9]/30" />
+                    </div>
+                  )}
+                  <div className="space-y-1 text-sm text-[#4a453d]">
+                    {couple.groom_bank_name && (
+                      <p>Ngân hàng: <strong>{couple.groom_bank_name}</strong></p>
+                    )}
+                    {couple.groom_bank_holder && (
+                      <p>Tên: <strong>{couple.groom_bank_holder}</strong></p>
+                    )}
+                    <p>STK: <strong>{couple.groom_bank_account}</strong></p>
+                  </div>
+                </div>
+              </FadeIn>
+            )}
+
+            {/* Bride bank card */}
+            {couple.bride_bank_account && (
+              <FadeIn delay={0.2}>
+                <div className="rounded-2xl border border-[#d4c5a9]/40 bg-white/80 backdrop-blur-sm p-6 text-center shadow-sm">
+                  <p className="text-[0.65rem] uppercase tracking-[0.4em] text-[#b39a6a] mb-2">❀ Mừng cưới đến cô dâu</p>
+                  {couple.bride_bank_qr && (
+                    <div className="flex justify-center my-4">
+                      <img src={couple.bride_bank_qr} alt="QR cô dâu" className="w-36 h-36 object-contain rounded-xl border border-[#d4c5a9]/30" />
+                    </div>
+                  )}
+                  <div className="space-y-1 text-sm text-[#4a453d]">
+                    {couple.bride_bank_name && (
+                      <p>Ngân hàng: <strong>{couple.bride_bank_name}</strong></p>
+                    )}
+                    {couple.bride_bank_holder && (
+                      <p>Tên: <strong>{couple.bride_bank_holder}</strong></p>
+                    )}
+                    <p>STK: <strong>{couple.bride_bank_account}</strong></p>
+                  </div>
+                </div>
+              </FadeIn>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* ════════ SECTION 5 — SỔ LƯU BÚT ════════ */}
       <section className="py-16 md:py-24 px-6">
         <FadeIn className="max-w-xl mx-auto text-center mb-10">

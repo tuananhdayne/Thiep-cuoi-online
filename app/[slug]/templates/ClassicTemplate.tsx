@@ -8,6 +8,7 @@ import WishSection from '../components/WishSection'
 import PetalEffect from '../components/PetalEffect'
 import Footer from '../components/Footer'
 import AudioPlayer from '../components/AudioPlayer'
+import GiftSection from '../components/GiftSection'
 import { TemplateProps } from './types'
 
 export default function ClassicTemplate({
@@ -61,6 +62,8 @@ export default function ClassicTemplate({
             />
 
             <Gallery images={gallery || []} />
+
+            <GiftSection couple={couple} />
 
             <RsvpSection
                 coupleId={couple.id}

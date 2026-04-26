@@ -410,6 +410,72 @@ export default function MidnightTemplate({ couple, gallery, wishes }: TemplatePr
             </FadeIn>
           ) : null}
 
+          {/* ── Hộp Mừng Cưới ── */}
+          {couple.gift_enabled && (couple.groom_bank_account || couple.bride_bank_account) ? (
+            <FadeIn className="col-span-12 md:col-span-10 md:col-start-2" delay={0.43}>
+              <div className="space-y-5">
+                <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55">
+                  Wedding Gift — Hộp Mừng Cưới
+                </p>
+                <p className="max-w-md text-sm leading-7 text-[#2C2A29]/65 italic">
+                  Nếu có thể, bạn hãy tới tham dự Đám cưới, chung vui và Mừng cưới trực tiếp cho chúng mình nha. Cảm ơn bạn rất nhiều!
+                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {couple.groom_bank_account && (
+                    <div className="border border-[#2C2A29]/10 bg-[#F2EFE9] px-5 py-5 text-center flex flex-col h-full">
+                      <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55 mb-4">
+                        ❀ Mừng cưới đến chú rể
+                      </p>
+                      {couple.groom_bank_qr && (
+                        <div className="flex justify-center mb-4 flex-grow items-center">
+                          <img
+                            src={couple.groom_bank_qr}
+                            alt="QR chú rể"
+                            className="w-32 h-32 object-contain border border-[#2C2A29]/10"
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-1 text-sm leading-7 text-[#2C2A29]/76 mt-auto pt-2">
+                        {couple.groom_bank_name && (
+                          <p>NH: <strong className="text-[#2C2A29]">{couple.groom_bank_name}</strong></p>
+                        )}
+                        {couple.groom_bank_holder && (
+                          <p>Tên: <strong className="text-[#2C2A29]">{couple.groom_bank_holder}</strong></p>
+                        )}
+                        <p>STK: <strong className="text-[#2C2A29]">{couple.groom_bank_account}</strong></p>
+                      </div>
+                    </div>
+                  )}
+                  {couple.bride_bank_account && (
+                    <div className="border border-[#2C2A29]/10 bg-[#F2EFE9] px-5 py-5 text-center flex flex-col h-full">
+                      <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55 mb-4">
+                        ❀ Mừng cưới đến cô dâu
+                      </p>
+                      {couple.bride_bank_qr && (
+                        <div className="flex justify-center mb-4 flex-grow items-center">
+                          <img
+                            src={couple.bride_bank_qr}
+                            alt="QR cô dâu"
+                            className="w-32 h-32 object-contain border border-[#2C2A29]/10"
+                          />
+                        </div>
+                      )}
+                      <div className="space-y-1 text-sm leading-7 text-[#2C2A29]/76 mt-auto pt-2">
+                        {couple.bride_bank_name && (
+                          <p>NH: <strong className="text-[#2C2A29]">{couple.bride_bank_name}</strong></p>
+                        )}
+                        {couple.bride_bank_holder && (
+                          <p>Tên: <strong className="text-[#2C2A29]">{couple.bride_bank_holder}</strong></p>
+                        )}
+                        <p>STK: <strong className="text-[#2C2A29]">{couple.bride_bank_account}</strong></p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </FadeIn>
+          ) : null}
+
           {wishTiles.length > 0 ? (
             <FadeIn className="col-span-12 md:col-span-10 md:col-start-2" delay={0.46}>
               <div className="space-y-4">

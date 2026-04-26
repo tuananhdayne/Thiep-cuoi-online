@@ -27,6 +27,15 @@ type CouplePayload = {
   groom_address: string
   groom_google_map_embed: string
   theme: string
+  gift_enabled: boolean
+  groom_bank_name: string
+  groom_bank_holder: string
+  groom_bank_account: string
+  groom_bank_qr: string
+  bride_bank_name: string
+  bride_bank_holder: string
+  bride_bank_account: string
+  bride_bank_qr: string
 }
 
 type UploadedImage = {
@@ -99,6 +108,15 @@ function CreateForm() {
     groom_address: '',
     groom_google_map_embed: '',
     theme: initialTheme,
+    gift_enabled: false,
+    groom_bank_name: '',
+    groom_bank_holder: '',
+    groom_bank_account: '',
+    groom_bank_qr: '',
+    bride_bank_name: '',
+    bride_bank_holder: '',
+    bride_bank_account: '',
+    bride_bank_qr: '',
   })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -152,6 +170,21 @@ function CreateForm() {
       slug,
       bride_google_map_embed: brideMap,
       groom_google_map_embed: groomMap,
+    }
+
+    // Clean up empty gift fields
+    if (!payload.gift_enabled) {
+      delete payload.groom_bank_name
+      delete payload.groom_bank_holder
+      delete payload.groom_bank_account
+      delete payload.groom_bank_qr
+      delete payload.bride_bank_name
+      delete payload.bride_bank_holder
+      delete payload.bride_bank_account
+      delete payload.bride_bank_qr
+    } else {
+      if (!payload.groom_bank_qr) delete payload.groom_bank_qr
+      if (!payload.bride_bank_qr) delete payload.bride_bank_qr
     }
 
     // Clean up empty strings for date/time fields to prevent Postgres 22007 (invalid input syntax for type date "") 400 Payload Invalid
@@ -454,6 +487,101 @@ function CreateForm() {
                   </div>
                 </label>
               </div>
+            </section>
+
+            {/* Gift Box Toggle & Bank Details */}
+            <section className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm text-[#7b5e4b] font-medium">Hộp mừng cưới</label>
+                  <p className="text-xs text-[#9a7d68] mt-0.5">Hiển thị thông tin chuyển khoản trên thiệp</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setForm((prev) => ({ ...prev, gift_enabled: !prev.gift_enabled }))}
+                  className={`relative w-12 h-7 rounded-full transition-colors duration-300 ${form.gift_enabled ? 'bg-[#c08a4b]' : 'bg-gray-300'}`}
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform duration-300 ${form.gift_enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              {form.gift_enabled && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 animate-fade-in">
+                  {/* Groom bank */}
+                  <div className="rounded-[22px] bg-[#fdf5ff] border border-[#eddcf3] p-5 space-y-3 shadow-sm">
+                    <div>
+                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Groom</p>
+                      <h3 className="text-lg font-semibold text-[#5b3a29]">Mừng cưới đến chú rể</h3>
+                    </div>
+                    <input
+                      value={form.groom_bank_name}
+                      onChange={(e) => handleChange('groom_bank_name', e.target.value)}
+                      placeholder="Tên ngân hàng (VD: Vietcombank)"
+                      className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
+                    />
+                    <input
+                      value={form.groom_bank_holder}
+                      onChange={(e) => handleChange('groom_bank_holder', e.target.value)}
+                      placeholder="Tên chủ tài khoản"
+                      className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
+                    />
+                    <input
+                      value={form.groom_bank_account}
+                      onChange={(e) => handleChange('groom_bank_account', e.target.value)}
+                      placeholder="Số tài khoản"
+                      className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
+                    />
+                    <input
+                      value={form.groom_bank_qr}
+                      onChange={(e) => handleChange('groom_bank_qr', e.target.value)}
+                      placeholder="Link ảnh QR chuyển khoản (không bắt buộc)"
+                      className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
+                    />
+                    {form.groom_bank_qr && (
+                      <div className="flex justify-center">
+                        <img src={form.groom_bank_qr} alt="QR chú rể" className="w-32 h-32 object-contain rounded-xl border border-[#eddcf3]" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Bride bank */}
+                  <div className="rounded-[22px] bg-[#fff7ed] border border-[#f6e2c6] p-5 space-y-3 shadow-sm">
+                    <div>
+                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Bride</p>
+                      <h3 className="text-lg font-semibold text-[#5b3a29]">Mừng cưới đến cô dâu</h3>
+                    </div>
+                    <input
+                      value={form.bride_bank_name}
+                      onChange={(e) => handleChange('bride_bank_name', e.target.value)}
+                      placeholder="Tên ngân hàng (VD: Vietcombank)"
+                      className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
+                    />
+                    <input
+                      value={form.bride_bank_holder}
+                      onChange={(e) => handleChange('bride_bank_holder', e.target.value)}
+                      placeholder="Tên chủ tài khoản"
+                      className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
+                    />
+                    <input
+                      value={form.bride_bank_account}
+                      onChange={(e) => handleChange('bride_bank_account', e.target.value)}
+                      placeholder="Số tài khoản"
+                      className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
+                    />
+                    <input
+                      value={form.bride_bank_qr}
+                      onChange={(e) => handleChange('bride_bank_qr', e.target.value)}
+                      placeholder="Link ảnh QR chuyển khoản (không bắt buộc)"
+                      className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
+                    />
+                    {form.bride_bank_qr && (
+                      <div className="flex justify-center">
+                        <img src={form.bride_bank_qr} alt="QR cô dâu" className="w-32 h-32 object-contain rounded-xl border border-[#eedfcc]" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </section>
 
             <section className="space-y-3">
