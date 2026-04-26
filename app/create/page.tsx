@@ -44,6 +44,10 @@ type UploadedImage = {
   path: string
 }
 
+type StringFieldKeys = {
+  [K in keyof CouplePayload]: CouplePayload[K] extends string ? K : never
+}[keyof CouplePayload]
+
 const slugify = (bride: string, groom: string) => {
   const raw = `${bride} ${groom}`.trim() || 'wedding'
   return raw
@@ -64,7 +68,7 @@ const extractMapSrc = (value: string) => {
   return ''
 }
 
-const requiredFields: (keyof CouplePayload)[] = [
+const requiredFields: StringFieldKeys[] = [
   'bride_name',
   'groom_name',
   'intro_description',

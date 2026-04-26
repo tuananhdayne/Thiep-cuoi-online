@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { TemplateProps } from './types'
 import { supabase } from '@/lib/supabaseClient'
 import AudioPlayer from '../components/AudioPlayer'
@@ -62,7 +62,7 @@ export default function MinimalistTemplate({ couple, gallery, wishes, weddingGif
     }
 
     // Fade Up Variants
-    const fadeUp = {
+    const fadeUp: Variants = {
         hidden: { opacity: 0, y: 30 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
     }

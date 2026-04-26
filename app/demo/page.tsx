@@ -26,7 +26,6 @@ export default async function DemoPage({
         location: 'Trung tâm Tiệc cưới The Grand',
         address: 'Quận 1, TP. HCM',
         theme: validTheme,
-        created_at: new Date().toISOString()
     }
 
     const mockLocations = {

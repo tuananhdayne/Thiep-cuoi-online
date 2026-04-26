@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import { TemplateProps } from './types'
 import { supabase } from '@/lib/supabaseClient'
 // components
@@ -132,7 +132,7 @@ export default function MidnightRomanceTemplate({ couple, gallery, wishes, weddi
   }
 
   // Fade Up Variants
-  const fadeUp = {
+    const fadeUp: Variants = {
       hidden: { opacity: 0, y: 40 },
       visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   }
