@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import type { TemplateProps } from './types'
+import ImageLightbox from '../components/ImageLightbox'
 
 function formatDate(value?: string | null) {
   if (!value) return '15.11.2026'
@@ -206,6 +207,7 @@ export default function MidnightTemplate({ couple, gallery, wishes, weddingGift,
 
   const galleryTiles = gallery.slice(0, 6)
   const wishTiles = wishes.slice(0, 4)
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null)
 
   return (
     <div className={`relative overflow-hidden bg-[#F2EFE9] text-[#2C2A29] ${themeClass}`}>
@@ -429,13 +431,13 @@ export default function MidnightTemplate({ couple, gallery, wishes, weddingGift,
                               : 'col-span-12 row-span-2 md:col-span-5 md:row-span-3'
 
                   return (
-                    <div key={item.id} className={`overflow-hidden border border-[#2C2A29]/10 bg-[#e9e3d8] ${spanClass}`}>
+                    <button key={item.id} type="button" onClick={() => setSelectedGalleryIndex(index)} className={`overflow-hidden border border-[#2C2A29]/10 bg-[#e9e3d8] text-left ${spanClass}`}>
                       <img
                         src={item.image_url}
                         alt={item.caption || `Ảnh cưới ${index + 1}`}
                         className="h-full w-full object-cover"
                       />
-                    </div>
+                    </button>
                   )
                 })}
               </div>
@@ -522,6 +524,23 @@ export default function MidnightTemplate({ couple, gallery, wishes, weddingGift,
                     >
                       <div className="flex items-start justify-between gap-4">
                         <p className="text-[0.68rem] uppercase tracking-[0.45em] text-[#2C2A29]/55">
+                            {galleryTiles.length > 0 && (
+                              <ImageLightbox
+                                images={galleryTiles}
+                                selectedIndex={selectedGalleryIndex}
+                                onClose={() => setSelectedGalleryIndex(null)}
+                                onPrev={() =>
+                                  setSelectedGalleryIndex((current) =>
+                                    current === null ? null : (current - 1 + galleryTiles.length) % galleryTiles.length
+                                  )
+                                }
+                                onNext={() =>
+                                  setSelectedGalleryIndex((current) =>
+                                    current === null ? null : (current + 1) % galleryTiles.length
+                                  )
+                                }
+                              />
+                            )}
                           {wish.name || 'Ẩn danh'}
                         </p>
                         <span className="text-[0.62rem] uppercase tracking-[0.3em] text-[#2C2A29]/35">

@@ -4,6 +4,7 @@ import { useState, type ReactNode } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '@/lib/supabaseClient'
 import type { TemplateProps } from './types'
+import ImageLightbox from '../components/ImageLightbox'
 
 /* ─── helpers ─── */
 function formatDate(v?: string | null) {
@@ -205,6 +206,7 @@ function RsvpForm({ coupleId }: { coupleId: number }) {
    MAIN TEMPLATE
    ══════════════════════════════════════════ */
 export default function EleganceTemplate({ couple, gallery, wishes, weddingGift, locations }: TemplateProps) {
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null)
   const heroImg = gallery?.[0]?.image_url || couple.bride_avatar || couple.groom_avatar
     || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1600'
   const date = formatDate(couple.wedding_date)
@@ -303,7 +305,7 @@ export default function EleganceTemplate({ couple, gallery, wishes, weddingGift,
           <div className="max-w-4xl mx-auto columns-2 md:columns-3 gap-3 md:gap-4 space-y-3 md:space-y-4">
             {gallery.slice(0, 9).map((img, i) => (
               <FadeIn key={img.id} delay={i * 0.07} className="break-inside-avoid">
-                <div className="group relative overflow-hidden rounded-2xl border border-[#d4c5a9]/25 shadow-sm">
+                <button type="button" onClick={() => setSelectedGalleryIndex(i)} className="group relative block w-full overflow-hidden rounded-2xl border border-[#d4c5a9]/25 shadow-sm text-left">
                   <img
                     src={img.image_url}
                     alt={img.caption || `Ảnh cưới ${i + 1}`}
@@ -316,11 +318,29 @@ export default function EleganceTemplate({ couple, gallery, wishes, weddingGift,
                       <p className="text-xs text-white/90 text-center">{img.caption}</p>
                     </div>
                   )}
-                </div>
+                </button>
               </FadeIn>
             ))}
           </div>
         </section>
+      )}
+
+      {gallery.length > 0 && (
+        <ImageLightbox
+          images={gallery.slice(0, 9)}
+          selectedIndex={selectedGalleryIndex}
+          onClose={() => setSelectedGalleryIndex(null)}
+          onPrev={() =>
+            setSelectedGalleryIndex((current) =>
+              current === null ? null : (current - 1 + gallery.slice(0, 9).length) % gallery.slice(0, 9).length
+            )
+          }
+          onNext={() =>
+            setSelectedGalleryIndex((current) =>
+              current === null ? null : (current + 1) % gallery.slice(0, 9).length
+            )
+          }
+        />
       )}
 
       {/* ════════ SECTION — HỘP MỪNG CƯỚI ════════ */}

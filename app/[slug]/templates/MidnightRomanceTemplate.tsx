@@ -6,6 +6,7 @@ import { TemplateProps } from './types'
 import { supabase } from '@/lib/supabaseClient'
 // components
 import AudioPlayer from '../components/AudioPlayer'
+import ImageLightbox from '../components/ImageLightbox'
 
 // --- Formatting Helpers ---
 const formatDate = (dateStr?: string | null) => {
@@ -67,7 +68,7 @@ function FloatingParticles() {
 }
 
 // --- Infinite Gallery ---
-function InfiniteGallery({ images }: { images: any[] }) {
+function InfiniteGallery({ images, onSelect }: { images: any[]; onSelect: (index: number) => void }) {
   if (!images || images.length === 0) return null
   
   // Duplicate images for infinite scroll
@@ -87,10 +88,15 @@ function InfiniteGallery({ images }: { images: any[] }) {
             whileTap={{ animationPlayState: 'paused' }}
         >
             {scrollImages.map((img, idx) => (
-                <div key={idx} className="w-[250px] h-[350px] flex-shrink-0 relative rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(251,191,36,0.15)] border border-white/10 group">
+                <button
+                    key={idx}
+                    type="button"
+                    onClick={() => onSelect(idx % images.length)}
+                    className="w-[250px] h-[350px] flex-shrink-0 relative rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(251,191,36,0.15)] border border-white/10 group text-left"
+                >
                     <img src={img.image_url} alt="Gallery" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B132B] via-transparent to-transparent opacity-60" />
-                </div>
+                </button>
             ))}
         </motion.div>
     </div>
@@ -109,6 +115,7 @@ export default function MidnightRomanceTemplate({ couple, gallery, wishes, weddi
   const [formMsg, setFormMsg] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [toastMsg, setToastMsg] = useState('')
+    const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null)
 
   const handleRSVP = async (e: React.FormEvent) => {
       e.preventDefault()
@@ -266,7 +273,7 @@ export default function MidnightRomanceTemplate({ couple, gallery, wishes, weddi
                 <p className="text-rose-300 tracking-[0.3em] uppercase text-xs mt-2 font-light">Lưu giữ kỷ niệm</p>
              </motion.div>
              
-             <InfiniteGallery images={gallery} />
+               <InfiniteGallery images={gallery} onSelect={setSelectedGalleryIndex} />
         </section>
 
         {/* WEDDING GIFT */}
@@ -303,7 +310,25 @@ export default function MidnightRomanceTemplate({ couple, gallery, wishes, weddi
                         )}
                     </div>
                 </motion.div>
-             </section>
+            </section>
+        )}
+
+        {gallery.length > 0 && (
+            <ImageLightbox
+                images={gallery}
+                selectedIndex={selectedGalleryIndex}
+                onClose={() => setSelectedGalleryIndex(null)}
+                onPrev={() =>
+                    setSelectedGalleryIndex((current) =>
+                        current === null ? null : (current - 1 + gallery.length) % gallery.length
+                    )
+                }
+                onNext={() =>
+                    setSelectedGalleryIndex((current) =>
+                        current === null ? null : (current + 1) % gallery.length
+                    )
+                }
+            />
         )}
 
         {/* SECTION 4: RSVP FORM */}

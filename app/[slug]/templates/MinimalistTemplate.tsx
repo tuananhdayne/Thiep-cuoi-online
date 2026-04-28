@@ -5,6 +5,7 @@ import { motion, type Variants } from 'framer-motion'
 import { TemplateProps } from './types'
 import { supabase } from '@/lib/supabaseClient'
 import AudioPlayer from '../components/AudioPlayer'
+import ImageLightbox from '../components/ImageLightbox'
 
 // --- Formatting Helpers ---
 const formatDate = (dateStr?: string | null) => {
@@ -39,6 +40,7 @@ export default function MinimalistTemplate({ couple, gallery, wishes, weddingGif
     const [formMsg, setFormMsg] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [toastMsg, setToastMsg] = useState('')
+    const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null)
 
     const handleRSVP = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -202,12 +204,32 @@ export default function MinimalistTemplate({ couple, gallery, wishes, weddingGif
                                     initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
                                     className="break-inside-avoid overflow-hidden rounded-md border border-gray-200"
                                 >
-                                    <img src={img.image_url} alt="Gallery" className="w-full h-auto hover:scale-105 transition-transform duration-700" />
+                                    <button type="button" onClick={() => setSelectedGalleryIndex(idx)} className="block w-full text-left">
+                                        <img src={img.image_url} alt="Gallery" className="w-full h-auto hover:scale-105 transition-transform duration-700" />
+                                    </button>
                                 </motion.div>
                             ))}
                         </div>
                     </div>
                 </section>
+            )}
+
+            {gallery.length > 0 && (
+                <ImageLightbox
+                    images={gallery}
+                    selectedIndex={selectedGalleryIndex}
+                    onClose={() => setSelectedGalleryIndex(null)}
+                    onPrev={() =>
+                        setSelectedGalleryIndex((current) =>
+                            current === null ? null : (current - 1 + gallery.length) % gallery.length
+                        )
+                    }
+                    onNext={() =>
+                        setSelectedGalleryIndex((current) =>
+                            current === null ? null : (current + 1) % gallery.length
+                        )
+                    }
+                />
             )}
 
             {/* 5. HỘP MỪNG CƯỚI (GIFT BOX) */}

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, type Variants } from 'framer-motion'
 import { supabase } from '@/lib/supabaseClient'
 import AudioPlayer from '../components/AudioPlayer'
+import ImageLightbox from '../components/ImageLightbox'
 import { TemplateProps } from './types'
 
 const formatDate = (dateStr?: string | null) => {
@@ -148,6 +149,7 @@ export default function LuxuryTemplate({ couple, gallery, wishes, weddingGift, l
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [toastMsg, setToastMsg] = useState('')
   const [activeVenue, setActiveVenue] = useState<'bride' | 'groom'>('bride')
+  const [selectedGalleryIndex, setSelectedGalleryIndex] = useState<number | null>(null)
 
   const brideTitle = locations?.bride_event_title || 'Lễ Vu Quy'
   const brideDate = formatShortDate(locations?.bride_event_date || couple.wedding_date)
@@ -256,11 +258,11 @@ export default function LuxuryTemplate({ couple, gallery, wishes, weddingGift, l
           <img
             src={heroImage}
             alt="Ảnh bìa"
-            className="relative z-0 h-full w-full object-cover object-center opacity-95"
+            className="relative z-0 h-full w-full object-cover object-center"
           />
-          <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(75,0,0,0.18)_0%,rgba(75,0,0,0.32)_42%,rgba(75,0,0,0.55)_100%)]" />
-          <div className="absolute inset-0 z-20 bg-[radial-gradient(circle_at_center,transparent_22%,rgba(139,0,0,0.18)_72%,rgba(75,0,0,0.42)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 z-20 h-32 bg-gradient-to-t from-[#4B0000] to-transparent" />
+          <div className="absolute inset-0 z-10 bg-[linear-gradient(180deg,rgba(75,0,0,0.05)_0%,rgba(75,0,0,0.12)_42%,rgba(75,0,0,0.25)_100%)]" />
+          <div className="absolute inset-0 z-20 bg-[radial-gradient(circle_at_center,transparent_28%,rgba(139,0,0,0.08)_72%,rgba(75,0,0,0.18)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 z-20 h-32 bg-gradient-to-t from-[#4B0000]/70 to-transparent" />
         </div>
 
         <motion.div
@@ -493,17 +495,40 @@ export default function LuxuryTemplate({ couple, gallery, wishes, weddingGift, l
                 transition={{ duration: 0.8, ease: 'easeOut', delay: idx * 0.05 }}
                 className="group overflow-hidden rounded-2xl border border-[#D4AF37]/50 bg-[#5a0000]/70 shadow-[0_0_20px_rgba(212,175,55,0.2)]"
               >
-                <img
-                  src={img.image_url}
-                  alt={img.caption || `Ảnh cưới ${idx + 1}`}
-                  className="h-72 w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+                <button
+                  type="button"
+                  onClick={() => setSelectedGalleryIndex(idx)}
+                  className="block w-full text-left"
+                >
+                  <img
+                    src={img.image_url}
+                    alt={img.caption || `Ảnh cưới ${idx + 1}`}
+                    className="h-72 w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </button>
               </motion.div>
             ))}
           </div>
         </section>
       )}
 
+      {gallery.length > 0 && (
+        <ImageLightbox
+          images={gallery.slice(0, 9)}
+          selectedIndex={selectedGalleryIndex}
+          onClose={() => setSelectedGalleryIndex(null)}
+          onPrev={() =>
+            setSelectedGalleryIndex((current) =>
+              current === null ? null : (current - 1 + gallery.slice(0, 9).length) % gallery.slice(0, 9).length
+            )
+          }
+          onNext={() =>
+            setSelectedGalleryIndex((current) =>
+              current === null ? null : (current + 1) % gallery.slice(0, 9).length
+            )
+          }
+        />
+      )}
       <section className="relative z-10 px-6 py-24">
         <motion.div
           initial="hidden"
