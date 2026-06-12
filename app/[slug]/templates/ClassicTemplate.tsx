@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react'
 import Gallery from '../components/Gallery'
 import Hero from '../components/Hero'
@@ -11,21 +13,28 @@ import AudioPlayer from '../components/AudioPlayer'
 import GiftSection from '../components/GiftSection'
 import { TemplateProps } from './types'
 
-export default function ClassicTemplate({
-    couple,
-    gallery,
-    wishes,
-    weddingGift,
-    locations,
-}: TemplateProps) {
-    const heroBackground =
-        gallery?.[0]?.image_url ||
-        couple.bride_avatar ||
-        couple.groom_avatar ||
-        undefined
+export default function ClassicTemplate(props: TemplateProps | any) {
+    // Defensive defaults: some callers (demo preview) may pass null/undefined
+    const {
+        couple = {
+            id: 0,
+            slug: 'demo',
+            bride_name: '',
+            groom_name: '',
+            intro_description: '',
+            wedding_date: '',
+            wedding_time: '',
+            theme: 'classic',
+        },
+        gallery = [],
+        wishes = [],
+        weddingGift = null,
+        locations = undefined,
+    } = props || {}
 
-    const themeClass =
-        couple.theme && couple.theme !== 'classic' ? `theme-${couple.theme}` : 'theme-classic'
+    const heroBackground = gallery?.[0]?.image_url || couple?.bride_avatar || couple?.groom_avatar || undefined
+
+    const themeClass = couple?.theme && couple.theme !== 'classic' ? `theme-${couple.theme}` : 'theme-classic'
 
     return (
         <div className={`bg-white text-primary overflow-hidden ${themeClass}`}>

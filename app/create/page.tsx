@@ -1,10 +1,11 @@
 'use client'
 
-import { FormEvent, useMemo, useState, useEffect, Suspense } from 'react'
+import { FormEvent, useMemo, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import ImageUploader from '@/components/ImageUploader'
 import SingleImageUploader from '@/components/SingleImageUploader'
+import AutoScrollTemplatePreview from '../components/AutoScrollTemplatePreview'
 import { getThemeDisplayName, supportedThemes } from '../[slug]/templates/templateLoader'
 type CouplePayload = {
   bride_name: string
@@ -126,6 +127,15 @@ function CreateForm() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [uploadedImages, setUploadedImages] = useState<{ original: string }[]>([])
+  const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit')
+  const [previewNonce, setPreviewNonce] = useState(0)
+  const previewData = useMemo(
+    () => ({
+      couple: form,
+      images: uploadedImages,
+    }),
+    [form, uploadedImages]
+  )
 
   const slug = useMemo(
     () => slugify(form.bride_name, form.groom_name),
@@ -140,6 +150,11 @@ function CreateForm() {
     () => extractMapSrc(form.groom_google_map_embed),
     [form.groom_google_map_embed]
   )
+
+  const openPreview = () => {
+    setPreviewNonce(Date.now())
+    setViewMode('preview')
+  }
 
   const handleChange = (key: keyof CouplePayload, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -303,26 +318,54 @@ function CreateForm() {
   }
 
   return (
-    <main
-      className="min-h-screen flex items-center justify-center px-4 py-14"
-      style={{
-        background:
-          'radial-gradient(circle at 20% 20%, rgba(255, 214, 170, 0.24), transparent 35%), radial-gradient(circle at 80% 10%, rgba(235, 183, 174, 0.2), transparent 36%), #f7f1e8',
-      }}
-    >
-      <div className="w-full max-w-5xl">
-        <div className="bg-white/90 backdrop-blur rounded-[28px] shadow-2xl shadow-amber-100/60 border border-amber-50/80 p-6 md:p-10 space-y-8">
-          <div className="space-y-3 text-center">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#8c6f5a]">Tạo thiệp cưới</p>
-            <h1 className="font-display text-3xl md:text-[34px] text-[#5b3a29] leading-tight">
-              Nhập thông tin cặp đôi
-            </h1>
-            <p className="text-sm md:text-base text-[#9a7d68] leading-relaxed">
-              Điền chi tiết buổi lễ của hai bên để tạo thiệp cưới.
-            </p>
-          </div>
+    <>
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-white border-b flex items-center justify-between p-4">
+        <h2 className="text-lg font-semibold text-[#5b3a29]">
+          {viewMode === 'preview' ? 'Xem trước thiệp cưới' : 'Tạo thiệp cưới'}
+        </h2>
+        <div className="inline-flex rounded-lg bg-white/80 p-1 border">
+          <button type="button" onClick={() => setViewMode('edit')} className={`px-3 py-1 text-sm rounded ${viewMode === 'edit' ? 'bg-amber-100' : 'hover:bg-gray-100'}`}>
+            Chỉnh sửa
+          </button>
+          <button type="button" onClick={openPreview} className={`px-3 py-1 text-sm rounded ${viewMode === 'preview' ? 'bg-amber-100' : 'hover:bg-gray-100'}`}>
+            Xem trước
+          </button>
+        </div>
+      </div>
 
-          <form className="space-y-8" onSubmit={handleSubmit}>
+      {viewMode === 'preview' ? (
+        <main className="fixed inset-0 z-50 bg-white flex flex-col pt-16">
+          <div className="flex-1 overflow-hidden">
+            <AutoScrollTemplatePreview
+              src={`/demo?theme=${encodeURIComponent(form.theme)}&embedded=1&v=${previewNonce}`}
+              title="Preview"
+              autoScroll={false}
+              previewData={previewData}
+            />
+          </div>
+        </main>
+      ) : (
+        <main
+          className="pt-24 min-h-screen flex items-center justify-center px-4 py-14"
+          style={{
+            background:
+              'radial-gradient(circle at 20% 20%, rgba(255, 214, 170, 0.24), transparent 35%), radial-gradient(circle at 80% 10%, rgba(235, 183, 174, 0.2), transparent 36%), #f7f1e8',
+          }}
+        >
+          <div className="w-full max-w-5xl">
+            <div className="bg-white/90 backdrop-blur rounded-[28px] shadow-2xl shadow-amber-100/60 border border-amber-50/80 p-6 md:p-10 space-y-8">
+              <div className="space-y-3 text-center">
+                <p className="text-xs uppercase tracking-[0.3em] text-[#8c6f5a]">Tạo thiệp cưới</p>
+                <h1 className="font-display text-3xl md:text-[34px] text-[#5b3a29] leading-tight">
+                  Nhập thông tin cặp đôi
+                </h1>
+                <p className="text-sm md:text-base text-[#9a7d68] leading-relaxed">
+                  Điền chi tiết buổi lễ của hai bên để tạo thiệp cưới.
+                </p>
+              </div>
+
+              <div className="space-y-8">
+                <form className="space-y-8" onSubmit={handleSubmit}>
             <section className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-3">
                 <label className="text-sm text-[#7b5e4b]">Tên cô dâu *</label>
@@ -483,137 +526,9 @@ function CreateForm() {
               </div>
             </section>
 
-            <section className="space-y-4">
-              <label className="text-sm text-[#7b5e4b] font-medium flex items-center justify-between">
-                <span>Chọn Mẫu Giao Diện *</span>
-                <span className="text-xs text-[#9a7d68] font-normal">Cuộn để xem thêm mẫu</span>
-              </label>
-
-              <div className="flex overflow-x-auto pb-4 gap-4 snap-x hide-scrollbar">
-                {/* Classic */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'classic'
-                      ? 'border-[#c08a4b] shadow-[0_8px_20px_rgba(192,138,75,0.2)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="classic" checked={form.theme === 'classic'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" alt="Cổ Điển Hoàng Kim" className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'classic' ? 'bg-[#fffaf3]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-[#5b3a29]">{getThemeDisplayName('classic')}</p>
-                      {form.theme === 'classic' && <div className="w-4 h-4 rounded-full bg-[#c08a4b] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className="text-[11px] text-[#7b5e4b] leading-tight">Bố cục ấm áp, sang trọng và thanh lịch.</p>
-                  </div>
-                </label>
-
-                {/* Heritage */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'heritage'
-                      ? 'border-[#0f766e] shadow-[0_8px_20px_rgba(15,118,110,0.2)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="heritage" checked={form.theme === 'heritage'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1513279922550-250c2129b13a?auto=format&fit=crop&q=80&w=400" alt="Hỷ Sắc Cổ Truyền" className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'heritage' ? 'bg-[#eef7f4]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-[#174a43]">{getThemeDisplayName('heritage')}</p>
-                      {form.theme === 'heritage' && <div className="w-4 h-4 rounded-full bg-[#0f766e] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className="text-[11px] text-[#3f6b64] leading-tight">Hoa văn Việt cổ, tông ngọc cổ trang nhã và cảm giác trang trọng.</p>
-                  </div>
-                </label>
-
-                {/* Midnight */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'midnight'
-                      ? 'border-[#d4af7a] shadow-[0_8px_20px_rgba(212,175,122,0.18)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="midnight" checked={form.theme === 'midnight'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&q=80&w=400" alt="Dạ Tiệc Ánh Kim" className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'midnight' ? 'bg-[#0f1720]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className={`font-semibold ${form.theme === 'midnight' ? 'text-[#f5efe6]' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('midnight')}</p>
-                      {form.theme === 'midnight' && <div className="w-4 h-4 rounded-full bg-[#d4af7a] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className={`text-[11px] leading-tight ${form.theme === 'midnight' ? 'text-[#d4c6b4]' : 'text-[#7b5e4b]'}`}>Tối màu sang trọng, ánh kim.</p>
-                  </div>
-                </label>
-
-                {/* Elegance */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'elegance'
-                      ? 'border-[#b39a6a] shadow-[0_8px_20px_rgba(179,154,106,0.18)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="elegance" checked={form.theme === 'elegance'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-gray-100">
-                    <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=400" alt="Thanh Lịch Tân Cổ Điển" className="w-full h-full object-cover" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'elegance' ? 'bg-[#f8f6f1]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className={`font-semibold ${form.theme === 'elegance' ? 'text-[#2d2a26]' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('elegance')}</p>
-                      {form.theme === 'elegance' && <div className="w-4 h-4 rounded-full bg-[#b39a6a] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className={`text-[11px] leading-tight ${form.theme === 'elegance' ? 'text-[#4a453d]' : 'text-[#7b5e4b]'}`}>Tối giản kết hợp tân cổ điển sang trọng.</p>
-                  </div>
-                </label>
-
-                {/* Romance (Midnight Glassmorphism) */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'romance'
-                      ? 'border-[#f43f5e] shadow-[0_8px_20px_rgba(244,63,94,0.18)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="romance" checked={form.theme === 'romance'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-[#0B132B]">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=400" alt="Đêm Lãng Mạn" className="w-full h-full object-cover opacity-70" />
-                  </div>
-                  <div className={`p-4 ${form.theme === 'romance' ? 'bg-[#1a1120]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className={`font-semibold ${form.theme === 'romance' ? 'text-rose-300' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('romance')}</p>
-                      {form.theme === 'romance' && <div className="w-4 h-4 rounded-full bg-rose-400 flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className={`text-[11px] leading-tight ${form.theme === 'romance' ? 'text-rose-200/70' : 'text-[#7b5e4b]'}`}>Glassmorphism với hiệu ứng hạt ánh sáng lãng mạn.</p>
-                  </div>
-                </label>
-
-                {/* Minimalist Neoclassical (Typography Focus) */}
-                <label
-                  className={`relative flex-none w-[200px] cursor-pointer rounded-[24px] border-2 overflow-hidden transition-all snap-start ${form.theme === 'minimalist'
-                      ? 'border-[#BFA054] shadow-[0_8px_20px_rgba(191,160,84,0.18)] scale-100'
-                      : 'border-transparent opacity-70 hover:opacity-100 scale-95 hover:scale-100'
-                    }`}
-                >
-                  <input type="radio" name="theme" value="minimalist" checked={form.theme === 'minimalist'} onChange={(e) => handleChange('theme', e.target.value)} className="sr-only" />
-                  <div className="h-32 w-full bg-[#FDFBF7]">
-                    <div className="w-full h-full flex flex-col items-center justify-center border-b border-[#E5DFD3]">
-                        <span className="font-signora text-3xl text-gray-800">Wedding</span>
-                    </div>
-                  </div>
-                  <div className={`p-4 ${form.theme === 'minimalist' ? 'bg-[#F9F6F0]' : 'bg-white'}`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <p className={`font-semibold ${form.theme === 'minimalist' ? 'text-gray-900' : 'text-[#5b3a29]'}`}>{getThemeDisplayName('minimalist')}</p>
-                      {form.theme === 'minimalist' && <div className="w-4 h-4 rounded-full bg-[#BFA054] flex items-center justify-center"><svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg></div>}
-                    </div>
-                    <p className={`text-[11px] leading-tight ${form.theme === 'minimalist' ? 'text-gray-600' : 'text-[#7b5e4b]'}`}>Sang trọng, căn giữa, tập trung vào font chữ thư pháp cổ điển.</p>
-                  </div>
-                </label>
-
-              </div>
-            </section>
+            {/* Theme selection removed: choose theme from homepage. Keep hidden input so form still posts the theme. */}
+            <input type="hidden" name="theme" value={form.theme} />
+            <div className="text-sm text-[#7b5e4b]">Mẫu thiệp được chọn trên trang chủ. Hiện tại: <strong className="ml-2">{getThemeDisplayName(form.theme)}</strong></div>
 
             {/* Gift Box Toggle & Bank Details */}
             <section className="space-y-4">
@@ -738,9 +653,12 @@ function CreateForm() {
               {loading ? 'Đang tạo thiệp & tải ảnh...' : 'Tạo thiệp'}
             </button>
           </form>
-        </div>
-      </div>
-    </main>
+              </div>
+            </div>
+          </div>
+        </main>
+      )}
+    </>
   )
 }
 

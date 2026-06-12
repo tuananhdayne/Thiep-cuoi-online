@@ -33,6 +33,29 @@ export type Couple = {
     music_volume?: number | null
     music_autoplay?: boolean | null
     theme?: string | null
+    // Event details
+    bride_event_title?: string | null
+    bride_event_date?: string | null
+    bride_event_time?: string | null
+    bride_location?: string | null
+    bride_address?: string | null
+    bride_google_map_embed?: string | null
+    groom_event_title?: string | null
+    groom_event_date?: string | null
+    groom_event_time?: string | null
+    groom_location?: string | null
+    groom_address?: string | null
+    groom_google_map_embed?: string | null
+    // Gift details
+    gift_enabled?: boolean | null
+    groom_bank_name?: string | null
+    groom_bank_holder?: string | null
+    groom_bank_account?: string | null
+    groom_bank_qr?: string | null
+    bride_bank_name?: string | null
+    bride_bank_holder?: string | null
+    bride_bank_account?: string | null
+    bride_bank_qr?: string | null
 }
 
 export type WeddingGift = {
@@ -63,10 +86,21 @@ export type Wish = {
     created_at: string
 }
 
+export type Story = {
+    id: number
+    couple_id?: number
+    title: string
+    story_date?: string | null
+    description: string
+    image_url?: string | null
+    sort_order?: number | null
+}
+
 export interface TemplateProps {
     couple: Couple
     gallery: GalleryItem[]
     wishes: Wish[]
     weddingGift?: WeddingGift | null
     locations?: Location | null
+    stories?: Story[]
 }

@@ -9,14 +9,16 @@ export type RsvpSectionProps = {
     guestName?: string
     brideAvatar?: string | null
     groomAvatar?: string | null
+    includeMessage?: boolean
 }
 
-export default function RsvpSection({ coupleId, guestName: initialGuestName = '', brideAvatar, groomAvatar }: RsvpSectionProps) {
+export default function RsvpSection({ coupleId, guestName: initialGuestName = '', brideAvatar, groomAvatar, includeMessage = false }: RsvpSectionProps) {
     const [guestName, setGuestName] = useState(initialGuestName)
     const [attendStatus, setAttendStatus] = useState<'Có' | 'Không' | 'Chưa chắc'>('Có')
     const [guestCount, setGuestCount] = useState<'1' | '2' | '3' | '4'>('1')
     const [side, setSide] = useState<'Nhà trai' | 'Nhà gái'>('Nhà gái')
 
+    const [message, setMessage] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [toastMessage, setToastMessage] = useState('')
 
@@ -33,15 +35,22 @@ export default function RsvpSection({ coupleId, guestName: initialGuestName = ''
             const mappedAttend = attendStatus === 'Có' ? 'yes' : attendStatus === 'Không' ? 'no' : 'maybe'
             const mappedSide = side === 'Nhà trai' ? 'groom' : 'bride'
 
-            const { error } = await supabase.from('rsvp').insert([
-                {
-                    couple_id: coupleId,
-                    guest_name: guestName.trim(),
-                    attend_status: mappedAttend,
-                    guest_count: parseInt(guestCount, 10),
-                    side: mappedSide,
-                },
+            const payload = {
+                couple_id: coupleId,
+                guest_name: guestName.trim(),
+                attend_status: mappedAttend,
+                guest_count: parseInt(guestCount, 10),
+                side: mappedSide,
+            }
+
+            let { error } = await supabase.from('rsvp').insert([
+                includeMessage ? { ...payload, message: message.trim() || null } : payload,
             ])
+
+            if (error && includeMessage) {
+                const retry = await supabase.from('rsvp').insert([payload])
+                error = retry.error
+            }
 
             if (error) throw error
 
@@ -86,7 +95,7 @@ export default function RsvpSection({ coupleId, guestName: initialGuestName = ''
                                     <label className="block text-sm font-medium text-primary mb-2">Bạn sẽ đến chứ?</label>
                                     <select
                                         value={attendStatus}
-                                        onChange={(e) => setAttendStatus(e.target.value as any)}
+                                        onChange={(e) => setAttendStatus(e.target.value as typeof attendStatus)}
                                         className="w-full px-5 py-3.5 rounded-2xl bg-bg-alt/50 border-border-light text-primary focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all appearance-none outline-none"
                                     >
                                         <option value="Có">Có, tôi sẽ đến</option>
@@ -100,7 +109,7 @@ export default function RsvpSection({ coupleId, guestName: initialGuestName = ''
                                     <label className="block text-sm font-medium text-primary mb-2">Bạn đi bao nhiêu người?</label>
                                     <select
                                         value={guestCount}
-                                        onChange={(e) => setGuestCount(e.target.value as any)}
+                                        onChange={(e) => setGuestCount(e.target.value as typeof guestCount)}
                                         className="w-full px-5 py-3.5 rounded-2xl bg-bg-alt/50 border-border-light text-primary focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all appearance-none outline-none"
                                         disabled={attendStatus === 'Không'}
                                     >
@@ -148,6 +157,19 @@ export default function RsvpSection({ coupleId, guestName: initialGuestName = ''
                                     </label>
                                 </div>
                             </div>
+
+                            {includeMessage && (
+                                <div>
+                                    <label className="block text-sm font-medium text-primary mb-2">Lời nhắn dành cho cô dâu chú rể</label>
+                                    <textarea
+                                        placeholder="Gửi một lời nhắn ngắn..."
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        rows={4}
+                                        className="w-full resize-none px-5 py-3.5 rounded-2xl bg-bg-alt/50 border-border-light text-primary placeholder:text-primary-light focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all"
+                                    />
+                                </div>
+                            )}
 
                             {/* Submit */}
                             <div className="pt-4">

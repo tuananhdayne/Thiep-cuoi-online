@@ -1,22 +1,101 @@
+"use client"
+
+import React, { useEffect, useState, Suspense } from 'react'
 import { Couple, GalleryItem, Wish } from '../[slug]/templates/types'
-import { getThemeDisplayName, loadTemplate, supportedThemes } from '../[slug]/templates/templateLoader'
+import { loadTemplate, supportedThemes } from '../[slug]/templates/templateLoader'
+import { useSearchParams } from 'next/navigation'
 
-export default async function DemoPage({
-    searchParams,
-}: {
-    searchParams: Promise<{ theme?: string; embedded?: string }>
-}) {
-    const { theme, embedded } = await searchParams
-    const requestedTheme = theme || 'classic'
-    const isEmbedded = embedded === '1'
+const getPreviewImageUrl = (item: unknown) => {
+    if (typeof item === 'string') return item
+    if (!item || typeof item !== 'object') return ''
 
-    // Validate theme, default to classic
-    const validTheme = supportedThemes.includes(requestedTheme as (typeof supportedThemes)[number])
-        ? requestedTheme
+    const image = item as { original?: unknown; url?: unknown }
+    if (typeof image.original === 'string') return image.original
+    if (typeof image.url === 'string') return image.url
+    return ''
+}
+
+function DemoPageContent() {
+    const searchParams = useSearchParams()
+    const theme = searchParams.get('theme') || 'classic'
+    const [TemplateToRender, setTemplateToRender] = useState<React.ComponentType<any> | null>(null)
+    const [couple, setCouple] = useState<Couple | null>(null)
+    const [previewGallery, setPreviewGallery] = useState<GalleryItem[]>([])
+    const [hasPreviewData, setHasPreviewData] = useState(false)
+
+    const validTheme = supportedThemes.includes(theme as (typeof supportedThemes)[number])
+        ? theme
         : 'classic'
 
-    // Mock Data for Demo
-    const mockCouple: Couple = {
+    useEffect(() => {
+        let active = true
+
+        // Load template. Wrap setState so React does not treat component as a state updater function.
+        loadTemplate(validTheme).then((loaded) => {
+            if (!active) return
+
+            const component =
+                typeof loaded === 'function'
+                    ? (loaded as React.ComponentType<any>)
+                    : loaded && typeof loaded === 'object' && 'default' in (loaded as any)
+                        ? ((loaded as any).default as React.ComponentType<any>)
+                        : null
+
+            if (component) {
+                // Wrap in function so React stores the component value,
+                // not treat it as a functional state updater.
+                setTemplateToRender(() => component)
+            } else {
+                setTemplateToRender(null)
+            }
+        })
+
+        return () => {
+            active = false
+        }
+    }, [validTheme])
+
+    useEffect(() => {
+        const receivePreviewData = (event: MessageEvent) => {
+            if (
+                event.origin !== window.location.origin ||
+                event.source !== window.parent ||
+                event.data?.type !== 'wedding-preview-data'
+            ) {
+                return
+            }
+
+            const data = event.data.payload
+            if (!data?.couple) return
+
+            setHasPreviewData(true)
+            setCouple({
+                ...data.couple,
+                theme: validTheme,
+            })
+
+            const mapped = Array.isArray(data.images)
+                ? data.images
+                    .map((item: unknown, index: number) => {
+                        const imageUrl = getPreviewImageUrl(item)
+                        if (!imageUrl) return null
+                        return {
+                            id: index + 1,
+                            image_url: imageUrl,
+                        } as GalleryItem
+                    })
+                    .filter(Boolean) as GalleryItem[]
+                : []
+
+            setPreviewGallery(mapped)
+        }
+
+        window.addEventListener('message', receivePreviewData)
+        return () => window.removeEventListener('message', receivePreviewData)
+    }, [validTheme])
+
+    // Mock Data for Demo (fallback)
+    const mockCouple: Couple = couple || {
         id: 0,
         slug: 'demo',
         bride_name: 'Ngọc Lan',
@@ -31,76 +110,108 @@ export default async function DemoPage({
 
     const mockLocations = {
         id: '1',
-        couple_id: '0',
-        bride_event_title: 'Lễ Vu Quy',
-        bride_event_date: '2025-12-24',
-        bride_event_time: '09:00',
-        bride_location: 'Tư Gia Nhà Gái',
-        bride_address: '123 Đường Hoa Hồng, Quận 1, TP. HCM',
-        bride_google_map_embed: '',
-        groom_event_title: 'Tiệc Cưới',
-        groom_event_date: '2025-12-25',
-        groom_event_time: '18:00',
-        groom_location: 'Trung tâm Hội nghị The Grand',
-        groom_address: '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM',
-        groom_google_map_embed: ''
+        couple_id: couple?.id?.toString() || '0',
+        bride_event_title: couple?.bride_event_title || 'Lễ Vu Quy',
+        bride_event_date: couple?.bride_event_date || '2025-12-24',
+        bride_event_time: couple?.bride_event_time || '09:00',
+        bride_location: couple?.bride_location || 'Tư Gia Nhà Gái',
+        bride_address: couple?.bride_address || '123 Đường Hoa Hồng, Quận 1, TP. HCM',
+        bride_google_map_embed: couple?.bride_google_map_embed || '',
+        groom_event_title: couple?.groom_event_title || 'Tiệc Cưới',
+        groom_event_date: couple?.groom_event_date || '2025-12-25',
+        groom_event_time: couple?.groom_event_time || '18:00',
+        groom_location: couple?.groom_location || 'Trung tâm Hội nghị The Grand',
+        groom_address: couple?.groom_address || '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM',
+        groom_google_map_embed: couple?.groom_google_map_embed || ''
     }
 
     const mockGift = {
         id: 1,
-        couple_id: 0,
-        is_enabled: true,
-        groom_bank_name: 'Vietcombank',
-        groom_bank_holder: 'NGUYEN MINH KHANG',
-        groom_bank_account: '9948240614',
-        groom_bank_qr: 'https://img.vietqr.io/image/VCB-9948240614-compact.png',
-        bride_bank_name: 'Vietcombank',
-        bride_bank_holder: 'TRAN NGOC LAN',
-        bride_bank_account: '1062395400',
-        bride_bank_qr: 'https://img.vietqr.io/image/VCB-1062395400-compact.png',
+        couple_id: couple?.id || 0,
+        is_enabled: couple?.gift_enabled !== false,
+        groom_bank_name: couple?.groom_bank_name || 'Vietcombank',
+        groom_bank_holder: couple?.groom_bank_holder || 'NGUYEN MINH KHANG',
+        groom_bank_account: couple?.groom_bank_account || '9948240614',
+        groom_bank_qr: couple?.groom_bank_qr || 'https://img.vietqr.io/image/VCB-9948240614-compact.png',
+        bride_bank_name: couple?.bride_bank_name || 'Vietcombank',
+        bride_bank_holder: couple?.bride_bank_holder || 'TRAN NGOC LAN',
+        bride_bank_account: couple?.bride_bank_account || '1062395400',
+        bride_bank_qr: couple?.bride_bank_qr || 'https://img.vietqr.io/image/VCB-1062395400-compact.png',
     }
 
-    const mockGallery: GalleryItem[] = [
-        { id: 1, image_url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80' },
-        { id: 2, image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80' },
-        { id: 3, image_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80' },
-        { id: 4, image_url: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80' },
+    const locationsToRender = hasPreviewData
+        ? {
+            id: 'preview',
+            couple_id: couple?.id?.toString() || '0',
+            bride_event_title: couple?.bride_event_title || '',
+            bride_event_date: couple?.bride_event_date || '',
+            bride_event_time: couple?.bride_event_time || '',
+            bride_location: couple?.bride_location || '',
+            bride_address: couple?.bride_address || '',
+            bride_google_map_embed: couple?.bride_google_map_embed || '',
+            groom_event_title: couple?.groom_event_title || '',
+            groom_event_date: couple?.groom_event_date || '',
+            groom_event_time: couple?.groom_event_time || '',
+            groom_location: couple?.groom_location || '',
+            groom_address: couple?.groom_address || '',
+            groom_google_map_embed: couple?.groom_google_map_embed || '',
+        }
+        : mockLocations
+
+    const giftToRender = hasPreviewData
+        ? {
+            id: 0,
+            couple_id: couple?.id || 0,
+            is_enabled: couple?.gift_enabled === true,
+            groom_bank_name: couple?.groom_bank_name || '',
+            groom_bank_holder: couple?.groom_bank_holder || '',
+            groom_bank_account: couple?.groom_bank_account || '',
+            groom_bank_qr: couple?.groom_bank_qr || '',
+            bride_bank_name: couple?.bride_bank_name || '',
+            bride_bank_holder: couple?.bride_bank_holder || '',
+            bride_bank_account: couple?.bride_bank_account || '',
+            bride_bank_qr: couple?.bride_bank_qr || '',
+        }
+        : mockGift
+
+    const defaultGallery: GalleryItem[] = [
+        { id: 1, image_url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1600&q=88' },
+        { id: 2, image_url: 'https://images.unsplash.com/photo-1529633965402-3b5bf2e4f9b1?auto=format&fit=crop&w=1400&q=85' },
+        { id: 3, image_url: 'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=1400&q=85' },
+        { id: 4, image_url: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1400&q=85' },
     ]
+    const mockGallery: GalleryItem[] = hasPreviewData ? previewGallery : defaultGallery
 
     const mockWishes: Wish[] = [
         { id: 1, name: 'Hội bạn thân', message: 'Chúc hai bạn trăm năm hạnh phúc, sớm sinh quý tử nhé!', created_at: new Date().toISOString() },
         { id: 2, name: 'Đồng nghiệp', message: 'Mãi mãi yêu thương và đồng hành cùng nhau nhé anh chị.', created_at: new Date(Date.now() - 86400000).toISOString() },
     ]
 
-    const TemplateToRender = await loadTemplate(validTheme)
+    if (!TemplateToRender) {
+        return <div>Loading...</div>
+    }
+
+    if (!TemplateToRender) {
+        return <div>Template unavailable</div>
+    }
 
     return (
         <main className="relative">
-            {/* Floating Notice pointing back to Home or Create */}
-            {!isEmbedded && (
-                <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] animate-fade-in-up flex flex-col items-center gap-2">
-                    <div className="bg-primary text-bg-main px-6 py-2 rounded-full shadow-2xl flex items-center gap-3">
-                        <span className="text-xl">✨</span>
-                        <p className="text-sm font-semibold tracking-wide">
-                            Bản Xem Thử (Mẫu: {getThemeDisplayName(validTheme)})
-                        </p>
-                    </div>
-                    <a
-                        href={`/create?theme=${validTheme}`}
-                        className="bg-white/90 backdrop-blur-sm text-primary px-5 py-2 rounded-full shadow-lg text-xs font-bold hover:bg-white hover:scale-105 transition-all flex items-center gap-2"
-                    >
-                        Tạo Thiệp Với Mẫu này ➔
-                    </a>
-                </div>
-            )}
-
             <TemplateToRender
                 couple={mockCouple}
                 gallery={mockGallery}
                 wishes={mockWishes}
-                weddingGift={mockGift}
-                locations={mockLocations}
+                weddingGift={giftToRender}
+                locations={locationsToRender}
             />
         </main>
+    )
+}
+
+export default function DemoPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <DemoPageContent />
+        </Suspense>
     )
 }

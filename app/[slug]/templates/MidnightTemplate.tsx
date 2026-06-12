@@ -385,15 +385,7 @@ export default function MidnightTemplate({ couple, gallery, wishes, weddingGift,
           </FadeIn>
 
           <FadeIn className="col-span-12 md:col-span-10 md:col-start-2 lg:mt-4" delay={0.34}>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="border border-[#2C2A29]/10 bg-[#F2EFE9] px-5 py-5">
-                <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55">
-                  Dress Code
-                </p>
-                <p className="mt-3 text-sm leading-7 text-[#2C2A29]/76">
-                  Tông trắng, kem, nâu nhạt. Tránh họa tiết quá mạnh để giữ nhịp thị giác của không gian.
-                </p>
-              </div>
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="border border-[#2C2A29]/10 bg-[#F2EFE9] px-5 py-5 md:translate-y-8">
                 <p className="text-[0.68rem] uppercase tracking-[0.5em] text-[#2C2A29]/55">
                   RSVP

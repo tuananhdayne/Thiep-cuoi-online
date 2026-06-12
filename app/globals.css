@@ -68,6 +68,58 @@
   --border-light: rgba(179, 154, 106, 0.25);
 }
 
+/* Pastel Theme – Korean Soft Romance */
+.theme-pastel {
+  --bg-main: #faf7f2;
+  --bg-alt: #ffffff;
+  --primary: #6b6b6b;
+  --primary-light: #8f8f8f;
+  --accent: #a8c3bc;
+  --accent-light: #dce8f2;
+  --accent-pale: rgba(232, 207, 207, 0.34);
+  --accent-bg: rgba(255, 255, 255, 0.72);
+  --border-light: rgba(107, 107, 107, 0.1);
+}
+
+/* Vietnamese silk wedding theme */
+.theme-viet-silk {
+  --bg-main: #f5ead5;
+  --bg-alt: #fffaf0;
+  --primary: #6f2325;
+  --primary-light: #8d5843;
+  --accent: #a76238;
+  --accent-light: #d6a75f;
+  --accent-pale: rgba(183, 132, 73, 0.22);
+  --accent-bg: #fff4df;
+  --border-light: rgba(183, 132, 73, 0.34);
+}
+
+/* European botanical garden wedding theme */
+.theme-botanical {
+  --bg-main: #f7f3e9;
+  --bg-alt: #edf1e9;
+  --primary: #3f4a38;
+  --primary-light: #687060;
+  --accent: #879477;
+  --accent-light: #b4a173;
+  --accent-pale: rgba(135, 148, 119, 0.2);
+  --accent-bg: #f0f2eb;
+  --border-light: rgba(135, 148, 119, 0.3);
+}
+
+/* Midnight Elegance - luxury evening wedding theme */
+.theme-midnight-elegance {
+  --bg-main: #0f172a;
+  --bg-alt: #111827;
+  --primary: #f8f8f2;
+  --primary-light: rgba(248, 248, 242, 0.72);
+  --accent: #d4af7f;
+  --accent-light: #f3d8a5;
+  --accent-pale: rgba(212, 175, 127, 0.16);
+  --accent-bg: rgba(17, 24, 39, 0.72);
+  --border-light: rgba(212, 175, 127, 0.28);
+}
+
 @theme inline {
   --color-foreground: var(--foreground);
   --color-bg-main: var(--bg-main);

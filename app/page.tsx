@@ -1,254 +1,389 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import PetalEffect from './[slug]/components/PetalEffect'
-import { getThemeDisplayName } from './[slug]/templates/templateLoader'
 import AutoScrollTemplatePreview from './components/AutoScrollTemplatePreview'
+import { getThemeDisplayName, type SupportedTheme } from './[slug]/templates/templateLoader'
+
+type TemplateCard = {
+  theme: SupportedTheme
+  eyebrow: string
+  description: string
+  palette: string
+  frame: string
+  badge: string
+  button: string
+  featured?: boolean
+}
+
+const templates: TemplateCard[] = [
+  {
+    theme: 'classic',
+    eyebrow: 'Ấm áp · Trang trọng',
+    description: 'Sắc nâu và vàng cổ điển, dành cho một lễ cưới trang trọng nhưng vẫn gần gũi.',
+    palette: 'from-[#f8ecdc] via-[#fffaf3] to-[#ead2b5]',
+    frame: 'border-[#6b4632]/20 shadow-[0_24px_55px_rgba(91,58,41,0.2)]',
+    badge: 'bg-white/80 text-[#654430] border-[#8f6246]/15',
+    button: 'from-[#6b4632] to-[#b77d47]',
+  },
+  {
+    theme: 'heritage',
+    eyebrow: 'Tinh hoa Việt · Thanh nhã',
+    description: 'Hoa văn truyền thống trên nền ngọc trầm, cân bằng giữa nét Việt và thẩm mỹ hiện đại.',
+    palette: 'from-[#dcece7] via-[#f2f8f5] to-[#c7ddd5]',
+    frame: 'border-[#174a43]/20 shadow-[0_24px_55px_rgba(23,74,67,0.2)]',
+    badge: 'bg-white/80 text-[#174a43] border-[#174a43]/15',
+    button: 'from-[#174a43] to-[#2a8b7e]',
+  },
+  {
+    theme: 'midnight',
+    eyebrow: 'Điện ảnh · Sang trọng',
+    description: 'Nền đêm sâu cùng ánh kim tinh tế, phù hợp với tiệc tối và không gian cao cấp.',
+    palette: 'from-[#121b26] via-[#1c2937] to-[#0a1017]',
+    frame: 'border-[#d4af7a]/25 shadow-[0_24px_60px_rgba(0,0,0,0.45)]',
+    badge: 'bg-white/10 text-[#f5e8d2] border-white/10',
+    button: 'from-[#b98c52] to-[#e0bd83]',
+  },
+  {
+    theme: 'elegance',
+    eyebrow: 'Tân cổ điển · Tinh tế',
+    description: 'Nhiều khoảng thở, typography thanh lịch và những đường viền vàng đồng nhẹ nhàng.',
+    palette: 'from-[#eee9df] via-[#faf8f4] to-[#ddd3c1]',
+    frame: 'border-[#b39a6a]/20 shadow-[0_24px_55px_rgba(45,42,38,0.17)]',
+    badge: 'bg-white/80 text-[#3b3731] border-[#b39a6a]/20',
+    button: 'from-[#75654a] to-[#b39a6a]',
+  },
+  {
+    theme: 'luxury',
+    eyebrow: 'Hỷ sắc · Quyền quý',
+    description: 'Đỏ đô và vàng kim tạo nên không khí hỷ sự truyền thống, nổi bật và đầy trang trọng.',
+    palette: 'from-[#8f2028] via-[#b7373f] to-[#f0cda0]',
+    frame: 'border-[#f5d79b]/45 shadow-[0_24px_60px_rgba(112,25,31,0.28)]',
+    badge: 'bg-[#fff5dc]/90 text-[#8b2229] border-[#f1d39a]/60',
+    button: 'from-[#a62932] to-[#d7a447]',
+  },
+  {
+    theme: 'romance',
+    eyebrow: 'Lãng mạn · Huyền ảo',
+    description: 'Glassmorphism, sắc hồng đêm và hiệu ứng ánh sáng cho một câu chuyện tình đầy cảm xúc.',
+    palette: 'from-[#160e1c] via-[#2c1737] to-[#120a18]',
+    frame: 'border-rose-300/20 shadow-[0_24px_60px_rgba(190,60,110,0.3)]',
+    badge: 'bg-rose-300/10 text-rose-100 border-rose-200/15',
+    button: 'from-[#a83f69] to-[#e06f93]',
+  },
+  {
+    theme: 'minimalist',
+    eyebrow: 'Tối giản · Thời thượng',
+    description: 'Bố cục sạch, chữ đẹp và đường nét chuẩn mực để mọi thông tin luôn dễ đọc và nổi bật.',
+    palette: 'from-[#e8e5de] via-[#fdfbf7] to-[#d9d5cc]',
+    frame: 'border-black/10 shadow-[0_24px_55px_rgba(0,0,0,0.14)]',
+    badge: 'bg-white/80 text-[#2d3748] border-black/10',
+    button: 'from-[#26313e] to-[#596777]',
+  },
+  {
+    theme: 'pastel',
+    eyebrow: 'Hàn Quốc · Nhẹ nhàng',
+    description: 'Sage, nude và watercolor mềm mại cho một tấm thiệp trong trẻo, trẻ trung và giàu cảm xúc.',
+    palette: 'from-[#e3eeea] via-[#fbf8f3] to-[#eddcdd]',
+    frame: 'border-[#8ca89f]/20 shadow-[0_24px_55px_rgba(107,122,118,0.18)]',
+    badge: 'bg-white/80 text-[#60736e] border-[#8ca89f]/20',
+    button: 'from-[#78978f] to-[#a8c3bc]',
+  },
+  {
+    theme: 'viet-silk',
+    eyebrow: 'Gấm Việt · Hoa sen',
+    description: 'Đỏ son, kem lụa và vàng đồng kết hợp hoa sen, mây cổ và tinh thần thiệp hỷ Việt Nam.',
+    palette: 'from-[#f0d7b0] via-[#fff4df] to-[#a92f35]',
+    frame: 'border-[#e2bd78]/50 shadow-[0_24px_60px_rgba(111,35,37,0.28)]',
+    badge: 'bg-[#fff5df]/90 text-[#7d1f25] border-[#d7ad69]/50',
+    button: 'from-[#7d1f25] to-[#b78449]',
+  },
+  {
+    theme: 'botanical',
+    eyebrow: 'Garden wedding · Lãng mạn',
+    description: 'Khu vườn châu Âu với eucalyptus, olive, hoa trắng và bảng màu sage dịu nhẹ, thanh lịch.',
+    palette: 'from-[#dce4d5] via-[#f8f4e9] to-[#d9c8b4]',
+    frame: 'border-[#cbd5c2]/60 shadow-[0_24px_60px_rgba(74,86,65,0.22)]',
+    badge: 'bg-[#fffdf7]/90 text-[#4d5a45] border-[#aab8a0]/45',
+    button: 'from-[#647258] to-[#a8976d]',
+  },
+  {
+    theme: 'midnight-elegance',
+    eyebrow: 'Ballroom · Champagne glow',
+    description: 'Dạ tiệc cưới buổi tối với navy sâu, đen than, ánh pha lê và vàng champagne sang trọng.',
+    palette: 'from-[#070b12] via-[#0f172a] to-[#d4af7f]',
+    frame: 'border-[#d4af7f]/30 shadow-[0_24px_70px_rgba(0,0,0,0.45)]',
+    badge: 'bg-[#111827]/80 text-[#f8f8f2] border-[#d4af7f]/30',
+    button: 'from-[#111827] to-[#d4af7f]',
+  },
+]
+
+const features = [
+  {
+    number: '01',
+    title: 'Thiết kế có gu',
+    text: 'Nhiều phong cách được chăm chút cho từng không khí lễ cưới.',
+  },
+  {
+    number: '02',
+    title: 'Tạo trong vài phút',
+    text: 'Nhập thông tin, tải ảnh và xem trước ngay trước khi xuất bản.',
+  },
+  {
+    number: '03',
+    title: 'Đủ tiện ích',
+    text: 'Album ảnh, bản đồ, RSVP, lời chúc và hộp mừng cưới trong một nơi.',
+  },
+]
+
+function ArrowIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M5 12h14M14 7l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#fffaf3] text-[#5b3a29] font-sans selection:bg-[#c08a4b]/30">
+    <main className="min-h-screen overflow-hidden bg-[#f8f3ec] text-[#3c2921] selection:bg-[#bd8754]/25">
       <PetalEffect />
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden flex flex-col items-center justify-center min-h-[80vh] text-center">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay pointer-events-none"></div>
-        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-gradient-to-br from-[#c08a4b]/20 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] bg-gradient-to-bl from-[#e6b877]/20 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+      <header className="absolute inset-x-0 top-0 z-40">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-6 md:px-8">
+          <Link href="/" className="group flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-full border border-[#ad7748]/25 bg-white/70 font-display text-xl italic text-[#8b5a35] shadow-sm backdrop-blur-md">
+              W
+            </span>
+            <span>
+              <span className="block font-display text-lg leading-none text-[#4b3024]">Wedding Story</span>
+              <span className="mt-1 block text-[9px] uppercase tracking-[0.32em] text-[#a17b63]">Thiệp cưới trực tuyến</span>
+            </span>
+          </Link>
 
-        <div className="relative z-10 max-w-3xl mx-auto space-y-8 animate-fade-in-up">
-          <p className="text-sm md:text-base uppercase tracking-[0.3em] text-[#c08a4b] font-semibold">
-            Nền Tảng Tạo Thiệp Cưới Trực Tuyến
-          </p>
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-[#5b3a29] leading-[1.1]">
-            Lưu Giữ <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c08a4b] to-[#e6b877] italic pr-2">Khoảnh Khắc</span>
-            <br /> Trọn Vẹn
-          </h1>
-          <p className="text-lg md:text-xl text-[#7b5e4b] max-w-2xl mx-auto leading-relaxed">
-            Tạo thiệp cưới điện tử mang đậm dấu ấn cá nhân của bạn chỉ trong vài phút.
-            Gửi gắm yêu thương, nhận lời chúc phúc và quản lý khách mời dễ dàng.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <nav className="hidden items-center gap-8 text-sm text-[#745848] md:flex">
+            <a href="#features" className="transition hover:text-[#a46d3e]">Tiện ích</a>
+            <a href="#templates" className="transition hover:text-[#a46d3e]">Giao diện</a>
             <Link
               href="/create"
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#c08a4b] to-[#e6b877] text-white rounded-full font-medium hover:shadow-[0_8px_30px_rgba(192,138,75,0.4)] transition-all hover:-translate-y-1"
+              className="rounded-full bg-[#513426] px-5 py-2.5 font-semibold text-white shadow-[0_10px_30px_rgba(81,52,38,0.16)] transition hover:-translate-y-0.5 hover:bg-[#684531]"
             >
-              Tạo Thiệp Ngay
+              Tạo thiệp
             </Link>
-            <a
-              href="#templates"
-              className="w-full sm:w-auto px-8 py-4 bg-white text-[#5b3a29] rounded-full font-medium border border-amber-100 hover:border-[#c08a4b] hover:bg-[#fffaf3] transition-all"
-            >
-              Xem Mẫu Giao Diện
-            </a>
-          </div>
+          </nav>
         </div>
-      </section>
+      </header>
 
-      {/* Templates Section */}
-      <section id="templates" className="py-24 px-6 bg-white relative">
-        <div className="max-w-7xl mx-auto space-y-16">
-          <div className="text-center space-y-4">
-            <h2 className="font-display text-4xl md:text-5xl text-[#5b3a29]">Bộ Sưu Tập Giao Diện</h2>
-            <p className="text-[#7b5e4b] max-w-xl mx-auto">
-              Lựa chọn từ các phong cách thiết kế độc đáo và tinh tế, được tùy chỉnh để phù hợp với câu chuyện tình yêu của riêng bạn.
+      <section className="relative min-h-[880px] px-5 pb-24 pt-32 md:px-8 md:pt-40">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-[-12rem] top-[-12rem] h-[34rem] w-[34rem] rounded-full bg-[#e8cdb1]/45 blur-3xl" />
+          <div className="absolute bottom-0 right-[-8rem] h-[34rem] w-[34rem] rounded-full bg-[#d9c6bb]/40 blur-3xl" />
+          <div className="absolute inset-0 opacity-[0.035] [background-image:radial-gradient(#5b3a29_0.7px,transparent_0.7px)] [background-size:18px_18px]" />
+        </div>
+
+        <div className="relative mx-auto grid max-w-7xl items-center gap-16 lg:grid-cols-[1.02fr_0.98fr]">
+          <div className="max-w-2xl animate-fade-in-up">
+            <div className="mb-7 inline-flex items-center gap-3 rounded-full border border-[#9f7049]/15 bg-white/55 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#9a6a43] backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#bd8754]" />
+              Nơi câu chuyện tình yêu bắt đầu
+            </div>
+
+            <h1 className="font-display text-[3.5rem] leading-[0.98] tracking-[-0.045em] text-[#40291f] sm:text-7xl lg:text-[5.65rem]">
+              Một tấm thiệp,
+              <span className="mt-2 block font-normal italic text-[#ad7547]">vạn lời yêu thương.</span>
+            </h1>
+
+            <p className="mt-8 max-w-xl text-base leading-8 text-[#735b4d] md:text-lg">
+              Tạo thiệp cưới trực tuyến mang dấu ấn riêng, đẹp trên mọi thiết bị và sẵn sàng chia sẻ đến những người bạn yêu quý.
             </p>
-            <p className="text-sm uppercase tracking-[0.2em] text-[#c08a4b]">Live Demo Tu Dong Cuon Toan Trang</p>
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/create"
+                className="group inline-flex items-center justify-center gap-3 rounded-full bg-[#513426] px-7 py-4 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(81,52,38,0.2)] transition hover:-translate-y-1 hover:bg-[#684531]"
+              >
+                Bắt đầu tạo thiệp
+                <span className="transition-transform group-hover:translate-x-1"><ArrowIcon /></span>
+              </Link>
+              <a
+                href="#templates"
+                className="inline-flex items-center justify-center rounded-full border border-[#7d5d49]/20 bg-white/65 px-7 py-4 text-sm font-semibold text-[#5b4032] backdrop-blur-md transition hover:border-[#ad7547]/50 hover:bg-white"
+              >
+                Khám phá bộ sưu tập
+              </a>
+            </div>
+
+            <div className="mt-12 flex flex-wrap gap-x-9 gap-y-4 border-t border-[#775541]/10 pt-7">
+              <div>
+                <p className="font-display text-2xl text-[#4b3024]">11</p>
+                <p className="text-xs text-[#8c7161]">Giao diện cao cấp</p>
+              </div>
+              <div>
+                <p className="font-display text-2xl text-[#4b3024]">100%</p>
+                <p className="text-xs text-[#8c7161]">Tối ưu di động</p>
+              </div>
+              <div>
+                <p className="font-display text-2xl text-[#4b3024]">5 phút</p>
+                <p className="text-xs text-[#8c7161]">Để có thiệp đầu tiên</p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            {/* Template 1: Classic */}
-            <div className="group rounded-[36px] bg-[#fffaf3] border border-amber-100 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(91,58,41,0.14)] relative flex flex-col h-full">
-              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#fffaf3] to-[#f8efe2] flex items-center justify-center">
-                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#5b3a29]/15 bg-black/5 shadow-[0_16px_40px_rgba(91,58,41,0.2)] overflow-hidden">
-                  <AutoScrollTemplatePreview src="/demo?theme=classic&embedded=1" title="Cổ Điển Hoàng Kim preview" />
-                </div>
-                <div className="absolute top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1.5 bg-[#5b3a29]/10 backdrop-blur-md rounded-full text-[#5b3a29] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('classic')}</span>
-                </div>
-              </div>
-              <div className="p-8 flex-1 flex flex-col">
-                <h3 className="text-2xl font-display text-[#5b3a29] mb-3">{getThemeDisplayName('classic')}</h3>
-                <p className="text-sm text-[#7b5e4b] mb-8 flex-1">Nâu và Vàng truyền thống. Bố cục dọc chuẩn mực mang đến sự ấm áp, sang trọng và thanh lịch tuyệt đối.</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link
-                    href="/demo?theme=classic"
-                    target="_blank"
-                    className="flex-1 text-center py-3.5 px-4 bg-white text-[#5b3a29] border border-amber-200 rounded-full font-medium hover:bg-[#fffaf3] hover:border-[#c08a4b] transition-all text-sm"
-                  >
-                    Xem Thử
-                  </Link>
-                  <Link
-                    href="/create?theme=classic"
-                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-[#5b3a29] to-[#c08a4b] text-white rounded-full font-medium hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm"
-                  >
-                    Tạo Thiệp
-                  </Link>
-                </div>
+          <div className="relative mx-auto h-[610px] w-full max-w-[590px]">
+            <div className="absolute left-0 top-12 h-[455px] w-[72%] rotate-[-7deg] overflow-hidden rounded-[36px] border-[10px] border-white bg-white shadow-[0_35px_90px_rgba(74,45,31,0.18)]">
+              <Image
+                src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=88"
+                alt="Cặp đôi trong ngày cưới"
+                fill
+                sizes="(max-width: 1024px) 70vw, 420px"
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#342016]/45 via-transparent to-transparent" />
+              <div className="absolute bottom-7 left-7 text-white">
+                <p className="text-[10px] uppercase tracking-[0.32em] text-white/75">Save the date</p>
+                <p className="mt-2 font-display text-3xl italic">Ngọc Lan & Minh Khang</p>
               </div>
             </div>
 
-            {/* Template 2: Heritage */}
-            <div className="group rounded-[36px] bg-[#eef6f2] border border-[#cde3dd] overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(23,74,67,0.14)] relative flex flex-col h-full">
-              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#eef6f2] to-[#dbeee8] flex items-center justify-center">
-                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#174a43]/15 bg-black/5 shadow-[0_16px_40px_rgba(23,74,67,0.18)] overflow-hidden">
-                  <AutoScrollTemplatePreview src="/demo?theme=heritage&embedded=1" title="Hỷ Sắc Cổ Truyền preview" />
-                </div>
-                <div className="absolute top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1.5 bg-[#174a43]/10 backdrop-blur-md rounded-full text-[#174a43] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('heritage')}</span>
-                </div>
-              </div>
-              <div className="p-8 flex-1 flex flex-col bg-[#eef6f2]">
-                <h3 className="text-2xl font-display text-[#174a43] mb-3">{getThemeDisplayName('heritage')}</h3>
-                <p className="text-sm text-[#3f6b64] mb-8 flex-1">Tông ngọc cổ trang nhã, hoa văn truyền thống và bố cục trang trọng, đậm chất thiệp cưới Việt Nam.</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link
-                    href="/demo?theme=heritage"
-                    target="_blank"
-                    className="flex-1 text-center py-3.5 px-4 bg-white text-[#174a43] border border-[#cde3dd] rounded-full font-medium hover:bg-[#eaf5f1] transition-all text-sm"
-                  >
-                    Xem Thử
-                  </Link>
-                  <Link
-                    href="/create?theme=heritage"
-                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-[#0f766e] to-[#2a9d8f] text-white rounded-full font-medium hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm"
-                  >
-                    Tạo Thiệp
-                  </Link>
-                </div>
-              </div>
+            <div className="absolute bottom-0 right-0 h-[480px] w-[58%] rotate-[5deg] overflow-hidden rounded-[38px] border-[9px] border-[#fffdf9] bg-white shadow-[0_35px_90px_rgba(74,45,31,0.22)]">
+              <AutoScrollTemplatePreview src="/demo?theme=pastel&embedded=1" title="Thiệp cưới mẫu nổi bật" />
             </div>
 
-            {/* Template 3: Midnight */}
-            <div className="group rounded-[36px] bg-[#0f1720] border border-white/10 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(0,0,0,0.45)] relative flex flex-col h-full">
-              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#0f1720] to-[#1f2a36] flex items-center justify-center">
-                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#d4af7a]/25 bg-black/10 shadow-[0_16px_40px_rgba(0,0,0,0.4)] overflow-hidden">
-                  <AutoScrollTemplatePreview src="/demo?theme=midnight&embedded=1" title="Dạ Tiệc Ánh Kim preview" />
-                </div>
-                <div className="absolute top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-[#f5efe6] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('midnight')}</span>
-                </div>
-              </div>
-              <div className="p-8 flex-1 flex flex-col bg-[#0f1720]">
-                <h3 className="text-2xl font-display text-[#f5efe6] mb-3">{getThemeDisplayName('midnight')}</h3>
-                <p className="text-sm text-[#d4c6b4] mb-8 flex-1">Nền tối, viền vàng mảnh và cảm giác điện ảnh. Phù hợp với thiệp cưới sang trọng, khác biệt.</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link
-                    href="/demo?theme=midnight"
-                    target="_blank"
-                    className="flex-1 text-center py-3.5 px-4 bg-white text-[#0f1720] border border-white/20 rounded-full font-medium hover:bg-[#f5efe6] transition-all text-sm"
-                  >
-                    Xem Thử
-                  </Link>
-                  <Link
-                    href="/create?theme=midnight"
-                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-[#d4af7a] to-[#8c6f5a] text-white rounded-full font-medium hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm"
-                  >
-                    Tạo Thiệp
-                  </Link>
-                </div>
-              </div>
+            <div className="absolute right-3 top-4 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-[0_16px_40px_rgba(74,45,31,0.12)] backdrop-blur-xl">
+              <p className="text-[9px] uppercase tracking-[0.25em] text-[#a17b63]">Live preview</p>
+              <p className="mt-1 text-sm font-semibold text-[#513426]">Xem trước tức thì</p>
             </div>
 
-            {/* Template 4: Elegance */}
-            <div className="group rounded-[36px] bg-[#f8f6f1] border border-[#d4c5a9]/30 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(45,42,38,0.12)] relative flex flex-col h-full">
-              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#f8f6f1] to-[#efe7da] flex items-center justify-center">
-                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-[#b39a6a]/20 bg-black/5 shadow-[0_16px_40px_rgba(45,42,38,0.16)] overflow-hidden">
-                  <AutoScrollTemplatePreview src="/demo?theme=elegance&embedded=1" title="Thanh Lịch Tân Cổ Điển preview" />
-                </div>
-                <div className="absolute top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1.5 bg-[#2d2a26]/10 backdrop-blur-md rounded-full text-[#2d2a26] text-[11px] font-semibold tracking-wider">{getThemeDisplayName('elegance')}</span>
-                </div>
-              </div>
-              <div className="p-8 flex-1 flex flex-col bg-[#f8f6f1]">
-                <h3 className="text-2xl font-display text-[#2d2a26] mb-3">{getThemeDisplayName('elegance')}</h3>
-                <p className="text-sm text-[#4a453d] mb-8 flex-1">Tối giản kết hợp tân cổ điển. Nền ngà, viền vàng đồng, typography thanh lịch — thiết kế mobile-first cuộn dọc sang trọng.</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link
-                    href="/demo?theme=elegance"
-                    target="_blank"
-                    className="flex-1 text-center py-3.5 px-4 bg-white text-[#2d2a26] border border-[#d4c5a9]/40 rounded-full font-medium hover:bg-[#faf8f4] hover:border-[#b39a6a] transition-all text-sm"
-                  >
-                    Xem Thử
-                  </Link>
-                  <Link
-                    href="/create?theme=elegance"
-                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-[#b39a6a] to-[#d4c5a9] text-white rounded-full font-medium hover:shadow-lg transition-all hover:-translate-y-0.5 text-sm"
-                  >
-                    Tạo Thiệp
-                  </Link>
-                </div>
+            <div className="absolute bottom-10 left-4 flex items-center gap-3 rounded-2xl border border-white/70 bg-white/85 px-4 py-3 shadow-[0_16px_40px_rgba(74,45,31,0.12)] backdrop-blur-xl">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-[#edf3ef] text-[#718c83]">✓</span>
+              <div>
+                <p className="text-sm font-semibold text-[#513426]">Sẵn sàng chia sẻ</p>
+                <p className="text-[10px] text-[#967a69]">Mọi thiết bị · Mọi khoảnh khắc</p>
               </div>
             </div>
-
-            {/* Template 5: Romance */}
-            <div className="group rounded-[36px] bg-[#1a1120] border border-rose-500/20 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(244,63,94,0.2)] relative flex flex-col h-full">
-              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#1a1120] to-[#2b1836] flex items-center justify-center">
-                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-rose-400/20 bg-black/10 shadow-[0_16px_40px_rgba(244,63,94,0.25)] overflow-hidden">
-                  <AutoScrollTemplatePreview src="/demo?theme=romance&embedded=1" title="Đêm Lãng Mạn Glassmorphism preview" />
-                </div>
-                <div className="absolute top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1.5 bg-rose-500/20 backdrop-blur-md rounded-full text-rose-200 border border-rose-400/30 text-[11px] font-semibold tracking-wider">{getThemeDisplayName('romance')}</span>
-                </div>
-              </div>
-              <div className="p-8 flex-1 flex flex-col bg-[#1a1120]">
-                <h3 className="text-2xl font-display text-rose-300 mb-3">{getThemeDisplayName('romance')}</h3>
-                <p className="text-sm text-rose-200/70 mb-8 flex-1">Dark mode huyền bí với hiệu ứng Kính mờ (Glassmorphism), hạt sáng li ti lơ lửng và chuyển động Framer Motion siêu mượt mà.</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link
-                    href="/demo?theme=romance"
-                    target="_blank"
-                    className="flex-1 text-center py-3.5 px-4 bg-white/5 text-rose-200 border border-rose-500/30 rounded-full font-medium hover:bg-white/10 transition-all text-sm backdrop-blur-md"
-                  >
-                    Xem Thử
-                  </Link>
-                  <Link
-                    href="/create?theme=romance"
-                    className="flex-1 text-center py-3.5 px-4 bg-gradient-to-r from-rose-500 to-rose-400 text-white rounded-full font-medium hover:shadow-lg hover:shadow-rose-500/25 transition-all hover:-translate-y-0.5 text-sm"
-                  >
-                    Tạo Thiệp
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Template 6: Minimalist Typography */}
-            <div className="group rounded-[36px] bg-[#FDFBF7] border border-gray-200 overflow-hidden transition-all hover:shadow-[0_24px_70px_rgba(0,0,0,0.08)] relative flex flex-col h-full">
-              <div className="relative h-[620px] w-full bg-gradient-to-b from-[#FDFBF7] to-[#f2eee8] flex items-center justify-center border-b border-gray-200">
-                <div className="w-[280px] sm:w-[300px] h-[560px] rounded-[36px] border-[7px] border-gray-300/60 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.12)] overflow-hidden">
-                  <AutoScrollTemplatePreview src="/demo?theme=minimalist&embedded=1" title="Tối Giản Tân Cổ Điển preview" />
-                </div>
-                <div className="absolute top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1.5 bg-white/70 backdrop-blur-md rounded-full text-gray-800 border border-gray-300 text-[11px] font-semibold tracking-wider">{getThemeDisplayName('minimalist')}</span>
-                </div>
-              </div>
-              <div className="p-8 flex-1 flex flex-col bg-[#FDFBF7]">
-                <h3 className="text-2xl font-display text-gray-900 mb-3">{getThemeDisplayName('minimalist')}</h3>
-                <p className="text-sm text-gray-600 mb-8 flex-1">Phong cách Tân Cổ Điển Tối Giản. Phân cấp Typography tinh tế với các font chữ ký bay bổng, Serif sang trọng và căn giữa hoàn toàn.</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link
-                    href="/demo?theme=minimalist"
-                    target="_blank"
-                    className="flex-1 text-center py-3.5 px-4 bg-white text-gray-800 border border-gray-300 rounded-full font-medium hover:bg-gray-50 hover:border-gray-400 transition-all text-sm"
-                  >
-                    Xem Thử
-                  </Link>
-                  <Link
-                    href="/create?theme=minimalist"
-                    className="flex-1 text-center py-3.5 px-4 bg-[#2D3748] text-white rounded-full font-medium hover:shadow-lg hover:bg-[#1A202C] transition-all hover:-translate-y-0.5 text-sm"
-                  >
-                    Tạo Thiệp
-                  </Link>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 text-center text-sm text-[#7b5e4b] bg-white border-t border-amber-50">
-        <p>&copy; {new Date().getFullYear()} Thiệp Cưới Trực Tuyến. All rights reserved.</p>
+      <section id="features" className="relative border-y border-[#684631]/10 bg-[#4b3024] px-5 py-10 text-white md:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 md:grid-cols-3 md:gap-0">
+          {features.map((feature, index) => (
+            <div
+              key={feature.number}
+              className={`flex gap-5 px-2 md:px-9 ${index > 0 ? 'md:border-l md:border-white/10' : ''}`}
+            >
+              <span className="font-display text-3xl italic text-[#d2a572]">{feature.number}</span>
+              <div>
+                <h2 className="font-display text-xl">{feature.title}</h2>
+                <p className="mt-1.5 text-xs leading-6 text-white/60">{feature.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="templates" className="relative bg-[#fffdf9] px-5 py-24 md:px-8 md:py-32">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-[#f8f3ec] to-transparent" />
+        <div className="relative mx-auto max-w-7xl">
+          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#ad7547]">Bộ sưu tập giao diện</p>
+              <h2 className="mt-5 font-display text-4xl leading-tight tracking-[-0.03em] text-[#40291f] md:text-6xl">
+                Chọn phong cách
+                <span className="block italic text-[#ad7547]">kể câu chuyện của bạn.</span>
+              </h2>
+            </div>
+            <div className="lg:pb-2">
+              <p className="max-w-2xl text-sm leading-7 text-[#7b6253] md:text-base">
+                Mỗi mẫu là một không khí riêng. Di chuột vào bản xem trước để khám phá toàn bộ thiệp, hoặc mở bản đầy đủ trước khi bắt đầu chỉnh sửa.
+              </p>
+              <div className="mt-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9a7a64]">
+                <span className="h-px w-10 bg-[#bd8754]" />
+                Preview tự động cuộn
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 grid grid-cols-1 gap-7 md:grid-cols-2">
+            {templates.map((template, index) => (
+              <article
+                key={template.theme}
+                className={`group overflow-hidden rounded-[32px] border border-[#5c3b28]/10 bg-white shadow-[0_14px_50px_rgba(76,50,36,0.07)] transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_80px_rgba(76,50,36,0.14)] ${
+                  template.featured ? 'md:col-span-2' : ''
+                }`}
+              >
+                <div className={`grid ${template.featured ? 'lg:grid-cols-[0.8fr_1.2fr]' : ''}`}>
+                  <div className={`relative flex min-h-[560px] items-center justify-center overflow-hidden bg-gradient-to-br ${template.palette} px-6 py-12`}>
+                    <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(#3c2921_0.7px,transparent_0.7px)] [background-size:16px_16px]" />
+                    <span className={`absolute left-5 top-5 z-10 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] backdrop-blur-md ${template.badge}`}>
+                      {String(index + 1).padStart(2, '0')} · {getThemeDisplayName(template.theme)}
+                    </span>
+                    <div className={`relative h-[500px] w-[260px] overflow-hidden rounded-[32px] border-[7px] bg-white/20 transition duration-500 group-hover:scale-[1.025] ${template.frame}`}>
+                      <AutoScrollTemplatePreview
+                        src={`/demo?theme=${template.theme}&embedded=1`}
+                        title={`${getThemeDisplayName(template.theme)} preview`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={`flex flex-col justify-between p-7 md:p-9 ${template.featured ? 'lg:p-12' : ''}`}>
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#ae8060]">{template.eyebrow}</p>
+                      <h3 className="mt-3 font-display text-3xl tracking-[-0.02em] text-[#40291f]">{getThemeDisplayName(template.theme)}</h3>
+                      <p className="mt-4 text-sm leading-7 text-[#7b6253]">{template.description}</p>
+                    </div>
+
+                    <div className="mt-8 flex gap-3">
+                      <Link
+                        href={`/demo?theme=${template.theme}`}
+                        target="_blank"
+                        className="flex-1 rounded-full border border-[#654634]/15 bg-[#faf7f2] px-4 py-3.5 text-center text-sm font-semibold text-[#604536] transition hover:border-[#ad7547]/40 hover:bg-white"
+                      >
+                        Xem đầy đủ
+                      </Link>
+                      <Link
+                        href={`/create?theme=${template.theme}`}
+                        className={`group/button flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:shadow-lg ${template.button}`}
+                      >
+                        Chọn mẫu <span className="transition-transform group-hover/button:translate-x-1"><ArrowIcon /></span>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#fffdf9] px-5 pb-24 md:px-8 md:pb-32">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[40px] bg-[#4b3024] px-6 py-16 text-center text-white shadow-[0_30px_80px_rgba(75,48,36,0.2)] md:px-12 md:py-20">
+          <div className="pointer-events-none absolute -left-20 -top-28 h-72 w-72 rounded-full border border-white/10" />
+          <div className="pointer-events-none absolute -bottom-36 -right-14 h-80 w-80 rounded-full border border-[#d2a572]/25" />
+          <p className="relative text-[11px] font-semibold uppercase tracking-[0.3em] text-[#d2a572]">Ngày vui đang đến gần</p>
+          <h2 className="relative mx-auto mt-5 max-w-3xl font-display text-4xl leading-tight md:text-6xl">
+            Biến lời mời thành một phần đẹp nhất của ngày cưới.
+          </h2>
+          <p className="relative mx-auto mt-5 max-w-xl text-sm leading-7 text-white/60">
+            Chọn mẫu bạn yêu thích, thêm câu chuyện của riêng mình và chia sẻ chỉ bằng một đường dẫn.
+          </p>
+          <Link
+            href="/create"
+            className="relative mt-9 inline-flex items-center gap-3 rounded-full bg-[#d2a572] px-7 py-4 text-sm font-bold text-[#40291f] transition hover:-translate-y-1 hover:bg-[#e0b986]"
+          >
+            Tạo thiệp cưới ngay <ArrowIcon />
+          </Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-[#684631]/10 bg-[#f8f3ec] px-5 py-9 md:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="font-display text-lg text-[#4b3024]">Wedding Story</p>
+            <p className="mt-1 text-[10px] uppercase tracking-[0.24em] text-[#9c806e]">Thiệp cưới trực tuyến</p>
+          </div>
+          <p className="text-xs text-[#927766]">© {new Date().getFullYear()} Wedding Story. Gửi yêu thương theo cách của bạn.</p>
+        </div>
       </footer>
     </main>
   )

@@ -153,14 +153,14 @@ export default function LuxuryTemplate({ couple, gallery, wishes, weddingGift, l
 
   const brideTitle = locations?.bride_event_title || 'Lễ Vu Quy'
   const brideDate = formatShortDate(locations?.bride_event_date || couple.wedding_date)
-  const brideTime = formatTime(locations?.bride_event_time || couple.wedding_time) || '09:00'
+  const brideTime = formatTime(locations?.bride_event_time ?? couple.wedding_time)
   const brideVenue = locations?.bride_location || 'Tư Gia Nhà Gái'
   const brideAddr = locations?.bride_address || '123 Đường Hoa Hồng, Quận 1, TP. HCM'
   const brideMapLink = locations?.bride_google_map_embed
 
   const groomTitle = locations?.groom_event_title || 'Lễ Thành Hôn'
   const groomDate = formatShortDate(locations?.groom_event_date || couple.wedding_date)
-  const groomTime = formatTime(locations?.groom_event_time || couple.wedding_time) || '18:00'
+  const groomTime = formatTime(locations?.groom_event_time ?? couple.wedding_time)
   const groomVenue = locations?.groom_location || 'Trung tâm Hội nghị The Grand'
   const groomAddr = locations?.groom_address || '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM'
   const groomMapLink = locations?.groom_google_map_embed
@@ -355,7 +355,7 @@ export default function LuxuryTemplate({ couple, gallery, wishes, weddingGift, l
                 <div className="w-full md:w-1/2" />
                 <div className="w-full md:w-1/2">
                   <div className="rounded-2xl border border-[#D4AF37]/40 bg-[#5a0000]/75 p-6 shadow-[0_0_24px_rgba(212,175,55,0.2)]">
-                    <p className="text-xs uppercase tracking-[0.4em] text-[#FFD700]">{item.date} • {item.time}</p>
+                    <p className="text-xs uppercase tracking-[0.4em] text-[#FFD700]">{item.date}</p>
                     <h3 className="mt-3 font-display text-2xl uppercase tracking-[0.2em] text-white">{item.title}</h3>
                     <p className="mt-4 text-sm leading-7 text-white/80">
                       <span className="font-semibold text-white">{item.location}</span>
@@ -556,9 +556,7 @@ export default function LuxuryTemplate({ couple, gallery, wishes, weddingGift, l
               </div>
               <p className="text-xs uppercase tracking-[0.4em] text-[#FFD700]">{item.side === 'bride' ? 'Nhà Gái' : 'Nhà Trai'}</p>
               <h3 className="mt-3 font-display text-2xl uppercase tracking-[0.2em] text-white">{item.title}</h3>
-              <p className="mt-4 text-sm text-white/80">
-                {item.date} • {item.time}
-              </p>
+              <p className="mt-4 text-sm text-white/80">{item.date}</p>
               <p className="mt-2 text-sm text-white/80">
                 <span className="font-semibold text-white">{item.location}</span>
                 <br />

@@ -5,10 +5,30 @@ import { useEffect, useRef } from 'react'
 type AutoScrollTemplatePreviewProps = {
   src: string
   title: string
+  autoScroll?: boolean
+  previewData?: unknown
 }
 
-export default function AutoScrollTemplatePreview({ src, title }: AutoScrollTemplatePreviewProps) {
+export default function AutoScrollTemplatePreview({
+  src,
+  title,
+  autoScroll = false,
+  previewData,
+}: AutoScrollTemplatePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const previewDataRef = useRef(previewData)
+
+  useEffect(() => {
+    previewDataRef.current = previewData
+
+    if (previewData !== undefined) {
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: 'wedding-preview-data', payload: previewData },
+        window.location.origin
+      )
+    }
+  }, [previewData])
 
   useEffect(() => {
     const iframe = iframeRef.current
@@ -18,6 +38,7 @@ export default function AutoScrollTemplatePreview({ src, title }: AutoScrollTemp
     let resetTimeoutId: number | null = null
     let pausedUntil = 0
     let isResetting = false
+    let isAutoScrolling = false
 
     const clearTimers = () => {
       if (intervalId) {
@@ -31,6 +52,12 @@ export default function AutoScrollTemplatePreview({ src, title }: AutoScrollTemp
     }
 
     const startAutoScroll = () => {
+      if (isAutoScrolling) return
+      isAutoScrolling = true
+      // ensure we start from top when starting fresh
+      try {
+        iframeRef.current?.contentWindow?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+      } catch {}
       clearTimers()
 
       intervalId = window.setInterval(() => {
@@ -95,29 +122,68 @@ export default function AutoScrollTemplatePreview({ src, title }: AutoScrollTemp
           doc.head.appendChild(style)
         }
         iframe.contentWindow?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+        if (previewDataRef.current !== undefined) {
+          iframe.contentWindow?.postMessage(
+            { type: 'wedding-preview-data', payload: previewDataRef.current },
+            window.location.origin
+          )
+        }
       } catch {
         return
       }
-      startAutoScroll()
+      // auto-scroll immediately if autoScroll is enabled, otherwise wait for user interaction
+      if (autoScroll) {
+        startAutoScroll()
+      }
     }
 
     iframe.addEventListener('load', onLoad)
 
+    if (!autoScroll) {
+      // When autoScroll is false, don't attach event listeners - user can scroll freely
+      return () => {
+        iframe.removeEventListener('load', onLoad)
+        clearTimers()
+      }
+    }
+
+    const container = containerRef.current
+    const handlePointerEnter = () => startAutoScroll()
+    const handlePointerDown = () => startAutoScroll()
+    const handlePointerLeave = () => {
+      // stop when pointer leaves preview area
+      clearTimers()
+      isAutoScrolling = false
+    }
+
+    if (container) {
+      container.addEventListener('pointerenter', handlePointerEnter)
+      container.addEventListener('pointerdown', handlePointerDown)
+      container.addEventListener('pointerleave', handlePointerLeave)
+    }
+
     return () => {
       iframe.removeEventListener('load', onLoad)
+      if (container) {
+        container.removeEventListener('pointerenter', handlePointerEnter)
+        container.removeEventListener('pointerdown', handlePointerDown)
+        container.removeEventListener('pointerleave', handlePointerLeave)
+      }
       clearTimers()
     }
-  }, [src])
+  }, [src, autoScroll])
 
   return (
-    <iframe
-      ref={iframeRef}
-      src={src}
-      title={title}
-      loading="lazy"
-      className="h-full w-full border-0 pointer-events-none"
-      tabIndex={-1}
-      aria-hidden="true"
-    />
+    <div ref={containerRef} className="h-full w-full">
+      <iframe
+        ref={iframeRef}
+        src={src}
+        title={title}
+        loading="lazy"
+        className={`h-full w-full border-0 ${autoScroll ? 'pointer-events-none' : ''}`}
+        tabIndex={-1}
+        aria-hidden="true"
+      />
+    </div>
   )
 }
