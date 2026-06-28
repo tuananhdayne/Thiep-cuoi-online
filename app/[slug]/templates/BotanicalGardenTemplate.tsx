@@ -48,20 +48,37 @@ function FallingPetals({ enabled }: { enabled: boolean }) {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-10 overflow-hidden" aria-hidden="true">
-      {Array.from({ length: 12 }).map((_, index) => (
-        <motion.span
-          key={index}
-          className="absolute top-[-32px] h-3 w-2 rounded-full bg-[#ead8d1]/55"
-          style={{ left: `${8 + index * 8}%` }}
-          animate={{ y: ['0vh', '108vh'], x: [0, index % 2 ? 22 : -18, 0], rotate: [0, 160, 320] }}
-          transition={{
-            duration: 18 + (index % 5) * 2,
-            repeat: Infinity,
-            delay: index * 1.4,
-            ease: 'linear',
-          }}
-        />
-      ))}
+      {Array.from({ length: 16 }).map((_, index) => {
+        const isLeaf = index % 2 === 0
+        const colorClass = isLeaf ? 'bg-[#9aaa8d]/25' : 'bg-[#e9d6cb]/45'
+        const sizeWidth = 10 + (index % 4) * 3
+        const sizeHeight = 14 + (index % 3) * 4
+        const startLeft = 5 + (index * 6)
+
+        return (
+          <motion.span
+            key={index}
+            className={`absolute top-[-32px] rounded-tl-full rounded-br-full ${colorClass}`}
+            style={{
+              left: `${startLeft}%`,
+              width: `${sizeWidth}px`,
+              height: `${sizeHeight}px`,
+            }}
+            animate={{
+              y: ['0vh', '108vh'],
+              x: [0, index % 2 ? 35 : -35, index % 3 ? 15 : -15],
+              rotate: [0, 180, 360],
+              scale: [0.9, 1.1, 0.9]
+            }}
+            transition={{
+              duration: 20 + (index % 6) * 3,
+              repeat: Infinity,
+              delay: index * 1.2,
+              ease: 'linear',
+            }}
+          />
+        )
+      })}
     </div>
   )
 }
@@ -71,10 +88,10 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
   return (
     <motion.div
       className={className}
-      initial={reduceMotion ? false : { opacity: 0, y: 26 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.14 }}
-      transition={{ duration: 0.75, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.995 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{ duration: 0.85, delay, ease: [0.21, 1, 0.35, 1] }}
     >
       {children}
     </motion.div>
@@ -82,10 +99,25 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
 }
 
 function Heading({ overline, children }: { overline: string; children: React.ReactNode }) {
+  const reduceMotion = useReducedMotion()
   return (
     <div className="relative mb-8 text-center">
-      <BotanicalSprig className="pointer-events-none absolute left-1/2 top-1/2 hidden h-28 w-20 -translate-x-[180px] -translate-y-1/2 rotate-[65deg] text-[#9aaa8d]/20 sm:block" />
-      <BotanicalSprig className="pointer-events-none absolute left-1/2 top-1/2 hidden h-28 w-20 translate-x-[100px] -translate-y-1/2 rotate-[-65deg] text-[#9aaa8d]/20 sm:block" flip />
+      <motion.div
+        className="pointer-events-none absolute left-1/2 top-1/2 hidden h-28 w-20 -translate-x-[180px] -translate-y-1/2 text-[#9aaa8d]/20 sm:block"
+        animate={reduceMotion ? undefined : { rotate: [61, 67, 61] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ originY: 0.5, originX: 0.5 }}
+      >
+        <BotanicalSprig className="h-full w-full" />
+      </motion.div>
+      <motion.div
+        className="pointer-events-none absolute left-1/2 top-1/2 hidden h-28 w-20 translate-x-[100px] -translate-y-1/2 text-[#9aaa8d]/20 sm:block"
+        animate={reduceMotion ? undefined : { rotate: [-61, -67, -61] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        style={{ originY: 0.5, originX: 0.5 }}
+      >
+        <BotanicalSprig className="h-full w-full" flip />
+      </motion.div>
       <p className="font-display text-xl text-[#b4a173]">✦</p>
       <p className="text-[10px] font-semibold uppercase tracking-[0.38em] text-[#879477]">{overline}</p>
       <h2 className="mt-3 font-display text-3xl text-[#3f4a38] sm:text-5xl">{children}</h2>
@@ -179,29 +211,66 @@ export default function BotanicalGardenTemplate({
               />
             </motion.div>
             <div className="absolute inset-0 bg-gradient-to-b from-[#30402d]/5 via-transparent to-[#263423]/70" />
-            <BotanicalSprig className="absolute -left-8 -top-8 h-48 w-32 rotate-[18deg] text-[#edf1e7]/75 sm:h-72 sm:w-48" />
-            <BotanicalSprig className="absolute -right-8 -top-8 h-48 w-32 rotate-[-18deg] text-[#edf1e7]/75 sm:h-72 sm:w-48" flip />
-
             <motion.div
-              className="absolute inset-x-0 bottom-0 px-5 pb-10 text-center text-white sm:px-12 sm:pb-14"
-              initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, delay: 0.25 }}
+              className="absolute -left-8 -top-8 h-48 w-32 text-[#edf1e7]/75 sm:h-72 sm:w-48"
+              animate={reduceMotion ? undefined : { rotate: [16, 21, 16] }}
+              transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ originY: 0, originX: 0 }}
             >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.48em] text-[#eff2e8]">Save The Date</p>
-              <h1 className="mt-4 font-display text-[1.8rem] xs:text-[2.2rem] min-[390px]:text-[2.5rem] sm:text-6xl md:text-7xl leading-[1.02] drop-shadow-lg whitespace-nowrap">
+              <BotanicalSprig className="h-full w-full" />
+            </motion.div>
+            <motion.div
+              className="absolute -right-8 -top-8 h-48 w-32 text-[#edf1e7]/75 sm:h-72 sm:w-48"
+              animate={reduceMotion ? undefined : { rotate: [-16, -21, -16] }}
+              transition={{ duration: 11, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+              style={{ originY: 0, originX: 1 }}
+            >
+              <BotanicalSprig className="h-full w-full" flip />
+            </motion.div>
+
+            <div className="absolute inset-x-0 bottom-0 px-5 pb-10 text-center text-white sm:px-12 sm:pb-14 z-20">
+              <motion.p
+                className="text-[10px] font-semibold uppercase tracking-[0.48em] text-[#eff2e8]"
+                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.85, delay: 0.2 }}
+              >
+                Save The Date
+              </motion.p>
+              <motion.h1
+                className="mt-4 font-display text-[1.8rem] xs:text-[2.2rem] min-[390px]:text-[2.5rem] sm:text-6xl md:text-7xl leading-[1.02] drop-shadow-lg whitespace-nowrap"
+                initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.97 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.95, delay: 0.45, ease: [0.21, 1, 0.35, 1] }}
+              >
                 {couple.bride_name}
                 <span className="mx-2 font-normal italic text-[#e5d5af]">&amp;</span>
                 {couple.groom_name}
-              </h1>
-              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.32em] text-white/85">
+              </motion.h1>
+              <motion.p
+                className="mt-5 text-xs font-semibold uppercase tracking-[0.32em] text-white/85"
+                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.85, delay: 0.65 }}
+              >
                 {couple.wedding_date || 'Our wedding day'}
-              </p>
-              <div className="mx-auto mt-7 h-px w-24 bg-[#e5d5af]" />
-              <p className="mx-auto mt-5 max-w-lg text-xs leading-6 text-white/80 sm:text-sm">
+              </motion.p>
+              <motion.div
+                className="mx-auto mt-7 h-px w-24 bg-[#e5d5af]"
+                initial={reduceMotion ? false : { scaleX: 0 }}
+                animate={reduceMotion ? undefined : { scaleX: 1 }}
+                transition={{ duration: 0.9, delay: 0.8 }}
+                style={{ originX: 0.5 }}
+              />
+              <motion.p
+                className="mx-auto mt-5 max-w-lg text-xs leading-6 text-white/80 sm:text-sm"
+                initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.85, delay: 0.95 }}
+              >
                 We are getting married in a garden filled with love, sunlight and everyone we cherish.
-              </p>
-            </motion.div>
+              </motion.p>
+            </div>
           </div>
         </motion.div>
       </header>
@@ -262,7 +331,11 @@ export default function BotanicalGardenTemplate({
                     ✦
                   </span>
                   <div className={`${index % 2 ? 'sm:col-start-2' : ''}`}>
-                    <div className="relative overflow-hidden rounded-[22px] border border-[#d6ddcf] bg-white/90 p-3 shadow-[0_16px_45px_rgba(74,86,65,0.08)]">
+                    <motion.div
+                      whileHover={reduceMotion ? undefined : { y: -6, boxShadow: "0 22px 55px rgba(74,86,65,0.13)" }}
+                      transition={{ duration: 0.35, ease: 'easeOut' }}
+                      className="relative overflow-hidden rounded-[22px] border border-[#d6ddcf] bg-white/90 p-3 shadow-[0_16px_45px_rgba(74,86,65,0.08)]"
+                    >
                       <span className="absolute right-5 top-4 font-display text-4xl text-[#d8c9a8]/55">{String(index + 1).padStart(2, '0')}</span>
                       <BotanicalSprig className="absolute -bottom-16 -right-12 h-48 w-32 rotate-[-35deg] text-[#9aaa8d]/12" flip />
                       {story.image_url && (
@@ -279,7 +352,7 @@ export default function BotanicalGardenTemplate({
                         <h3 className="mt-3 font-display text-2xl text-[#44503e]">{story.title}</h3>
                         <p className="mt-3 text-sm leading-7 text-[#72796c]">{story.description}</p>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 </article>
               </Reveal>
