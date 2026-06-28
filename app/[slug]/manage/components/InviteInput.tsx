@@ -47,13 +47,63 @@ export default function InviteInput({ coupleId, baseSlug, onSaved }: InviteInput
     setMessage(null)
     setError(null)
 
-    const rows = Array.from(new Set(parsedGuests)).map((guestName) => ({
-      couple_id: coupleId,
-      guest_name: guestName,
-      guest_slug: slugifyGuest(guestName),
-    }))
-
     try {
+      // Query existing guests for this couple to check for conflicts
+      const { data: existingGuests, error: fetchError } = await supabase
+        .from('guests')
+        .select('guest_name, guest_slug')
+        .eq('couple_id', coupleId)
+
+      if (fetchError) {
+        setError('Không thể kiểm tra danh sách khách hiện tại. Vui lòng thử lại.')
+        setLoading(false)
+        return
+      }
+
+      const usedSlugs = new Set<string>()
+      if (existingGuests) {
+        existingGuests.forEach((g) => {
+          if (g.guest_slug) {
+            usedSlugs.add(g.guest_slug)
+          }
+        })
+      }
+
+      const rows = []
+      for (const guestName of Array.from(new Set(parsedGuests))) {
+        // If the exact same guest name already exists in the database (case-insensitive),
+        // reuse their existing slug to avoid breaking their shared links.
+        const existing = existingGuests?.find(
+          (g) => g.guest_name?.trim().toLowerCase() === guestName.toLowerCase()
+        )
+
+        if (existing && existing.guest_slug) {
+          rows.push({
+            couple_id: coupleId,
+            guest_name: guestName,
+            guest_slug: existing.guest_slug,
+          })
+          continue
+        }
+
+        const baseSlug = slugifyGuest(guestName)
+        let finalSlug = baseSlug
+        let suffix = 1
+
+        // Resolve collision by appending an incrementing suffix
+        while (usedSlugs.has(finalSlug)) {
+          finalSlug = `${baseSlug}-${suffix}`
+          suffix++
+        }
+
+        usedSlugs.add(finalSlug)
+        rows.push({
+          couple_id: coupleId,
+          guest_name: guestName,
+          guest_slug: finalSlug,
+        })
+      }
+
       const { error: upsertError } = await supabase
         .from('guests')
         .upsert(rows, { onConflict: 'couple_id,guest_slug' })
