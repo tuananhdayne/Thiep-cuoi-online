@@ -189,7 +189,7 @@ export default function BotanicalGardenTemplate({
               transition={{ duration: 0.85, delay: 0.25 }}
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.48em] text-[#eff2e8]">Save The Date</p>
-              <h1 className="mt-4 font-display text-[3rem] leading-[1.02] drop-shadow-lg sm:text-7xl">
+              <h1 className="mt-4 font-display text-[1.8rem] xs:text-[2.2rem] min-[390px]:text-[2.5rem] sm:text-6xl md:text-7xl leading-[1.02] drop-shadow-lg whitespace-nowrap">
                 {couple.bride_name}
                 <span className="mx-2 font-normal italic text-[#e5d5af]">&amp;</span>
                 {couple.groom_name}

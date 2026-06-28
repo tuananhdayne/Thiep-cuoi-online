@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useMemo, useState, Suspense } from 'react'
+import { FormEvent, useMemo, useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 import ImageUploader from '@/components/ImageUploader'
@@ -52,6 +52,8 @@ type StringFieldKeys = {
 const slugify = (bride: string, groom: string) => {
   const raw = `${bride} ${groom}`.trim() || 'wedding'
   return raw
+    .replace(/Đ/g, 'D')
+    .replace(/đ/g, 'd')
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
     .toLowerCase()
@@ -66,6 +68,35 @@ const extractMapSrc = (value: string) => {
   if (iframeMatch?.[1]) return iframeMatch[1].trim()
   const trimmed = value.trim()
   if (/^https?:\/\//i.test(trimmed)) return trimmed
+  return ''
+}
+
+const buildEmbedUrl = (mapValue: string, location?: string, address?: string) => {
+  const source = mapValue?.trim() || ''
+
+  if (source.includes('/embed')) {
+    return source
+  }
+
+  if (source && /google\.com\/maps|maps\.google/i.test(source)) {
+    return source.includes('output=embed') ? source : `${source}${source.includes('?') ? '&' : '?'}output=embed`
+  }
+
+  // If it's a short link or normal link, check if it contains maps.app.goo.gl or goo.gl/maps
+  // and prioritize the query search so it doesn't show a broken iframe.
+  if (/maps\.app\.goo\.gl|goo\.gl\/maps/i.test(source)) {
+    const query = `${location || ''} ${address || ''}`.trim()
+    if (query) {
+      return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
+    }
+    return '' // return empty instead of broken short link
+  }
+
+  const query = `${location || ''} ${address || ''}`.trim()
+  if (query) {
+    return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
+  }
+
   return ''
 }
 
@@ -142,14 +173,74 @@ function CreateForm() {
     [form.bride_name, form.groom_name]
   )
 
-  const brideMap = useMemo(
-    () => extractMapSrc(form.bride_google_map_embed),
-    [form.bride_google_map_embed]
-  )
-  const groomMap = useMemo(
-    () => extractMapSrc(form.groom_google_map_embed),
-    [form.groom_google_map_embed]
-  )
+  const [brideMap, setBrideMap] = useState('')
+  const [groomMap, setGroomMap] = useState('')
+
+  useEffect(() => {
+    let active = true
+    const val = form.bride_google_map_embed
+    if (!val) {
+      setBrideMap(buildEmbedUrl('', form.bride_location, form.bride_address))
+      return
+    }
+
+    const src = extractMapSrc(val)
+    if (/maps\.app\.goo\.gl|goo\.gl\/maps/i.test(src)) {
+      fetch(`/api/resolve-map?url=${encodeURIComponent(src)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!active) return
+          if (data.resolvedUrl) {
+            setBrideMap(buildEmbedUrl(data.resolvedUrl, form.bride_location, form.bride_address))
+          } else {
+            setBrideMap(buildEmbedUrl(src, form.bride_location, form.bride_address))
+          }
+        })
+        .catch(() => {
+          if (!active) return
+          setBrideMap(buildEmbedUrl(src, form.bride_location, form.bride_address))
+        })
+    } else {
+      setBrideMap(buildEmbedUrl(src, form.bride_location, form.bride_address))
+    }
+
+    return () => {
+      active = false
+    }
+  }, [form.bride_google_map_embed, form.bride_location, form.bride_address])
+
+  useEffect(() => {
+    let active = true
+    const val = form.groom_google_map_embed
+    if (!val) {
+      setGroomMap(buildEmbedUrl('', form.groom_location, form.groom_address))
+      return
+    }
+
+    const src = extractMapSrc(val)
+    if (/maps\.app\.goo\.gl|goo\.gl\/maps/i.test(src)) {
+      fetch(`/api/resolve-map?url=${encodeURIComponent(src)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!active) return
+          if (data.resolvedUrl) {
+            setGroomMap(buildEmbedUrl(data.resolvedUrl, form.groom_location, form.groom_address))
+          } else {
+            setGroomMap(buildEmbedUrl(src, form.groom_location, form.groom_address))
+          }
+        })
+        .catch(() => {
+          if (!active) return
+          setGroomMap(buildEmbedUrl(src, form.groom_location, form.groom_address))
+        })
+    } else {
+      setGroomMap(buildEmbedUrl(src, form.groom_location, form.groom_address))
+    }
+
+    return () => {
+      active = false
+    }
+  }, [form.groom_google_map_embed, form.groom_location, form.groom_address])
 
   const openPreview = () => {
     setPreviewNonce(Date.now())
@@ -334,14 +425,27 @@ function CreateForm() {
       </div>
 
       {viewMode === 'preview' ? (
-        <main className="fixed inset-0 z-50 bg-white flex flex-col pt-16">
-          <div className="flex-1 overflow-hidden">
-            <AutoScrollTemplatePreview
-              src={`/demo?theme=${encodeURIComponent(form.theme)}&embedded=1&v=${previewNonce}`}
-              title="Preview"
-              autoScroll={false}
-              previewData={previewData}
-            />
+        <main className="fixed inset-0 z-50 bg-[#f8f3ec] flex flex-col pt-16">
+          <div className="flex-1 flex items-center justify-center p-4 md:p-6 overflow-hidden">
+            {/* Phone mockup on desktop, full screen on mobile */}
+            <div className="w-full h-full md:w-[390px] md:h-[820px] md:bg-[#1e1915] md:rounded-[52px] md:p-[12px] md:shadow-[0_25px_60px_rgba(75,48,36,0.3)] md:border md:border-[#4b3c36]/25 relative flex flex-col">
+              {/* Speaker/Camera notch (hidden on mobile) */}
+              <div className="hidden md:flex absolute top-4 left-1/2 transform -translate-x-1/2 w-[110px] h-[24px] bg-[#1e1915] rounded-full z-20 items-center justify-center gap-1.5 px-3">
+                <span className="h-1.5 w-1.5 rounded-full bg-neutral-800" />
+                <span className="h-1 w-10 rounded-full bg-neutral-900" />
+                <span className="h-1.5 w-1.5 rounded-full bg-neutral-800" />
+              </div>
+
+              {/* Screen container */}
+              <div className="flex-1 w-full h-full overflow-hidden md:rounded-[42px] bg-white relative">
+                <AutoScrollTemplatePreview
+                  src={`/demo?theme=${encodeURIComponent(form.theme)}&embedded=1&v=${previewNonce}`}
+                  title="Preview"
+                  autoScroll={false}
+                  previewData={previewData}
+                />
+              </div>
+            </div>
           </div>
         </main>
       ) : (
@@ -456,6 +560,9 @@ function CreateForm() {
                     rows={3}
                     className="w-full rounded-xl border border-[#eedfcc] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#f2c87c]"
                   />
+                  <p className="text-[11px] text-[#8c7161] leading-relaxed">
+                    💡 Hướng dẫn: Nên dán <strong>Mã nhúng bản đồ (Iframe)</strong> từ Google Maps. Nếu dán link rút gọn chia sẻ (maps.app.goo.gl), hệ thống sẽ hiển thị theo địa chỉ nhập ở trên.
+                  </p>
 
                   {brideMap && (
                     <div className="overflow-hidden rounded-2xl border border-[#f2dec4] shadow-sm">
@@ -509,6 +616,9 @@ function CreateForm() {
                     rows={3}
                     className="w-full rounded-xl border border-[#eddcf3] bg-white px-4 py-3 text-sm text-[#5b3a29] focus:outline-none focus:ring-2 focus:ring-[#d9b1eb]"
                   />
+                  <p className="text-[11px] text-[#8c7161] leading-relaxed">
+                    💡 Hướng dẫn: Nên dán <strong>Mã nhúng bản đồ (Iframe)</strong> từ Google Maps. Nếu dán link rút gọn chia sẻ (maps.app.goo.gl), hệ thống sẽ hiển thị theo địa chỉ nhập ở trên.
+                  </p>
 
                   {groomMap && (
                     <div className="overflow-hidden rounded-2xl border border-[#ecd3f1] shadow-sm">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Reveal from './Reveal'
 
 export type LocationInfo = {
@@ -49,13 +49,21 @@ const buildEmbedUrl = (mapValue: string | null, location?: string | null, addres
             return source
         }
 
+        if (source && /google\.com\/maps|maps\.google/i.test(source)) {
+            return source.includes('output=embed') ? source : `${source}${source.includes('?') ? '&' : '?'}output=embed`
+        }
+
+        if (source && /maps\.app\.goo\.gl|goo\.gl\/maps/i.test(source)) {
+            const query = `${location || ''} ${address || ''}`.trim()
+            if (query) {
+                return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
+            }
+            return null
+        }
+
         const query = `${location || ''} ${address || ''}`.trim()
         if (query) {
             return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
-        }
-
-        if (source && /google\.com\/maps|maps\.google/i.test(source)) {
-            return source.includes('output=embed') ? source : `${source}${source.includes('?') ? '&' : '?'}output=embed`
         }
 
         return null
@@ -67,6 +75,12 @@ const getDirectMapLink = (mapUrl: string | null, location?: string | null, addre
         return query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '#'
     }
     
+    // If it is a resolved Google Maps place/search URL containing output=embed,
+    // we can just strip the output=embed parameter and return the clean URL.
+    if ((mapUrl.includes('google.com/maps') || mapUrl.includes('maps.google')) && !mapUrl.includes('/embed')) {
+        return mapUrl.replace(/[?&]output=embed/, '').replace(/&$/, '')
+    }
+
     const isEmbed = mapUrl.includes('/embed') || mapUrl.includes('output=embed')
     if (!isEmbed) return mapUrl
 
@@ -88,10 +102,78 @@ const getDirectMapLink = (mapUrl: string | null, location?: string | null, addre
 
 export default function LocationSection({ brideInfo, groomInfo, weddingDate, weddingTime }: LocationSectionProps) {
     const [activeTab, setActiveTab] = useState<'groom' | 'bride'>('groom')
+    const [resolvedGroomMap, setResolvedGroomMap] = useState('')
+    const [resolvedBrideMap, setResolvedBrideMap] = useState('')
+
+    useEffect(() => {
+        let active = true
+        const val = groomInfo.mapEmbedUrl
+        if (!val) {
+            setResolvedGroomMap(buildEmbedUrl(null, groomInfo.location, groomInfo.address) || '')
+            return
+        }
+
+        const src = extractMapSrc(val)
+        if (src && /maps\.app\.goo\.gl|goo\.gl\/maps/i.test(src)) {
+            fetch(`/api/resolve-map?url=${encodeURIComponent(src)}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (!active) return
+                    if (data.resolvedUrl) {
+                        setResolvedGroomMap(buildEmbedUrl(data.resolvedUrl, groomInfo.location, groomInfo.address) || '')
+                    } else {
+                        setResolvedGroomMap(buildEmbedUrl(src, groomInfo.location, groomInfo.address) || '')
+                    }
+                })
+                .catch(() => {
+                    if (!active) return
+                    setResolvedGroomMap(buildEmbedUrl(src, groomInfo.location, groomInfo.address) || '')
+                })
+        } else {
+            setResolvedGroomMap(buildEmbedUrl(src, groomInfo.location, groomInfo.address) || '')
+        }
+
+        return () => {
+            active = false
+        }
+    }, [groomInfo.mapEmbedUrl, groomInfo.location, groomInfo.address])
+
+    useEffect(() => {
+        let active = true
+        const val = brideInfo.mapEmbedUrl
+        if (!val) {
+            setResolvedBrideMap(buildEmbedUrl(null, brideInfo.location, brideInfo.address) || '')
+            return
+        }
+
+        const src = extractMapSrc(val)
+        if (src && /maps\.app\.goo\.gl|goo\.gl\/maps/i.test(src)) {
+            fetch(`/api/resolve-map?url=${encodeURIComponent(src)}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (!active) return
+                    if (data.resolvedUrl) {
+                        setResolvedBrideMap(buildEmbedUrl(data.resolvedUrl, brideInfo.location, brideInfo.address) || '')
+                    } else {
+                        setResolvedBrideMap(buildEmbedUrl(src, brideInfo.location, brideInfo.address) || '')
+                    }
+                })
+                .catch(() => {
+                    if (!active) return
+                    setResolvedBrideMap(buildEmbedUrl(src, brideInfo.location, brideInfo.address) || '')
+                })
+        } else {
+            setResolvedBrideMap(buildEmbedUrl(src, brideInfo.location, brideInfo.address) || '')
+        }
+
+        return () => {
+            active = false
+        }
+    }, [brideInfo.mapEmbedUrl, brideInfo.location, brideInfo.address])
 
     const currentInfo = activeTab === 'groom' ? groomInfo : brideInfo
     const mapUrl = extractMapSrc(currentInfo.mapEmbedUrl)
-    const embedMapUrl = buildEmbedUrl(mapUrl, currentInfo.location, currentInfo.address)
+    const embedMapUrl = activeTab === 'groom' ? resolvedGroomMap : resolvedBrideMap
     const externalMapUrl = getDirectMapLink(mapUrl, currentInfo.location, currentInfo.address)
 
     return (

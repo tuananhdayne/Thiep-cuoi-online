@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState, Suspense } from 'react'
 import { Couple, GalleryItem, Wish } from '../[slug]/templates/types'
-import { loadTemplate, supportedThemes } from '../[slug]/templates/templateLoader'
+import { loadTemplate, supportedThemes, getThemeDisplayName } from '../[slug]/templates/templateLoader'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 const getPreviewImageUrl = (item: unknown) => {
     if (typeof item === 'string') return item
@@ -18,6 +19,7 @@ const getPreviewImageUrl = (item: unknown) => {
 function DemoPageContent() {
     const searchParams = useSearchParams()
     const theme = searchParams.get('theme') || 'classic'
+    const isEmbedded = searchParams.get('embedded') === '1'
     const [TemplateToRender, setTemplateToRender] = useState<React.ComponentType<any> | null>(null)
     const [couple, setCouple] = useState<Couple | null>(null)
     const [previewGallery, setPreviewGallery] = useState<GalleryItem[]>([])
@@ -188,22 +190,48 @@ function DemoPageContent() {
     ]
 
     if (!TemplateToRender) {
-        return <div>Loading...</div>
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8f3ec] text-[#8c7161] font-semibold text-sm">
+                Đang tải giao diện...
+            </div>
+        )
     }
 
-    if (!TemplateToRender) {
-        return <div>Template unavailable</div>
-    }
+    const ActiveTemplate = TemplateToRender
 
     return (
         <main className="relative">
-            <TemplateToRender
+            <ActiveTemplate
                 couple={mockCouple}
                 gallery={mockGallery}
                 wishes={mockWishes}
                 weddingGift={giftToRender}
                 locations={locationsToRender}
             />
+
+            {/* Floating action bar to choose template, shown only when not embedded in an iframe */}
+            {!isEmbedded && (
+                <div className="fixed top-4 inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[600px] z-[9999] bg-white/95 backdrop-blur-md border border-[#ad7748]/20 px-5 py-3 rounded-2xl shadow-[0_15px_45px_rgba(75,48,36,0.18)] flex items-center justify-between gap-4 text-[#3c2921] animate-fade-in-up">
+                    <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+                        <span className="text-[10px] uppercase tracking-wider text-[#ad7547] font-semibold">Đang xem thử</span>
+                        <span className="text-sm font-semibold font-display">{getThemeDisplayName(theme)}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href="/"
+                            className="text-xs font-semibold text-[#8c7161] hover:text-[#513426] transition px-3 py-2 rounded-lg hover:bg-gray-100/60"
+                        >
+                            Quay lại
+                        </Link>
+                        <Link
+                            href={`/create?theme=${theme}`}
+                            className="bg-[#513426] text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-[0_4px_12px_rgba(81,52,38,0.2)] transition hover:bg-[#684531] hover:-translate-y-0.5"
+                        >
+                            Chọn mẫu này
+                        </Link>
+                    </div>
+                </div>
+            )}
         </main>
     )
 }

@@ -13,6 +13,8 @@ const slugifyGuest = (name: string) => {
   const cleaned = name.trim()
   if (!cleaned) return ''
   return cleaned
+    .replace(/Đ/g, 'D')
+    .replace(/đ/g, 'd')
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
     .toLowerCase()

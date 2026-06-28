@@ -245,7 +245,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="absolute bottom-0 right-0 h-[480px] w-[58%] rotate-[5deg] overflow-hidden rounded-[38px] border-[9px] border-[#fffdf9] bg-white shadow-[0_35px_90px_rgba(74,45,31,0.22)]">
+            <div className="absolute bottom-0 right-0 h-[480px] w-[58%] rotate-[5deg] overflow-hidden rounded-[38px] border-[10px] border-[#1e1915] bg-white shadow-[0_35px_90px_rgba(0,0,0,0.3)] relative">
+              {/* Phone Notch */}
+              <div className="absolute top-2.5 left-1/2 transform -translate-x-1/2 w-16 h-3.5 bg-[#1e1915] rounded-full z-20 pointer-events-none" />
               <AutoScrollTemplatePreview src="/demo?theme=pastel&embedded=1" title="Thiệp cưới mẫu nổi bật" />
             </div>
 
@@ -318,7 +320,9 @@ export default function Home() {
                     <span className={`absolute left-5 top-5 z-10 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] backdrop-blur-md ${template.badge}`}>
                       {String(index + 1).padStart(2, '0')} · {getThemeDisplayName(template.theme)}
                     </span>
-                    <div className={`relative h-[500px] w-[260px] overflow-hidden rounded-[32px] border-[7px] bg-white/20 transition duration-500 group-hover:scale-[1.025] ${template.frame}`}>
+                    <div className={`relative h-[500px] w-[260px] overflow-hidden rounded-[34px] border-[9px] border-[#1e1915] bg-[#1e1915] transition duration-500 group-hover:scale-[1.025] shadow-xl`}>
+                      {/* Phone Notch */}
+                      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-14 h-3 bg-[#1e1915] rounded-full z-20 pointer-events-none" />
                       <AutoScrollTemplatePreview
                         src={`/demo?theme=${template.theme}&embedded=1`}
                         title={`${getThemeDisplayName(template.theme)} preview`}
@@ -377,6 +381,29 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-[#684631]/10 bg-[#f8f3ec] px-5 py-9 md:px-8">
+        <div className="mx-auto mb-8 max-w-7xl rounded-[28px] border border-[#d9c7b3]/70 bg-white/65 p-6 text-center shadow-[0_16px_45px_rgba(76,50,36,0.06)] backdrop-blur md:p-8">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[#ad7547]">Liên hệ tư vấn</p>
+          <h2 className="mt-3 font-display text-3xl text-[#4b3024]">Cần hỗ trợ tạo thiệp?</h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-[#7b6253]">
+            Kết nối với chúng tôi để được tư vấn mẫu thiệp, chỉnh giao diện và hỗ trợ tạo thiệp cưới online.
+          </p>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <a
+              href="tel:0867899875"
+              className="rounded-full bg-[#513426] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#684531]"
+            >
+              Zalo: 0867899875
+            </a>
+            <a
+              href="https://www.facebook.com/share/1CzHvomGia/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-[#654634]/15 bg-white px-6 py-3 text-sm font-semibold text-[#604536] transition hover:-translate-y-0.5 hover:border-[#ad7547]/40"
+            >
+              Facebook
+            </a>
+          </div>
+        </div>
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-center sm:flex-row sm:text-left">
           <div>
             <p className="font-display text-lg text-[#4b3024]">Wedding Story</p>
