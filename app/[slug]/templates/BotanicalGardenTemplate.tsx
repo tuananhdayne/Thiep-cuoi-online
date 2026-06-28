@@ -396,21 +396,21 @@ export default function BotanicalGardenTemplate({
           title: 'Ngày đầu gặp gỡ',
           story_date: couple.wedding_date || '',
           description: 'Từ một cuộc gặp gỡ giản dị, chúng tôi đã tìm thấy ở nhau sự bình yên và đồng điệu.',
-          image_url: gallery?.[1]?.image_url,
+          image_url: gallery?.[2]?.image_url,
         },
         {
           id: 2,
           title: 'Cùng nhau trưởng thành',
           story_date: '',
           description: couple.intro_description || 'Những ngày bên nhau trở thành khu vườn nhỏ nuôi dưỡng tình yêu bằng sự chân thành.',
-          image_url: gallery?.[2]?.image_url,
+          image_url: gallery?.[3]?.image_url,
         },
         {
           id: 3,
           title: 'Về chung một nhà',
           story_date: couple.wedding_date || '',
           description: 'Chúng tôi chọn nắm tay nhau bước vào một hành trình mới, với gia đình và những người thân yêu bên cạnh.',
-          image_url: gallery?.[3]?.image_url,
+          image_url: gallery?.[4]?.image_url,
         },
       ]
 
@@ -632,42 +632,48 @@ export default function BotanicalGardenTemplate({
           <div className="mx-auto max-w-6xl">
             <Heading overline="Captured In Bloom">Album kỷ niệm</Heading>
             <div className="grid grid-cols-2 gap-3 sm:gap-6">
-              {gallery?.slice(2).map((image, index) => {
-                const isLeft = index % 2 === 0
-                const xOffset = isLeft ? -60 : 60
-                return (
-                  <motion.div
-                    key={image.id}
-                    initial={{ opacity: 0, x: xOffset }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, amount: 0.02 }}
-                    transition={{
-                      duration: 1.4,
-                      ease: [0.16, 1, 0.3, 1] as const,
-                      delay: (index % 2) * 0.12,
-                    }}
-                    className="w-full"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const urls = gallery?.slice(2).map(img => img.image_url) || []
-                        setLightboxImages(urls)
-                        setLightboxIndex(index)
+              {(() => {
+                const storiesUsedFallback = !stories || stories.length === 0
+                const albumStartIndex = storiesUsedFallback ? 5 : 2
+                const albumImages = gallery?.slice(albumStartIndex) || []
+
+                return albumImages.map((image, index) => {
+                  const isLeft = index % 2 === 0
+                  const xOffset = isLeft ? -60 : 60
+                  return (
+                    <motion.div
+                      key={image.id}
+                      initial={{ opacity: 0, x: xOffset }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, amount: 0.02 }}
+                      transition={{
+                        duration: 1.4,
+                        ease: [0.16, 1, 0.3, 1] as const,
+                        delay: (index % 2) * 0.12,
                       }}
-                      className="group relative block aspect-[3/4] w-full overflow-hidden rounded-[18px] border-[4px] sm:border-[6px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]"
+                      className="w-full"
                     >
-                      <Image
-                        src={image.image_url}
-                        alt={image.caption || 'Ảnh cưới'}
-                        fill
-                        sizes="(max-width: 640px) 50vw, 450px"
-                        className="object-cover transition duration-700 group-hover:scale-[1.04]"
-                      />
-                    </button>
-                  </motion.div>
-                )
-              })}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const urls = albumImages.map((img) => img.image_url)
+                          setLightboxImages(urls)
+                          setLightboxIndex(index)
+                        }}
+                        className="group relative block aspect-[3/4] w-full overflow-hidden rounded-[18px] border-[4px] sm:border-[6px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]"
+                      >
+                        <Image
+                          src={image.image_url}
+                          alt={image.caption || 'Ảnh cưới'}
+                          fill
+                          sizes="(max-width: 640px) 50vw, 450px"
+                          className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                        />
+                      </button>
+                    </motion.div>
+                  )
+                })
+              })()}
             </div>
           </div>
         </section>
