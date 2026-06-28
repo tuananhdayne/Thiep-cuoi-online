@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AudioPlayer from '../components/AudioPlayer'
 import Countdown from '../components/Countdown'
 import Footer from '../components/Footer'
@@ -277,7 +277,24 @@ export default function BotanicalGardenTemplate({
   stories,
 }: TemplateProps) {
   const reduceMotion = useReducedMotion()
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [lightboxImages, setLightboxImages] = useState<string[]>([])
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (lightboxIndex === null || lightboxImages.length === 0) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        setLightboxIndex((prev) => (prev !== null ? (prev + 1) % lightboxImages.length : null))
+      } else if (e.key === 'ArrowLeft') {
+        setLightboxIndex((prev) => (prev !== null ? (prev - 1 + lightboxImages.length) % lightboxImages.length : null))
+      } else if (e.key === 'Escape') {
+        setLightboxIndex(null)
+        setLightboxImages([])
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [lightboxIndex, lightboxImages])
   const heroImage =
     gallery?.[0]?.image_url ||
     couple.bride_avatar ||
@@ -483,7 +500,12 @@ export default function BotanicalGardenTemplate({
                       <span className="absolute right-5 top-4 font-display text-4xl text-[#d8c9a8]/55">{String(index + 1).padStart(2, '0')}</span>
                       <BotanicalSprig className="absolute -bottom-16 -right-12 h-48 w-32 rotate-[-35deg] text-[#9aaa8d]/12" flip />
                       {story.image_url && (
-                        <button type="button" onClick={() => setSelectedImage(story.image_url || null)} className="relative block aspect-[3/4] w-full overflow-hidden rounded-[16px]">
+                        <button type="button" onClick={() => {
+                          if (story.image_url) {
+                            setLightboxImages([story.image_url])
+                            setLightboxIndex(0)
+                          }
+                        }} className="relative block aspect-[3/4] w-full overflow-hidden rounded-[16px]">
                           <Image src={story.image_url} alt={story.title} fill sizes="(max-width: 640px) 85vw, 360px" className="object-cover transition duration-700 hover:scale-105" />
                         </button>
                       )}
@@ -524,7 +546,11 @@ export default function BotanicalGardenTemplate({
                     }}
                     className="mb-3 break-inside-avoid sm:mb-5"
                   >
-                    <button type="button" onClick={() => setSelectedImage(image.image_url)} className="group relative block w-full overflow-hidden rounded-[18px] border-[5px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]">
+                    <button type="button" onClick={() => {
+                      const urls = gallery?.map(img => img.image_url) || []
+                      setLightboxImages(urls)
+                      setLightboxIndex(index)
+                    }} className="group relative block w-full overflow-hidden rounded-[18px] border-[5px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]">
                       <Image
                         src={image.image_url}
                         alt={image.caption || 'Ảnh cưới'}
@@ -600,13 +626,75 @@ export default function BotanicalGardenTemplate({
       <Footer bride={couple.bride_name} groom={couple.groom_name} date={couple.wedding_date} />
       <AudioPlayer musicUrl={couple.music_url} delay={couple.music_delay} volume={couple.music_volume} autoplay={couple.music_autoplay} />
 
-      {selectedImage && (
-        <button type="button" onClick={() => setSelectedImage(null)} className="fixed inset-0 z-[100] grid place-items-center bg-[#182016]/95 p-4 backdrop-blur-md">
-          <span className="absolute right-5 top-5 text-[10px] uppercase tracking-[0.3em] text-white">Đóng</span>
-          <span className="relative h-[85vh] w-full max-w-5xl">
-            <Image src={selectedImage} alt="Ảnh cưới phóng to" fill sizes="100vw" className="object-contain" />
-          </span>
-        </button>
+      {lightboxIndex !== null && lightboxImages.length > 0 && (
+        <div
+          onClick={() => {
+            setLightboxIndex(null)
+            setLightboxImages([])
+          }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#182016]/96 p-4 backdrop-blur-md select-none"
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={() => {
+              setLightboxIndex(null)
+              setLightboxImages([])
+            }}
+            className="absolute right-5 top-5 z-[110] px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-white/80 hover:text-white transition-colors bg-white/5 rounded-full border border-white/10 hover:bg-white/10"
+          >
+            Đóng
+          </button>
+
+          {/* Left Arrow */}
+          {lightboxImages.length > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setLightboxIndex((prev) => (prev !== null ? (prev - 1 + lightboxImages.length) % lightboxImages.length : null))
+              }}
+              className="absolute left-4 md:left-8 z-[110] flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-black/45 text-xl text-white/80 hover:bg-black/70 hover:text-white transition-all active:scale-95"
+              aria-label="Ảnh trước"
+            >
+              ⟨
+            </button>
+          )}
+
+          {/* Image Container */}
+          <div className="relative h-[80vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
+            <Image
+              src={lightboxImages[lightboxIndex]}
+              alt="Ảnh cưới phóng to"
+              fill
+              sizes="100vw"
+              className="object-contain"
+              priority
+            />
+          </div>
+
+          {/* Right Arrow */}
+          {lightboxImages.length > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setLightboxIndex((prev) => (prev !== null ? (prev + 1) % lightboxImages.length : null))
+              }}
+              className="absolute right-4 md:right-8 z-[110] flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-black/45 text-xl text-white/80 hover:bg-black/70 hover:text-white transition-all active:scale-95"
+              aria-label="Ảnh tiếp theo"
+            >
+              ⟩
+            </button>
+          )}
+
+          {/* Page Counter Indicator */}
+          {lightboxImages.length > 1 && (
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-[110] bg-black/45 border border-white/10 px-4 py-1.5 rounded-full text-xs text-white/80 tracking-widest font-medium">
+              {lightboxIndex + 1} / {lightboxImages.length}
+            </div>
+          )}
+        </div>
       )}
     </div>
   )
