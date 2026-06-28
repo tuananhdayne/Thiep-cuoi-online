@@ -542,7 +542,7 @@ export default function BotanicalGardenTemplate({
           <Reveal>
             <div className="relative grid overflow-hidden rounded-[30px] border border-[#d7decf] bg-white/70 p-3 shadow-[0_20px_60px_rgba(74,86,65,0.1)] sm:grid-cols-[1.05fr_0.95fr] sm:p-4">
               <FloatingGardenFrame className="-left-14 -top-20 h-64 w-40" rotate={35} delay={0.2} />
-              <div className="relative min-h-[320px] overflow-hidden rounded-[24px] sm:min-h-[440px]">
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[24px]">
                 <Image
                   src={gallery?.[1]?.image_url || heroImage}
                   alt={`Ảnh cặp đôi ${couple.bride_name} và ${couple.groom_name}`}
