@@ -54,20 +54,20 @@ export default function WishForm({ coupleId, guestName, onSubmitted }: WishFormP
         placeholder="Tên của bạn"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full rounded-2xl border border-amber-100 bg-white/80 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm"
+        className="w-full rounded-2xl border border-border-light bg-white/80 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent shadow-sm"
       />
       <textarea
         placeholder="Gửi lời chúc đến cô dâu chú rể..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={4}
-        className="w-full rounded-2xl border border-amber-100 bg-white/80 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 shadow-sm"
+        className="w-full rounded-2xl border border-border-light bg-white/80 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent shadow-sm"
       />
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="w-full sm:w-auto rounded-full bg-amber-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-200 transition hover:bg-amber-800 disabled:opacity-60"
+        className="w-full sm:w-auto rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent-pale transition hover:opacity-90 disabled:opacity-60"
       >
         {loading ? 'Đang gửi...' : 'Gửi lời chúc'}
       </button>

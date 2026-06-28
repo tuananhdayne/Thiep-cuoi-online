@@ -135,6 +135,7 @@
   --font-sans: var(--font-body);
   --font-mono: var(--font-body);
   --font-display: var(--font-display);
+  --font-cursive: var(--font-cursive);
 }
 
 @media (prefers-color-scheme: dark) {

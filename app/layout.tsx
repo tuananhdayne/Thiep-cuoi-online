@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Playfair_Display } from "next/font/google";
+import { Manrope, Playfair_Display, Pinyon_Script } from "next/font/google";
 import "./globals.css";
 import SecurityProvider from "./components/SecurityProvider";
 
@@ -12,6 +12,12 @@ const display = Playfair_Display({
 const body = Manrope({
   variable: "--font-body",
   subsets: ["latin"],
+});
+
+const cursive = Pinyon_Script({
+  variable: "--font-cursive",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body
-        className={`${display.variable} ${body.variable} antialiased bg-[#fdf8f3] text-slate-900`}
+        className={`${display.variable} ${body.variable} ${cursive.variable} antialiased bg-[#fdf8f3] text-slate-900`}
       >
         <SecurityProvider>
           {children}

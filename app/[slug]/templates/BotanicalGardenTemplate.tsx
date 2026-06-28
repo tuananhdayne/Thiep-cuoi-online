@@ -180,6 +180,92 @@ function ScrollCharacterReveal({ text, className = "", delay = 0 }: { text: stri
   )
 }
 
+function WeddingCalendar({ weddingDate }: { weddingDate?: string | null }) {
+  const dateObj = weddingDate ? new Date(weddingDate) : new Date()
+  const isValid = weddingDate ? !isNaN(dateObj.getTime()) : false
+  
+  const year = isValid ? dateObj.getFullYear() : 2025
+  const monthIndex = isValid ? dateObj.getMonth() : 6 // 6 is July
+  const targetDay = isValid ? dateObj.getDate() : 5
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
+  const monthName = monthNames[monthIndex]
+
+  // Start offset: 1st of month
+  const firstDay = new Date(year, monthIndex, 1)
+  const startDayOfWeek = firstDay.getDay() // 0 = Sunday, 1 = Monday...
+  // Map Sun (0) to index 6, Mon (1) to index 0, Tue (2) to index 1...
+  const startOffset = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1
+  
+  // Total days in month
+  const totalDays = new Date(year, monthIndex + 1, 0).getDate()
+
+  const cells = []
+  for (let i = 0; i < startOffset; i++) {
+    cells.push(null)
+  }
+  for (let day = 1; day <= totalDays; day++) {
+    cells.push(day)
+  }
+
+  const daysOfWeek = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+
+  return (
+    <div className="flex flex-col items-center justify-center py-6 text-center select-none">
+      {/* Year & Month Header Overlay */}
+      <div className="relative mb-6">
+        <h3 className="font-display text-[5.5rem] leading-none tracking-wider text-[#3f4a38]/12 select-none">
+          {year}
+        </h3>
+        <p className="absolute left-1/2 top-[60%] -translate-x-1/2 -translate-y-1/2 font-cursive text-5xl sm:text-6xl text-[#748469] font-light capitalize tracking-wide whitespace-nowrap">
+          {monthName}
+        </p>
+      </div>
+
+      {/* Calendar Grid Container */}
+      <div className="w-full max-w-[300px] sm:max-w-[340px] px-1">
+        {/* Days of Week */}
+        <div className="grid grid-cols-7 gap-1 text-center mb-4">
+          {daysOfWeek.map((day) => (
+            <span key={day} className="text-[10px] sm:text-[11px] font-semibold tracking-widest text-[#879477]">
+              {day}
+            </span>
+          ))}
+        </div>
+
+        {/* Days of Month */}
+        <div className="grid grid-cols-7 gap-y-3.5 gap-x-1 text-center items-center justify-items-center">
+          {cells.map((day, idx) => {
+            if (day === null) {
+              return <div key={`empty-${idx}`} className="h-8 w-8" />
+            }
+
+            const isWeddingDay = day === targetDay
+
+            return (
+              <div key={`day-${day}`} className="relative h-8 w-8 flex items-center justify-center text-xs sm:text-sm">
+                {isWeddingDay ? (
+                  <div className="relative flex items-center justify-center h-8 w-8">
+                    <svg viewBox="0 0 100 100" className="absolute inset-0 h-9 w-9 -translate-y-[1px] stroke-[#879477] fill-none stroke-[2] overflow-visible">
+                      <path d="M50 82C50 82 88 56 88 34C88 18 73 6 56 18C50 23 50 23 50 23C50 23 50 23 44 18C27 6 12 18 12 34C12 56 50 82 50 82Z" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="relative z-10 font-bold text-[#3f4a38]">{day}</span>
+                  </div>
+                ) : (
+                  <span className="text-[#687060] font-medium">{day}</span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function FallingPetals({ enabled }: { enabled: boolean }) {
   if (!enabled) return null
 
@@ -529,10 +615,10 @@ export default function BotanicalGardenTemplate({
         <section className="bg-[#edf1e9]/70 px-4 py-14 sm:px-6 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <Heading overline="Captured In Bloom">Album kỷ niệm</Heading>
-            <div className="columns-2 gap-3 sm:columns-3 sm:gap-5">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6">
               {gallery?.map((image, index) => {
                 const isLeft = index % 2 === 0
-                const xOffset = isLeft ? -45 : 45
+                const xOffset = isLeft ? -60 : 60
                 return (
                   <motion.div
                     key={image.id}
@@ -542,21 +628,25 @@ export default function BotanicalGardenTemplate({
                     transition={{
                       duration: 1.4,
                       ease: [0.16, 1, 0.3, 1] as const,
-                      delay: (index % 3) * 0.12,
+                      delay: (index % 2) * 0.12,
                     }}
-                    className="mb-3 break-inside-avoid sm:mb-5"
+                    className="w-full"
                   >
-                    <button type="button" onClick={() => {
-                      const urls = gallery?.map(img => img.image_url) || []
-                      setLightboxImages(urls)
-                      setLightboxIndex(index)
-                    }} className="group relative block w-full overflow-hidden rounded-[18px] border-[5px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const urls = gallery?.map(img => img.image_url) || []
+                        setLightboxImages(urls)
+                        setLightboxIndex(index)
+                      }}
+                      className="group relative block aspect-[3/4] w-full overflow-hidden rounded-[18px] border-[4px] sm:border-[6px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]"
+                    >
                       <Image
                         src={image.image_url}
                         alt={image.caption || 'Ảnh cưới'}
-                        width={800}
-                        height={index % 3 === 0 ? 1000 : 700}
-                        className="h-auto w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+                        fill
+                        sizes="(max-width: 640px) 50vw, 450px"
+                        className="object-cover transition duration-700 group-hover:scale-[1.04]"
                       />
                     </button>
                   </motion.div>
@@ -594,6 +684,13 @@ export default function BotanicalGardenTemplate({
           <Reveal>
             <div className="rounded-[28px] border border-[#d3dccb] bg-white/75 px-4 py-9 shadow-[0_18px_55px_rgba(74,86,65,0.09)] backdrop-blur">
               <Heading overline="Counting Down">Ngày hạnh phúc đang đến</Heading>
+              
+              <div className="mb-6 flex justify-center">
+                <WeddingCalendar weddingDate={couple.wedding_date} />
+              </div>
+              
+              <div className="h-px w-32 bg-[#bdc8b4] mx-auto mb-8 opacity-65" />
+
               <Countdown weddingDate={couple.wedding_date} weddingTime={couple.wedding_time} />
             </div>
           </Reveal>
