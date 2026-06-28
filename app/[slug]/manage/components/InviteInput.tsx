@@ -71,18 +71,13 @@ export default function InviteInput({ coupleId, baseSlug, onSaved }: InviteInput
 
       const rows = []
       for (const guestName of Array.from(new Set(parsedGuests))) {
-        // If the exact same guest name already exists in the database (case-insensitive),
-        // reuse their existing slug to avoid breaking their shared links.
         const existing = existingGuests?.find(
           (g) => g.guest_name?.trim().toLowerCase() === guestName.toLowerCase()
         )
 
-        if (existing && existing.guest_slug) {
-          rows.push({
-            couple_id: coupleId,
-            guest_name: guestName,
-            guest_slug: existing.guest_slug,
-          })
+        if (existing) {
+          // If guest name already exists, skip it since it is already saved in the database.
+          // This avoids trying to update an existing row, which is blocked by RLS policies for anonymous users.
           continue
         }
 
@@ -104,19 +99,23 @@ export default function InviteInput({ coupleId, baseSlug, onSaved }: InviteInput
         })
       }
 
-      const { error: upsertError } = await supabase
-        .from('guests')
-        .upsert(rows, { onConflict: 'couple_id,guest_slug' })
+      if (rows.length > 0) {
+        const { error: insertError } = await supabase
+          .from('guests')
+          .insert(rows)
 
-      if (upsertError) {
-        setError('Không thể lưu danh sách khách. Vui lòng thử lại.')
-      } else {
-        setMessage('Đã lưu danh sách khách mời.')
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('guests-refresh'))
+        if (insertError) {
+          setError('Không thể lưu danh sách khách. Vui lòng thử lại.')
+          setLoading(false)
+          return
         }
-        onSaved?.()
       }
+
+      setMessage('Đã lưu danh sách khách mời.')
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('guests-refresh'))
+      }
+      onSaved?.()
     } catch (err) {
       setError('Có lỗi xảy ra. Vui lòng thử lại.')
     } finally {
