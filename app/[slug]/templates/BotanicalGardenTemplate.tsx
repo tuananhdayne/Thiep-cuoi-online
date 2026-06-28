@@ -632,7 +632,7 @@ export default function BotanicalGardenTemplate({
           <div className="mx-auto max-w-6xl">
             <Heading overline="Captured In Bloom">Album kỷ niệm</Heading>
             <div className="grid grid-cols-2 gap-3 sm:gap-6">
-              {gallery?.map((image, index) => {
+              {gallery?.slice(2).map((image, index) => {
                 const isLeft = index % 2 === 0
                 const xOffset = isLeft ? -60 : 60
                 return (
@@ -651,7 +651,7 @@ export default function BotanicalGardenTemplate({
                     <button
                       type="button"
                       onClick={() => {
-                        const urls = gallery?.map(img => img.image_url) || []
+                        const urls = gallery?.slice(2).map(img => img.image_url) || []
                         setLightboxImages(urls)
                         setLightboxIndex(index)
                       }}
@@ -724,7 +724,6 @@ export default function BotanicalGardenTemplate({
               coupleId={couple.id}
               brideAvatar={gallery?.[1]?.image_url || couple.bride_avatar}
               groomAvatar={gallery?.[0]?.image_url || couple.groom_avatar}
-              includeMessage
             />
           </Reveal>
         </div>
