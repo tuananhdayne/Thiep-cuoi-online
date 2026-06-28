@@ -83,11 +83,13 @@ export default function Hero({
           </p>
         )}
         <h1
-          className={`font-display text-5xl md:text-6xl lg:text-7xl drop-shadow-2xl transition-all duration-700 ease-out ${
+          className={`font-display text-[clamp(1.75rem,8vw,4.5rem)] leading-tight whitespace-nowrap drop-shadow-2xl transition-all duration-700 ease-out flex items-center justify-center gap-2 ${
             showTitles ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-[0.97] translate-y-4'
           }`}
         >
-          {brideName} <span className="text-[#e6c18f]">&</span> {groomName}
+          <span>{brideName}</span>
+          <span className="text-[#e6c18f] font-normal italic">&</span>
+          <span>{groomName}</span>
         </h1>
         {introDescription && (
           <p
