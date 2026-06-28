@@ -103,4 +103,5 @@ export interface TemplateProps {
     weddingGift?: WeddingGift | null
     locations?: Location | null
     stories?: Story[]
+    guestName?: string
 }

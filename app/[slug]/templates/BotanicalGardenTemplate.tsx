@@ -361,6 +361,7 @@ export default function BotanicalGardenTemplate({
   weddingGift,
   locations,
   stories,
+  guestName,
 }: TemplateProps) {
   const reduceMotion = useReducedMotion()
   const [lightboxImages, setLightboxImages] = useState<string[]>([])
@@ -474,6 +475,21 @@ export default function BotanicalGardenTemplate({
             </motion.div>
 
             <div className="absolute inset-x-0 bottom-0 px-5 pb-10 text-center text-white sm:px-12 sm:pb-14 z-20">
+              {guestName && (
+                <motion.div
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  transition={{ duration: 0.85, delay: 0.1 }}
+                  className="mb-3.5 space-y-1.5"
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#eff2e8]/90">
+                    Trân trọng kính mời
+                  </p>
+                  <p className="font-serif text-lg sm:text-xl font-semibold text-white drop-shadow-md">
+                    {guestName}
+                  </p>
+                </motion.div>
+              )}
               <motion.p
                 className="text-[10px] font-semibold uppercase tracking-[0.48em] text-[#eff2e8]"
                 initial={reduceMotion ? false : { opacity: 0, y: 12 }}
