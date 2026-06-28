@@ -78,7 +78,7 @@ export default function Hero({
           Trân trọng kính mời
         </p>
         {guestName && (
-          <p className={`text-sm font-medium text-white/90 transition-all duration-700 delay-100 ${showTitles ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
+          <p className={`text-xl md:text-2xl font-semibold text-white transition-all duration-700 delay-100 ${showTitles ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
             {guestName}
           </p>
         )}
