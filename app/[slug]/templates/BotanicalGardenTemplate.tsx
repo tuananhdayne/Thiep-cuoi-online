@@ -266,7 +266,7 @@ export default function BotanicalGardenTemplate({
                       <span className="absolute right-5 top-4 font-display text-4xl text-[#d8c9a8]/55">{String(index + 1).padStart(2, '0')}</span>
                       <BotanicalSprig className="absolute -bottom-16 -right-12 h-48 w-32 rotate-[-35deg] text-[#9aaa8d]/12" flip />
                       {story.image_url && (
-                        <button type="button" onClick={() => setSelectedImage(story.image_url || null)} className="relative block aspect-[16/10] w-full overflow-hidden rounded-[16px]">
+                        <button type="button" onClick={() => setSelectedImage(story.image_url || null)} className="relative block aspect-[3/4] w-full overflow-hidden rounded-[16px]">
                           <Image src={story.image_url} alt={story.title} fill sizes="(max-width: 640px) 85vw, 360px" className="object-cover transition duration-700 hover:scale-105" />
                         </button>
                       )}
