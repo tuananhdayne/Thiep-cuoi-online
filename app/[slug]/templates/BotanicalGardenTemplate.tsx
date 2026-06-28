@@ -27,19 +27,156 @@ function BotanicalSprig({ className = '', flip = false }: { className?: string; 
 
 function FloralDivider() {
   return (
-    <div className="flex items-center justify-center gap-4 py-2 text-[#9aaa8d]">
-      <span className="h-px w-14 bg-[#cbd4c1]" />
-      <span className="h-2 w-2 rotate-45 border border-[#9aaa8d]" />
-      <span className="h-px w-14 bg-[#cbd4c1]" />
-    </div>
+    <motion.div
+      className="flex items-center justify-center gap-4 py-2 text-[#9aaa8d]"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
+      <motion.span
+        variants={{
+          hidden: { scaleX: 0 },
+          visible: { scaleX: 1, transition: { duration: 0.8, ease: 'easeOut' } }
+        }}
+        className="h-px w-14 bg-[#cbd4c1] origin-right"
+      />
+      <motion.span
+        variants={{
+          hidden: { scale: 0, rotate: 0 },
+          visible: { scale: 1, rotate: 225, transition: { type: 'spring', delay: 0.3 } }
+        }}
+        className="h-2 w-2 border border-[#9aaa8d]"
+      />
+      <motion.span
+        variants={{
+          hidden: { scaleX: 0 },
+          visible: { scaleX: 1, transition: { duration: 0.8, ease: 'easeOut' } }
+        }}
+        className="h-px w-14 bg-[#cbd4c1] origin-left"
+      />
+    </motion.div>
   )
 }
 
-function GardenFrame({ className = '' }: { className?: string }) {
+function FloatingGardenFrame({ className = '', rotate = 0, delay = 0 }: { className?: string; rotate?: number; delay?: number }) {
+  const reduceMotion = useReducedMotion()
   return (
-    <div className={`pointer-events-none absolute text-[#879477]/25 ${className}`} aria-hidden="true">
+    <motion.div
+      className={`pointer-events-none absolute text-[#879477]/25 ${className}`}
+      animate={reduceMotion ? undefined : {
+        rotate: [rotate - 3, rotate + 3, rotate - 3],
+        y: [0, 8, 0]
+      }}
+      transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut', delay }}
+      aria-hidden="true"
+    >
       <BotanicalSprig className="h-full w-full" />
-    </div>
+    </motion.div>
+  )
+}
+
+function CharacterReveal({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) {
+  const letters = Array.from(text)
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.05, delayChildren: delay }
+    }
+  }
+  const childVariants = {
+    hidden: (index: number) => ({
+      opacity: 0,
+      x: index % 2 === 0 ? -40 : 40,
+      y: index % 3 === 0 ? -25 : 25,
+      scale: 0.5,
+      rotate: index % 2 === 0 ? -20 : 20
+    }),
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      rotate: 0,
+      transition: {
+        duration: 1.2,
+        ease: [0.16, 1, 0.3, 1] as const
+      }
+    }
+  }
+
+  return (
+    <motion.span
+      className={`inline-block ${className}`}
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {letters.map((char, index) => (
+        <motion.span
+          key={index}
+          custom={index}
+          variants={childVariants}
+          className="inline-block origin-center"
+          style={{ display: char === ' ' ? 'inline' : 'inline-block' }}
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </motion.span>
+      ))}
+    </motion.span>
+  )
+}
+
+function ScrollCharacterReveal({ text, className = "", delay = 0 }: { text: string; className?: string; delay?: number }) {
+  const letters = Array.from(text)
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.06, delayChildren: delay }
+    }
+  }
+  const childVariants = {
+    hidden: (index: number) => ({
+      opacity: 0,
+      x: -50,
+      scale: 0.8,
+      skewX: -15,
+      rotate: -5
+    }),
+    visible: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+      skewX: 0,
+      rotate: 0,
+      transition: {
+        duration: 1.3,
+        ease: [0.16, 1, 0.3, 1] as const
+      }
+    }
+  }
+
+  return (
+    <motion.span
+      className={`inline-block ${className}`}
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.02 }}
+    >
+      {letters.map((char, index) => (
+        <motion.span
+          key={index}
+          custom={index}
+          variants={childVariants}
+          className="inline-block origin-center"
+          style={{ display: char === ' ' ? 'inline' : 'inline-block' }}
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </motion.span>
+      ))}
+    </motion.span>
   )
 }
 
@@ -84,14 +221,13 @@ function FallingPetals({ enabled }: { enabled: boolean }) {
 }
 
 function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const reduceMotion = useReducedMotion()
   return (
     <motion.div
       className={className}
-      initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.995 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.12 }}
-      transition={{ duration: 0.85, delay, ease: [0.21, 1, 0.35, 1] }}
+      initial={{ opacity: 0, y: 20, scale: 0.99 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.02 }}
+      transition={{ duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] as const }}
     >
       {children}
     </motion.div>
@@ -120,7 +256,13 @@ function Heading({ overline, children }: { overline: string; children: React.Rea
       </motion.div>
       <p className="font-display text-xl text-[#b4a173]">✦</p>
       <p className="text-[10px] font-semibold uppercase tracking-[0.38em] text-[#879477]">{overline}</p>
-      <h2 className="mt-3 font-display text-3xl text-[#3f4a38] sm:text-5xl">{children}</h2>
+      <h2 className="mt-3 font-display text-3xl text-[#3f4a38] sm:text-5xl">
+        {typeof children === 'string' ? (
+          <ScrollCharacterReveal text={children} />
+        ) : (
+          children
+        )}
+      </h2>
       <FloralDivider />
     </div>
   )
@@ -237,16 +379,18 @@ export default function BotanicalGardenTemplate({
               >
                 Save The Date
               </motion.p>
-              <motion.h1
-                className="mt-4 font-display text-[1.8rem] xs:text-[2.2rem] min-[390px]:text-[2.5rem] sm:text-6xl md:text-7xl leading-[1.02] drop-shadow-lg whitespace-nowrap"
-                initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.97 }}
-                animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.95, delay: 0.45, ease: [0.21, 1, 0.35, 1] }}
-              >
-                {couple.bride_name}
-                <span className="mx-2 font-normal italic text-[#e5d5af]">&amp;</span>
-                {couple.groom_name}
-              </motion.h1>
+              <h1 className="mt-4 font-display text-[1.8rem] xs:text-[2.2rem] min-[390px]:text-[2.5rem] sm:text-6xl md:text-7xl leading-[1.02] drop-shadow-lg whitespace-nowrap flex items-center justify-center gap-1 sm:gap-2">
+                <CharacterReveal text={couple.bride_name} delay={0.4} />
+                <motion.span
+                  className="mx-2 font-normal italic text-[#e5d5af] inline-block"
+                  initial={reduceMotion ? false : { opacity: 0, scale: 0.4, rotate: -45 }}
+                  animate={reduceMotion ? undefined : { opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', delay: 0.75, damping: 12 }}
+                >
+                  &amp;
+                </motion.span>
+                <CharacterReveal text={couple.groom_name} delay={0.85} />
+              </h1>
               <motion.p
                 className="mt-5 text-xs font-semibold uppercase tracking-[0.32em] text-white/85"
                 initial={reduceMotion ? false : { opacity: 0, y: 12 }}
@@ -294,7 +438,7 @@ export default function BotanicalGardenTemplate({
         <section className="mx-auto max-w-5xl px-4 pb-10 sm:px-6 sm:pb-14">
           <Reveal>
             <div className="relative grid overflow-hidden rounded-[30px] border border-[#d7decf] bg-white/70 p-3 shadow-[0_20px_60px_rgba(74,86,65,0.1)] sm:grid-cols-[1.05fr_0.95fr] sm:p-4">
-              <GardenFrame className="-left-14 -top-20 h-64 w-40 rotate-[35deg]" />
+              <FloatingGardenFrame className="-left-14 -top-20 h-64 w-40" rotate={35} delay={0.2} />
               <div className="relative min-h-[320px] overflow-hidden rounded-[24px] sm:min-h-[440px]">
                 <Image
                   src={gallery?.[1]?.image_url || heroImage}
@@ -320,8 +464,8 @@ export default function BotanicalGardenTemplate({
         </section>
 
         <section className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
-          <GardenFrame className="-left-20 top-24 h-72 w-48 rotate-[22deg]" />
-          <GardenFrame className="-right-20 bottom-16 h-72 w-48 rotate-[-22deg]" />
+          <FloatingGardenFrame className="-left-20 top-24 h-72 w-48" rotate={22} delay={0.4} />
+          <FloatingGardenFrame className="-right-20 bottom-16 h-72 w-48" rotate={-22} delay={0.8} />
           <Heading overline="A Journey Through The Garden">Hành trình yêu thương</Heading>
           <div className="relative mx-auto max-w-3xl before:absolute before:bottom-0 before:left-[21px] before:top-0 before:w-px before:bg-[#bdc8b4] sm:before:left-1/2">
             {storyItems.map((story, index) => (
@@ -364,43 +508,60 @@ export default function BotanicalGardenTemplate({
           <div className="mx-auto max-w-6xl">
             <Heading overline="Captured In Bloom">Album kỷ niệm</Heading>
             <div className="columns-2 gap-3 sm:columns-3 sm:gap-5">
-              {gallery?.map((image, index) => (
-                <Reveal key={image.id} delay={(index % 4) * 0.03} className="mb-3 break-inside-avoid sm:mb-5">
-                  <button type="button" onClick={() => setSelectedImage(image.image_url)} className="group relative block w-full overflow-hidden rounded-[18px] border-[5px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]">
-                    <Image
-                      src={image.image_url}
-                      alt={image.caption || 'Ảnh cưới'}
-                      width={800}
-                      height={index % 3 === 0 ? 1000 : 700}
-                      className="h-auto w-full object-cover transition duration-700 group-hover:scale-[1.03]"
-                    />
-                  </button>
-                </Reveal>
-              ))}
+              {gallery?.map((image, index) => {
+                const isLeft = index % 2 === 0
+                const xOffset = isLeft ? -45 : 45
+                return (
+                  <motion.div
+                    key={image.id}
+                    initial={{ opacity: 0, x: xOffset }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, amount: 0.02 }}
+                    transition={{
+                      duration: 1.4,
+                      ease: [0.16, 1, 0.3, 1] as const,
+                      delay: (index % 3) * 0.12,
+                    }}
+                    className="mb-3 break-inside-avoid sm:mb-5"
+                  >
+                    <button type="button" onClick={() => setSelectedImage(image.image_url)} className="group relative block w-full overflow-hidden rounded-[18px] border-[5px] border-white bg-white shadow-[0_12px_35px_rgba(74,86,65,0.1)]">
+                      <Image
+                        src={image.image_url}
+                        alt={image.caption || 'Ảnh cưới'}
+                        width={800}
+                        height={index % 3 === 0 ? 1000 : 700}
+                        className="h-auto w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+                      />
+                    </button>
+                  </motion.div>
+                )
+              })}
             </div>
           </div>
         </section>
 
         <section id="location" className="mx-auto max-w-5xl px-3 py-12 sm:px-6 sm:py-16">
           <Heading overline="Wedding Celebration">Thông tin hôn lễ</Heading>
-          <div className="overflow-hidden rounded-[30px] border border-[#ced8c6] bg-white/75 shadow-[0_20px_60px_rgba(74,86,65,0.1)] [&_section]:bg-transparent">
-            <LocationSection
-              weddingDate={couple.wedding_date}
-              weddingTime={couple.wedding_time}
-              brideInfo={{
-                title: locations?.bride_event_title,
-                location: locations?.bride_location,
-                address: locations?.bride_address,
-                mapEmbedUrl: locations?.bride_google_map_embed,
-              }}
-              groomInfo={{
-                title: locations?.groom_event_title,
-                location: locations?.groom_location,
-                address: locations?.groom_address,
-                mapEmbedUrl: locations?.groom_google_map_embed,
-              }}
-            />
-          </div>
+          <Reveal>
+            <div className="overflow-hidden rounded-[30px] border border-[#ced8c6] bg-white/75 shadow-[0_20px_60px_rgba(74,86,65,0.1)] [&_section]:bg-transparent">
+              <LocationSection
+                weddingDate={couple.wedding_date}
+                weddingTime={couple.wedding_time}
+                brideInfo={{
+                  title: locations?.bride_event_title,
+                  location: locations?.bride_location,
+                  address: locations?.bride_address,
+                  mapEmbedUrl: locations?.bride_google_map_embed,
+                }}
+                groomInfo={{
+                  title: locations?.groom_event_title,
+                  location: locations?.groom_location,
+                  address: locations?.groom_address,
+                  mapEmbedUrl: locations?.groom_google_map_embed,
+                }}
+              />
+            </div>
+          </Reveal>
         </section>
 
         <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-16">
@@ -413,20 +574,26 @@ export default function BotanicalGardenTemplate({
         </section>
 
         <div className="mx-auto max-w-5xl px-3 py-8 sm:px-6 [&>section]:rounded-[30px] [&>section]:border [&>section]:border-[#d3dccb] [&>section]:bg-white/80 [&>section]:shadow-[0_20px_60px_rgba(74,86,65,0.09)]">
-          <GiftSection couple={couple} weddingGift={weddingGift} />
+          <Reveal>
+            <GiftSection couple={couple} weddingGift={weddingGift} />
+          </Reveal>
         </div>
 
         <div id="rsvp" className="mx-auto max-w-5xl px-3 py-8 sm:px-6 [&>section]:rounded-[30px] [&>section]:border [&>section]:border-[#d3dccb] [&>section]:bg-white/80 [&>section]:shadow-[0_20px_60px_rgba(74,86,65,0.09)]">
-          <RsvpSection
-            coupleId={couple.id}
-            brideAvatar={gallery?.[1]?.image_url || couple.bride_avatar}
-            groomAvatar={gallery?.[0]?.image_url || couple.groom_avatar}
-            includeMessage
-          />
+          <Reveal>
+            <RsvpSection
+              coupleId={couple.id}
+              brideAvatar={gallery?.[1]?.image_url || couple.bride_avatar}
+              groomAvatar={gallery?.[0]?.image_url || couple.groom_avatar}
+              includeMessage
+            />
+          </Reveal>
         </div>
 
         <div className="mx-auto max-w-6xl px-3 py-8 pb-20 sm:px-6 [&>section]:rounded-[30px] [&>section]:border [&>section]:border-[#d3dccb] [&>section]:bg-white/80 [&>section]:shadow-[0_20px_60px_rgba(74,86,65,0.09)]">
-          <WishSection coupleId={couple.id} initialWishes={wishes || []} />
+          <Reveal>
+            <WishSection coupleId={couple.id} initialWishes={wishes || []} />
+          </Reveal>
         </div>
       </main>
 
