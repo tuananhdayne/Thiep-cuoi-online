@@ -86,15 +86,18 @@ export default function SpringGardenTemplate({
     return () => clearInterval(timer)
   }, [couple.wedding_date, couple.wedding_time])
 
-  const defaultHero = 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'
+  const defaultHero = '/images/couples/wedding-couple-18.webp'
   const heroImage = couple.hero_image || (gallery.length > 0 ? gallery[0].image_url : defaultHero)
 
   const displayedGallery = gallery.length > 0
     ? gallery
     : [
-        { id: 1, image_url: defaultHero, sort_order: 1 },
-        { id: 2, image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80', sort_order: 2 },
-        { id: 3, image_url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80', sort_order: 3 },
+        { id: 1, image_url: '/images/couples/wedding-couple-18.webp', sort_order: 1 },
+        { id: 2, image_url: '/images/couples/wedding-couple-17.webp', sort_order: 2 },
+        { id: 3, image_url: '/images/couples/wedding-couple-15.webp', sort_order: 3 },
+        { id: 4, image_url: '/images/couples/wedding-couple-4.webp', sort_order: 4 },
+        { id: 5, image_url: '/images/couples/wedding-couple-5.webp', sort_order: 5 },
+        { id: 6, image_url: '/images/couples/wedding-couple-6.webp', sort_order: 6 }
       ]
 
   const handleWishSubmit = async (e: React.FormEvent) => {

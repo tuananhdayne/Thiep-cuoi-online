@@ -97,12 +97,157 @@ function DemoPageContent() {
         return () => window.removeEventListener('message', receivePreviewData)
     }, [validTheme])
 
+    // Curated theme-specific authentic bride & groom photos and info for demo
+    const themeDemoProfiles: Record<
+        string,
+        {
+            groom: string
+            bride: string
+            hero: string
+            gallery: string[]
+        }
+    > = {
+        'lotus-purity': {
+            groom: 'Quang Dũng',
+            bride: 'Mai Chi',
+            hero: '/images/couples/wedding-couple-1.webp',
+            gallery: [
+                '/images/couples/wedding-couple-1.webp',
+                '/images/couples/wedding-couple-2.webp',
+                '/images/couples/wedding-couple-3.webp',
+                '/images/couples/wedding-couple-4.webp',
+                '/images/couples/wedding-couple-5.webp',
+                '/images/couples/wedding-couple-6.webp',
+            ],
+        },
+        'imperial-harmony': {
+            groom: 'Minh Tuấn',
+            bride: 'Hồng Hạnh',
+            hero: '/images/couples/wedding-couple-7.webp',
+            gallery: [
+                '/images/couples/wedding-couple-7.webp',
+                '/images/couples/wedding-couple-8.webp',
+                '/images/couples/wedding-couple-9.webp',
+                '/images/couples/wedding-couple-10.webp',
+                '/images/couples/wedding-couple-11.webp',
+                '/images/couples/wedding-couple-12.webp',
+            ],
+        },
+        'burgundy-romance': {
+            groom: 'Hoàng Long',
+            bride: 'Bảo Ngọc',
+            hero: '/images/couples/wedding-couple-14.webp',
+            gallery: [
+                '/images/couples/wedding-couple-14.webp',
+                '/images/couples/wedding-couple-13.webp',
+                '/images/couples/wedding-couple-15.webp',
+                '/images/couples/wedding-couple-16.webp',
+                '/images/couples/wedding-couple-17.webp',
+                '/images/couples/wedding-couple-18.webp',
+            ],
+        },
+        'noir-prestige': {
+            groom: 'Trọng Hiếu',
+            bride: 'Kim Cương',
+            hero: '/images/couples/wedding-couple-13.webp',
+            gallery: [
+                '/images/couples/wedding-couple-13.webp',
+                '/images/couples/wedding-couple-14.webp',
+                '/images/couples/wedding-couple-24.webp',
+                '/images/couples/wedding-couple-15.webp',
+                '/images/couples/wedding-couple-16.webp',
+                '/images/couples/wedding-couple-17.webp',
+            ],
+        },
+        'sunset-blush': {
+            groom: 'Gia Huy',
+            bride: 'Thảo Vy',
+            hero: '/images/couples/wedding-couple-19.webp',
+            gallery: [
+                '/images/couples/wedding-couple-19.webp',
+                '/images/couples/wedding-couple-20.webp',
+                '/images/couples/wedding-couple-21.webp',
+                '/images/couples/wedding-couple-22.webp',
+                '/images/couples/wedding-couple-23.webp',
+                '/images/couples/wedding-couple-3.webp',
+            ],
+        },
+        'crystal-luxury': {
+            groom: 'Tuấn Kiệt',
+            bride: 'Thanh Hằng',
+            hero: '/images/couples/wedding-couple-16.webp',
+            gallery: [
+                '/images/couples/wedding-couple-16.webp',
+                '/images/couples/wedding-couple-15.webp',
+                '/images/couples/wedding-couple-17.webp',
+                '/images/couples/wedding-couple-18.webp',
+                '/images/couples/wedding-couple-21.webp',
+                '/images/couples/wedding-couple-22.webp',
+            ],
+        },
+        'golden-vintage': {
+            groom: 'Đức Anh',
+            bride: 'Khánh Linh',
+            hero: '/images/couples/wedding-couple-15.webp',
+            gallery: [
+                '/images/couples/wedding-couple-15.webp',
+                '/images/couples/wedding-couple-16.webp',
+                '/images/couples/wedding-couple-17.webp',
+                '/images/couples/wedding-couple-18.webp',
+                '/images/couples/wedding-couple-2.webp',
+                '/images/couples/wedding-couple-3.webp',
+            ],
+        },
+        'spring-garden': {
+            groom: 'Văn Khoa',
+            bride: 'Nhã Uyên',
+            hero: '/images/couples/wedding-couple-18.webp',
+            gallery: [
+                '/images/couples/wedding-couple-18.webp',
+                '/images/couples/wedding-couple-17.webp',
+                '/images/couples/wedding-couple-15.webp',
+                '/images/couples/wedding-couple-4.webp',
+                '/images/couples/wedding-couple-5.webp',
+                '/images/couples/wedding-couple-6.webp',
+            ],
+        },
+        'ocean-breeze': {
+            groom: 'Hải Đăng',
+            bride: 'Bích Ngân',
+            hero: '/images/couples/wedding-couple-17.webp',
+            gallery: [
+                '/images/couples/wedding-couple-17.webp',
+                '/images/couples/wedding-couple-18.webp',
+                '/images/couples/wedding-couple-15.webp',
+                '/images/couples/wedding-couple-21.webp',
+                '/images/couples/wedding-couple-22.webp',
+                '/images/couples/wedding-couple-23.webp',
+            ],
+        },
+        'lavender-dream': {
+            groom: 'Nhật Nam',
+            bride: 'Hà My',
+            hero: '/images/couples/wedding-couple-20.webp',
+            gallery: [
+                '/images/couples/wedding-couple-20.webp',
+                '/images/couples/wedding-couple-19.webp',
+                '/images/couples/wedding-couple-21.webp',
+                '/images/couples/wedding-couple-22.webp',
+                '/images/couples/wedding-couple-23.webp',
+                '/images/couples/wedding-couple-24.webp',
+            ],
+        },
+    }
+
+    const currentProfile = themeDemoProfiles[validTheme] || themeDemoProfiles['burgundy-romance']
+
     // Mock Data for Demo (fallback)
     const mockCouple: Couple = couple || {
         id: 0,
         slug: 'demo',
-        bride_name: 'Bảo Ngọc',
-        groom_name: 'Hoàng Long',
+        bride_name: currentProfile.bride,
+        groom_name: currentProfile.groom,
+        hero_image: currentProfile.hero,
         intro_description: 'Cùng nhau bắt đầu một chương mới của cuộc đời. Sự hiện diện của quý khách là niềm vinh hạnh lớn nhất của chúng tôi.',
         wedding_date: '2026-12-28',
         wedding_time: '18:00',
@@ -177,12 +322,11 @@ function DemoPageContent() {
         }
         : mockGift
 
-    const defaultGallery: GalleryItem[] = [
-        { id: 1, image_url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1600&q=88' },
-        { id: 2, image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1400&q=85' },
-        { id: 3, image_url: 'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=1400&q=85' },
-        { id: 4, image_url: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1400&q=85' },
-    ]
+    const defaultGallery: GalleryItem[] = currentProfile.gallery.map((imgUrl, i) => ({
+        id: i + 1,
+        image_url: imgUrl,
+        sort_order: i + 1,
+    }))
     const mockGallery: GalleryItem[] = hasPreviewData ? previewGallery : defaultGallery
 
     const mockWishes: Wish[] = [

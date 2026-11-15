@@ -6,6 +6,15 @@ const all10 = [
     fileName: 'BurgundyRomanceTemplate.tsx',
     componentName: 'BurgundyRomanceTemplate',
     variant: 'burgundy',
+    heroImage: '/images/couples/wedding-couple-14.webp',
+    gallery: [
+      '/images/couples/wedding-couple-14.webp',
+      '/images/couples/wedding-couple-13.webp',
+      '/images/couples/wedding-couple-15.webp',
+      '/images/couples/wedding-couple-16.webp',
+      '/images/couples/wedding-couple-17.webp',
+      '/images/couples/wedding-couple-18.webp',
+    ],
     outerBg: 'bg-[#200508]',
     cardBg: 'bg-[#FFF7EB]',
     textMain: 'text-[#511419]',
@@ -47,6 +56,15 @@ const all10 = [
     fileName: 'ImperialSongHyTemplate.tsx',
     componentName: 'ImperialSongHyTemplate',
     variant: 'songhy',
+    heroImage: '/images/couples/wedding-couple-7.webp',
+    gallery: [
+      '/images/couples/wedding-couple-7.webp',
+      '/images/couples/wedding-couple-8.webp',
+      '/images/couples/wedding-couple-9.webp',
+      '/images/couples/wedding-couple-10.webp',
+      '/images/couples/wedding-couple-11.webp',
+      '/images/couples/wedding-couple-12.webp',
+    ],
     outerBg: 'bg-[#2B0000]',
     cardBg: 'bg-[#FFF9E6]',
     textMain: 'text-[#420000]',
@@ -100,6 +118,15 @@ const all10 = [
     fileName: 'SpringGardenTemplate.tsx',
     componentName: 'SpringGardenTemplate',
     variant: 'vuonxuan',
+    heroImage: '/images/couples/wedding-couple-18.webp',
+    gallery: [
+      '/images/couples/wedding-couple-18.webp',
+      '/images/couples/wedding-couple-17.webp',
+      '/images/couples/wedding-couple-15.webp',
+      '/images/couples/wedding-couple-4.webp',
+      '/images/couples/wedding-couple-5.webp',
+      '/images/couples/wedding-couple-6.webp',
+    ],
     outerBg: 'bg-[#0E241B]',
     cardBg: 'bg-[#F8FAF6]',
     textMain: 'text-[#1B4332]',
@@ -133,6 +160,15 @@ const all10 = [
     fileName: 'GoldenVintageTemplate.tsx',
     componentName: 'GoldenVintageTemplate',
     variant: 'vintage',
+    heroImage: '/images/couples/wedding-couple-15.webp',
+    gallery: [
+      '/images/couples/wedding-couple-15.webp',
+      '/images/couples/wedding-couple-16.webp',
+      '/images/couples/wedding-couple-17.webp',
+      '/images/couples/wedding-couple-18.webp',
+      '/images/couples/wedding-couple-2.webp',
+      '/images/couples/wedding-couple-3.webp',
+    ],
     outerBg: 'bg-[#1C130C]',
     cardBg: 'bg-[#FAF6F0]',
     textMain: 'text-[#4A3525]',
@@ -174,6 +210,15 @@ const all10 = [
     fileName: 'SunsetBlushTemplate.tsx',
     componentName: 'SunsetBlushTemplate',
     variant: 'blush',
+    heroImage: '/images/couples/wedding-couple-19.webp',
+    gallery: [
+      '/images/couples/wedding-couple-19.webp',
+      '/images/couples/wedding-couple-20.webp',
+      '/images/couples/wedding-couple-21.webp',
+      '/images/couples/wedding-couple-22.webp',
+      '/images/couples/wedding-couple-23.webp',
+      '/images/couples/wedding-couple-3.webp',
+    ],
     outerBg: 'bg-[#260D13]',
     cardBg: 'bg-[#FFF5F6]',
     textMain: 'text-[#691D2E]',
@@ -214,6 +259,15 @@ const all10 = [
     fileName: 'CrystalLuxuryTemplate.tsx',
     componentName: 'CrystalLuxuryTemplate',
     variant: 'crystal',
+    heroImage: '/images/couples/wedding-couple-16.webp',
+    gallery: [
+      '/images/couples/wedding-couple-16.webp',
+      '/images/couples/wedding-couple-15.webp',
+      '/images/couples/wedding-couple-17.webp',
+      '/images/couples/wedding-couple-18.webp',
+      '/images/couples/wedding-couple-21.webp',
+      '/images/couples/wedding-couple-22.webp',
+    ],
     outerBg: 'bg-[#111111]',
     cardBg: 'bg-[#FDFCF7]',
     textMain: 'text-[#1F1E1D]',
@@ -253,6 +307,15 @@ const all10 = [
     fileName: 'OceanBreezeTemplate.tsx',
     componentName: 'OceanBreezeTemplate',
     variant: 'ocean',
+    heroImage: '/images/couples/wedding-couple-17.webp',
+    gallery: [
+      '/images/couples/wedding-couple-17.webp',
+      '/images/couples/wedding-couple-18.webp',
+      '/images/couples/wedding-couple-15.webp',
+      '/images/couples/wedding-couple-21.webp',
+      '/images/couples/wedding-couple-22.webp',
+      '/images/couples/wedding-couple-23.webp',
+    ],
     outerBg: 'bg-[#091626]',
     cardBg: 'bg-[#F4F7FB]',
     textMain: 'text-[#142942]',
@@ -294,6 +357,15 @@ const all10 = [
     fileName: 'LavenderDreamTemplate.tsx',
     componentName: 'LavenderDreamTemplate',
     variant: 'lavender',
+    heroImage: '/images/couples/wedding-couple-20.webp',
+    gallery: [
+      '/images/couples/wedding-couple-20.webp',
+      '/images/couples/wedding-couple-19.webp',
+      '/images/couples/wedding-couple-21.webp',
+      '/images/couples/wedding-couple-22.webp',
+      '/images/couples/wedding-couple-23.webp',
+      '/images/couples/wedding-couple-24.webp',
+    ],
     outerBg: 'bg-[#1B0F24]',
     cardBg: 'bg-[#FAF6FD]',
     textMain: 'text-[#3D1B50]',
@@ -337,6 +409,15 @@ const all10 = [
     fileName: 'NoirPrestigeTemplate.tsx',
     componentName: 'NoirPrestigeTemplate',
     variant: 'noir',
+    heroImage: '/images/couples/wedding-couple-13.webp',
+    gallery: [
+      '/images/couples/wedding-couple-13.webp',
+      '/images/couples/wedding-couple-14.webp',
+      '/images/couples/wedding-couple-24.webp',
+      '/images/couples/wedding-couple-15.webp',
+      '/images/couples/wedding-couple-16.webp',
+      '/images/couples/wedding-couple-17.webp',
+    ],
     outerBg: 'bg-[#0D0204]',
     cardBg: 'bg-[#1A0407]',
     textMain: 'text-[#F7E5C8]',
@@ -381,6 +462,15 @@ const all10 = [
     fileName: 'LotusPurityTemplate.tsx',
     componentName: 'LotusPurityTemplate',
     variant: 'lotus',
+    heroImage: '/images/couples/wedding-couple-1.webp',
+    gallery: [
+      '/images/couples/wedding-couple-1.webp',
+      '/images/couples/wedding-couple-2.webp',
+      '/images/couples/wedding-couple-3.webp',
+      '/images/couples/wedding-couple-4.webp',
+      '/images/couples/wedding-couple-5.webp',
+      '/images/couples/wedding-couple-6.webp',
+    ],
     outerBg: 'bg-[#0A1C1A]',
     cardBg: 'bg-[#F6FAF9]',
     textMain: 'text-[#163E3B]',
@@ -567,15 +657,20 @@ export default function ${t.componentName}({
     return () => clearInterval(timer)
   }, [couple.wedding_date, couple.wedding_time])
 
-  const defaultHero = 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80'
+  const defaultHero = '${t.heroImage || '/images/couples/wedding-couple-1.webp'}'
   const heroImage = couple.hero_image || (gallery.length > 0 ? gallery[0].image_url : defaultHero)
 
   const displayedGallery = gallery.length > 0
     ? gallery
     : [
-        { id: 1, image_url: defaultHero, sort_order: 1 },
-        { id: 2, image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80', sort_order: 2 },
-        { id: 3, image_url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80', sort_order: 3 },
+        ${(t.gallery || [
+          '/images/couples/wedding-couple-1.webp',
+          '/images/couples/wedding-couple-2.webp',
+          '/images/couples/wedding-couple-3.webp',
+          '/images/couples/wedding-couple-4.webp',
+          '/images/couples/wedding-couple-5.webp',
+          '/images/couples/wedding-couple-6.webp'
+        ]).map((img, i) => `{ id: ${i + 1}, image_url: '${img}', sort_order: ${i + 1} }`).join(',\n        ')}
       ]
 
   const handleWishSubmit = async (e: React.FormEvent) => {
