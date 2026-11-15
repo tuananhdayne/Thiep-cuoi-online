@@ -119,9 +119,21 @@ const variantConfigs: Record<ParticleVariant, ParticleConfig> = {
 
 export default function FloatingParticles({ variant }: FloatingParticlesProps) {
   const config = variantConfigs[variant] || variantConfigs.burgundy
+  const [shouldRender, setShouldRender] = React.useState(true)
+
+  React.useEffect(() => {
+    // If inside a tiny embedded card preview iframe (not modal or full screen), skip rendering to save CPU/GPU
+    if (typeof window !== 'undefined' && window.self !== window.top) {
+      const isQuickViewModal = window.location.search.includes('open=1')
+      if (!isQuickViewModal) {
+        setShouldRender(false)
+      }
+    }
+  }, [])
 
   // Generate 16 fixed particle definitions with consistent deterministic pseudo-random math
   const particles = useMemo(() => {
+    if (!shouldRender) return []
     return Array.from({ length: 16 }).map((_, i) => {
       const item = config.items[i % config.items.length]
       // Deterministic spread
@@ -145,6 +157,8 @@ export default function FloatingParticles({ variant }: FloatingParticlesProps) {
       }
     })
   }, [config])
+
+  if (!shouldRender) return null
 
   return (
     <div

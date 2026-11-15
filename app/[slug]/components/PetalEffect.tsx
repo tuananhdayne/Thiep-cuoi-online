@@ -21,6 +21,11 @@ export default function PetalEffect() {
   const rafRef = useRef<number | undefined>(undefined)
 
   useEffect(() => {
+    // Do not run canvas loop if page is embedded inside an iframe (e.g. preview card)
+    if (typeof window !== 'undefined' && window.self !== window.top) {
+      return
+    }
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
