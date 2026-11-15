@@ -291,8 +291,8 @@ export const templateCatalogList: TemplateCardData[] = [
 ]
 
 const categories: { key: CategoryKey; label: string; icon: string }[] = [
-  { key: 'chungdoi', label: '10 Mẫu Mới (Hot 2026)', icon: '🔥' },
-  { key: 'all', label: 'Tất Cả', icon: '✨' },
+  { key: 'all', label: 'Tất Cả (21 Mẫu)', icon: '✨' },
+  { key: 'chungdoi', label: '10 Mẫu Mới Nhất 2026', icon: '🔥' },
   { key: 'traditional', label: 'Truyền Thống & Song Hỷ', icon: '🏮' },
   { key: 'modern', label: 'Hiện Đại & Tối Giản', icon: '📐' },
   { key: 'garden', label: 'Lãng Mạn & Sân Vườn', icon: '🌿' },
@@ -325,7 +325,7 @@ function ExternalIcon() {
 }
 
 export default function TemplateCatalog() {
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>('chungdoi')
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>('all')
   const [quickViewTheme, setQuickViewTheme] = useState<SupportedTheme | null>(null)
 
   const filteredTemplates = useMemo(() => {
