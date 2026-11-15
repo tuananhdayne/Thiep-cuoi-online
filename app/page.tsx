@@ -17,6 +17,98 @@ type TemplateCard = {
 
 const templates: TemplateCard[] = [
   {
+    theme: 'burgundy-romance',
+    eyebrow: 'Minimalism · Đỏ Rượu Vang',
+    description: 'Phong cách tối giản hiện đại với sắc đỏ rượu vang quý phái, mở phong bì 3D nghệ thuật, con dấu sáp vàng và phom vòm thanh lịch.',
+    palette: 'from-[#511419] via-[#8B1E2D] to-[#FFF7EB]',
+    frame: 'border-[#511419]/40 shadow-[0_24px_70px_rgba(81,20,25,0.35)]',
+    badge: 'bg-[#511419] text-[#ECE4D8] border-[#C9A24A]/40',
+    button: 'from-[#511419] to-[#8C3A3F]',
+    featured: true,
+  },
+  {
+    theme: 'imperial-harmony',
+    eyebrow: 'Song Hỷ · Đỏ Hoàng Gia',
+    description: 'Hỷ sự truyền thống Á Đông với sắc đỏ hoàng triều, dấu sáp Song Hỷ 囍 dát vàng, hoa văn cung đình và lịch hoàng đạo cát tường.',
+    palette: 'from-[#8C0000] via-[#920002] to-[#FFE8A4]',
+    frame: 'border-[#FFE8A4]/40 shadow-[0_24px_70px_rgba(140,0,0,0.35)]',
+    badge: 'bg-[#8C0000] text-[#FFE8A4] border-[#FFE8A4]/50',
+    button: 'from-[#8C0000] to-[#FFE8A4] text-black',
+    featured: true,
+  },
+  {
+    theme: 'spring-garden',
+    eyebrow: 'Vườn Xuân · Xanh Sage Botanical',
+    description: 'Tiệc cưới sân vườn ngoài trời với sắc xanh sage dịu mát, lá bạch đàn rơi bồng bềnh, phong bì màu nước và gợi ý dress code.',
+    palette: 'from-[#5D6A57] via-[#697A62] to-[#F6F1E8]',
+    frame: 'border-[#5D6A57]/40 shadow-[0_24px_60px_rgba(93,106,87,0.25)]',
+    badge: 'bg-[#5D6A57] text-white border-[#BDCDC1]/40',
+    button: 'from-[#5D6A57] to-[#697A62]',
+  },
+  {
+    theme: 'golden-vintage',
+    eyebrow: 'Minimalism · Nâu Mocha Cổ Điển',
+    description: 'Sắc nâu mocha và giấy da ngả vàng hoài niệm, dấu sáp cổ thư và viền vàng đồng ấm áp chuẩn phong cách châu Âu thanh lịch.',
+    palette: 'from-[#7C6A60] via-[#827771] to-[#FFF7F3]',
+    frame: 'border-[#7C6A60]/40 shadow-[0_24px_60px_rgba(124,106,96,0.25)]',
+    badge: 'bg-[#7C6A60] text-[#FFF7F3] border-[#E1BC7C]/40',
+    button: 'from-[#7C6A60] to-[#E1BC7C]',
+  },
+  {
+    theme: 'sunset-blush',
+    eyebrow: 'Tơ Duyên · Hồng San Hô',
+    description: 'Gam màu hồng san hô ngọt ngào, ánh ráng chiều ấm áp, mở phong bì hoa đào bồng bềnh và khung ảnh vòm lãng mạn.',
+    palette: 'from-[#E66474] via-[#DDA9B8] to-[#FEFBF4]',
+    frame: 'border-[#E66474]/40 shadow-[0_24px_60px_rgba(230,100,116,0.25)]',
+    badge: 'bg-[#E66474] text-white border-[#F3DFC3]/40',
+    button: 'from-[#E66474] to-[#842E35]',
+  },
+  {
+    theme: 'crystal-luxury',
+    eyebrow: 'Cẩm Thạch · Vàng Hổ Phách',
+    description: 'Vân cẩm thạch sang trọng hòa quyện cùng sắc vàng hổ phách, dấu sáp kim cương và không gian tiệc cưới xa hoa tột bậc.',
+    palette: 'from-[#1E1E1E] via-[#A78555] to-[#FFFDF8]',
+    frame: 'border-[#A78555]/40 shadow-[0_24px_60px_rgba(167,133,85,0.25)]',
+    badge: 'bg-[#1E1E1E] text-[#A78555] border-[#A78555]/40',
+    button: 'from-[#A78555] to-[#1E1E1E]',
+  },
+  {
+    theme: 'ocean-breeze',
+    eyebrow: 'Minimalism · Lam Đậm Đại Dương',
+    description: 'Sắc xanh navy sâu thẳm phối viền kem ngà, phong bì 3D đại dương lộng gió, con dấu vỏ sò và dress code biển thanh lịch.',
+    palette: 'from-[#00224C] via-[#0F4C81] to-[#F7F5EE]',
+    frame: 'border-[#00224C]/40 shadow-[0_24px_60px_rgba(0,34,76,0.25)]',
+    badge: 'bg-[#00224C] text-[#F7F5EE] border-[#B58B2F]/40',
+    button: 'from-[#00224C] to-[#B58B2F]',
+  },
+  {
+    theme: 'lavender-dream',
+    eyebrow: 'Minimalism · Tím Oải Hương',
+    description: 'Sắc tím lavender dịu dàng của thảo nguyên miền Nam nước Pháp, cánh hoa bay nhẹ nhàng và thông điệp tình yêu son sắt.',
+    palette: 'from-[#7869A0] via-[#C4B5DD] to-white',
+    frame: 'border-[#7869A0]/40 shadow-[0_24px_60px_rgba(120,105,160,0.25)]',
+    badge: 'bg-[#7869A0] text-white border-[#C4B5DD]/40',
+    button: 'from-[#7869A0] to-[#5D5082]',
+  },
+  {
+    theme: 'noir-prestige',
+    eyebrow: 'Baroque V2 · Đỏ Đậm Dạ Vũ',
+    description: 'Tông đỏ đen rượu vang baroque kết hợp vàng champagne hoàng gia, dấu sáp vương miện và phong cách tiệc cưới quý tộc lộng lẫy.',
+    palette: 'from-[#2B0303] via-[#511419] to-[#FFDFAF]',
+    frame: 'border-[#FFDFAF]/40 shadow-[0_24px_70px_rgba(43,3,3,0.6)]',
+    badge: 'bg-[#2B0303] text-[#FFDFAF] border-[#FFDFAF]/50',
+    button: 'from-[#FFDFAF] to-[#C59D5F] text-[#2B0303]',
+  },
+  {
+    theme: 'lotus-purity',
+    eyebrow: 'Liên Hoa V2 · Xanh Sen Ngọc',
+    description: 'Vẻ đẹp thanh tao của đóa sen ngọc bích Đông Dương, hòa quyện cùng sắc xanh cốm non và nét hoài cổ tao nhã thuần khiết.',
+    palette: 'from-[#124D00] via-[#5E813C] to-[#FFFBED]',
+    frame: 'border-[#5E813C]/40 shadow-[0_24px_60px_rgba(18,77,0,0.25)]',
+    badge: 'bg-[#124D00] text-[#FFFBED] border-[#5E813C]/40',
+    button: 'from-[#124D00] to-[#5E813C]',
+  },
+  {
     theme: 'classic',
     eyebrow: 'Ấm áp · Trang trọng',
     description: 'Sắc nâu và vàng cổ điển, dành cho một lễ cưới trang trọng nhưng vẫn gần gũi.',
@@ -248,7 +340,7 @@ export default function Home() {
             <div className="absolute bottom-0 right-0 h-[480px] w-[58%] rotate-[5deg] overflow-hidden rounded-[38px] border-[10px] border-[#1e1915] bg-white shadow-[0_35px_90px_rgba(0,0,0,0.3)] relative">
               {/* Phone Notch */}
               <div className="absolute top-2.5 left-1/2 transform -translate-x-1/2 w-16 h-3.5 bg-[#1e1915] rounded-full z-20 pointer-events-none" />
-              <AutoScrollTemplatePreview src="/demo?theme=pastel&embedded=1" title="Thiệp cưới mẫu nổi bật" />
+              <AutoScrollTemplatePreview src="/demo?theme=burgundy-romance&embedded=1" title="Thiệp cưới mẫu nổi bật" />
             </div>
 
             <div className="absolute right-3 top-4 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-[0_16px_40px_rgba(74,45,31,0.12)] backdrop-blur-xl">
@@ -389,7 +481,9 @@ export default function Home() {
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <a
-              href="tel:0867899875"
+              href="https://zalo.me/0867899875"
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-full bg-[#513426] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#684531]"
             >
               Zalo: 0867899875

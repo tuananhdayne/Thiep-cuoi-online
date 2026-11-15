@@ -132,10 +132,14 @@
   --color-accent-bg: var(--accent-bg);
   --color-border-light: var(--border-light);
   
-  --font-sans: var(--font-body);
+  --font-sans: var(--font-montserrat), var(--font-body), system-ui, sans-serif;
   --font-mono: var(--font-body);
-  --font-display: var(--font-display);
-  --font-cursive: var(--font-cursive);
+  --font-display: var(--font-display), "Playfair Display", Georgia, serif;
+  --font-cursive: var(--font-cursive), "Pinyon Script", "Great Vibes", "Alex Brush", "Ms Madi", cursive;
+  --font-lora: var(--font-lora), "Lora", Georgia, serif;
+  --font-montserrat: var(--font-montserrat), "Montserrat", sans-serif;
+  --font-cormorant: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-cinzel: var(--font-cinzel), "Cinzel", "Playfair Display", serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -145,13 +149,35 @@
 body {
   background: var(--bg-main);
   color: var(--foreground);
-  font-family: var(--font-body), "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-montserrat), var(--font-body), "Segoe UI", system-ui, -apple-system, sans-serif;
   line-height: 1.6;
 }
 
+.font-cursive-names {
+  font-family: var(--font-cursive), "Pinyon Script", "Great Vibes", "Alex Brush", "Ms Madi", cursive !important;
+}
+
+.font-heading-display {
+  font-family: var(--font-display), "Playfair Display", "Cormorant Garamond", serif !important;
+  letter-spacing: 0.05em;
+}
+
+.font-body-text {
+  font-family: var(--font-montserrat), "Montserrat", system-ui, -apple-system, sans-serif !important;
+}
+
+.font-badge-text {
+  font-family: var(--font-cinzel), "Cinzel", "Playfair Display", serif !important;
+  letter-spacing: 0.22em;
+}
+
+.font-quote-lora {
+  font-family: var(--font-lora), "Lora", Georgia, serif !important;
+}
+
 .font-display {
-  font-family: var(--font-display), "Times New Roman", serif;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), "Playfair Display", "Times New Roman", serif;
+  letter-spacing: -0.01em;
 }
 
 .paper-card {
@@ -190,4 +216,52 @@ body {
 
 .animate-fade-in-scale {
   animation: fade-in-scale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Organic breathing & gentle flower sway */
+@keyframes floralSway {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1.2deg);
+  }
+}
+
+.animate-floral-sway {
+  animation: floralSway 7s ease-in-out infinite;
+}
+
+.animate-floral-sway-slow {
+  animation: floralSway 10s ease-in-out infinite reverse;
+}
+
+/* Shimmer shine effect */
+@keyframes shimmerLight {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-badge {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmerLight 4s infinite;
+}
+
+/* Soft breathing pulse for gift / action buttons */
+@keyframes softPulseGlow {
+  0%, 100% {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    box-shadow: 0 8px 30px rgba(201, 162, 74, 0.45);
+  }
+}
+
+.animate-soft-glow {
+  animation: softPulseGlow 3s ease-in-out infinite;
 }

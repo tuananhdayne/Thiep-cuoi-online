@@ -20,6 +20,7 @@ export type Couple = {
     slug: string
     bride_name: string
     groom_name: string
+    hero_image?: string | null
     bride_avatar?: string | null
     groom_avatar?: string | null
     intro_title?: string | null
@@ -33,6 +34,7 @@ export type Couple = {
     music_volume?: number | null
     music_autoplay?: boolean | null
     theme?: string | null
+    expires_at?: string | null
     // Event details
     bride_event_title?: string | null
     bride_event_date?: string | null
@@ -83,6 +85,8 @@ export type Wish = {
     id: number
     name: string | null
     message: string
+    attendance?: 'yes' | 'no' | 'maybe' | null
+    couple_id?: number
     created_at: string
 }
 
@@ -104,4 +108,5 @@ export interface TemplateProps {
     locations?: Location | null
     stories?: Story[]
     guestName?: string
+    defaultOpen?: boolean
 }

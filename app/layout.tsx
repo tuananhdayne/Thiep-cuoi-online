@@ -1,28 +1,10 @@
 import type { Metadata } from "next";
-import { Manrope, Playfair_Display, Pinyon_Script } from "next/font/google";
 import "./globals.css";
 import SecurityProvider from "./components/SecurityProvider";
 
-const display = Playfair_Display({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const body = Manrope({
-  variable: "--font-body",
-  subsets: ["latin"],
-});
-
-const cursive = Pinyon_Script({
-  variable: "--font-cursive",
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
 export const metadata: Metadata = {
-  title: "Thiệp cưới",
-  description: "Thiệp cưới online sang trọng",
+  title: "Thiệp Cưới Online Sang Trọng",
+  description: "Thiết kế thiệp cưới online cao cấp, chuẩn phong cách Chung Đôi với hiệu ứng mở thiệp 3D",
 };
 
 export default function RootLayout({
@@ -32,9 +14,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body
-        className={`${display.variable} ${body.variable} ${cursive.variable} antialiased bg-[#fdf8f3] text-slate-900`}
-      >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&family=Ms+Madi&family=Pattaya&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased bg-[#fdf8f3] text-slate-900 font-body-text">
         <SecurityProvider>
           {children}
         </SecurityProvider>

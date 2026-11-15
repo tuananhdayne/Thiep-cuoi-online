@@ -35,9 +35,9 @@ const securityHeaders = [
     value: 'camera=(), microphone=(), geolocation=(), payment=()'
   },
   {
-    // Content Security Policy - chặn script từ nguồn không uy tín
+    // Content Security Policy - cho phép Google Fonts, Supabase, Unsplash, Mixkit audio
     key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; media-src 'self' https: blob: data:; font-src 'self'; connect-src 'self' https://*.supabase.co https://images.unsplash.com; frame-src 'self' https://www.google.com https://maps.google.com https://www.google.com/maps; frame-ancestors 'self'; object-src 'none';"
+    value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; media-src 'self' https: blob: data: https://assets.mixkit.co; connect-src 'self' https://*.supabase.co https://images.unsplash.com https://fonts.googleapis.com https://fonts.gstatic.com https://assets.mixkit.co; frame-src 'self' https://www.google.com https://maps.google.com https://www.google.com/maps; frame-ancestors 'self'; object-src 'none';"
   }
 ];
 

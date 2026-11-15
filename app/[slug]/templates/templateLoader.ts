@@ -1,4 +1,26 @@
-export const supportedThemes = ['classic', 'heritage', 'midnight', 'elegance', 'romance', 'minimalist', 'luxury', 'pastel', 'viet-silk', 'botanical', 'midnight-elegance'] as const
+export const supportedThemes = [
+  'classic',
+  'heritage',
+  'midnight',
+  'elegance',
+  'romance',
+  'minimalist',
+  'luxury',
+  'pastel',
+  'viet-silk',
+  'botanical',
+  'midnight-elegance',
+  'burgundy-romance',
+  'imperial-harmony',
+  'spring-garden',
+  'ocean-breeze',
+  'sunset-blush',
+  'crystal-luxury',
+  'golden-vintage',
+  'lavender-dream',
+  'noir-prestige',
+  'lotus-purity',
+] as const
 
 export type SupportedTheme = (typeof supportedThemes)[number]
 
@@ -14,6 +36,16 @@ export const themeDisplayNames: Record<SupportedTheme, string> = {
   'viet-silk': 'Gấm Việt Hỷ Hoa',
   botanical: 'Botanical Garden',
   'midnight-elegance': 'Midnight Elegance',
+  'burgundy-romance': 'Đỏ Rượu Hoàng Gia (3D Envelope)',
+  'imperial-harmony': 'Song Hỷ Cát Tường (Hoàng Triều)',
+  'spring-garden': 'Vườn Xuân Thanh Khiết (Sân Vườn)',
+  'ocean-breeze': 'Biển Xanh Lãng Mạn (Coastal Beach)',
+  'sunset-blush': 'Hoàng Hôn Mộng Mơ (Sunset Blush)',
+  'crystal-luxury': 'Pha Lê Ánh Bạc (Crystal Luxury)',
+  'golden-vintage': 'Cổ Điển Hoàng Gia (Vintage Paris)',
+  'lavender-dream': 'Oải Hương Tím (Lavender Provence)',
+  'noir-prestige': 'Dạ Vũ Thượng Lưu (Noir Prestige)',
+  'lotus-purity': 'Sen Trắng Đông Dương (Indochine Lotus)',
 }
 
 export function getThemeDisplayName(theme?: string | null) {
@@ -27,6 +59,16 @@ export function getThemeDisplayName(theme?: string | null) {
   if (theme === 'viet-silk') return themeDisplayNames['viet-silk']
   if (theme === 'botanical') return themeDisplayNames.botanical
   if (theme === 'midnight-elegance') return themeDisplayNames['midnight-elegance']
+  if (theme === 'burgundy-romance') return themeDisplayNames['burgundy-romance']
+  if (theme === 'imperial-harmony') return themeDisplayNames['imperial-harmony']
+  if (theme === 'spring-garden') return themeDisplayNames['spring-garden']
+  if (theme === 'ocean-breeze') return themeDisplayNames['ocean-breeze']
+  if (theme === 'sunset-blush') return themeDisplayNames['sunset-blush']
+  if (theme === 'crystal-luxury') return themeDisplayNames['crystal-luxury']
+  if (theme === 'golden-vintage') return themeDisplayNames['golden-vintage']
+  if (theme === 'lavender-dream') return themeDisplayNames['lavender-dream']
+  if (theme === 'noir-prestige') return themeDisplayNames['noir-prestige']
+  if (theme === 'lotus-purity') return themeDisplayNames['lotus-purity']
   return themeDisplayNames.classic
 }
 
@@ -52,6 +94,26 @@ export async function loadTemplate(theme?: string | null) {
       return (await import('./BotanicalGardenTemplate')).default
     case 'midnight-elegance':
       return (await import('./MidnightEleganceTemplate')).default
+    case 'burgundy-romance':
+      return (await import('./BurgundyRomanceTemplate')).default
+    case 'imperial-harmony':
+      return (await import('./ImperialSongHyTemplate')).default
+    case 'spring-garden':
+      return (await import('./SpringGardenTemplate')).default
+    case 'ocean-breeze':
+      return (await import('./OceanBreezeTemplate')).default
+    case 'sunset-blush':
+      return (await import('./SunsetBlushTemplate')).default
+    case 'crystal-luxury':
+      return (await import('./CrystalLuxuryTemplate')).default
+    case 'golden-vintage':
+      return (await import('./GoldenVintageTemplate')).default
+    case 'lavender-dream':
+      return (await import('./LavenderDreamTemplate')).default
+    case 'noir-prestige':
+      return (await import('./NoirPrestigeTemplate')).default
+    case 'lotus-purity':
+      return (await import('./LotusPurityTemplate')).default
     case 'classic':
     default:
       return (await import('./ClassicTemplate')).default

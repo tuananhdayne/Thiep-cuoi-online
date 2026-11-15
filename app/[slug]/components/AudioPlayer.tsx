@@ -112,26 +112,41 @@ export default function AudioPlayer({
 
             <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2">
                 {showPlayText && !isPlaying && (
-                    <span className="bg-white text-[#c08a4b] text-sm px-3 py-1.5 rounded-full shadow-md animate-pulse whitespace-nowrap font-medium border border-[#c08a4b]/20">
-                        Bật nhạc
+                    <span className="bg-white/95 backdrop-blur-sm text-[#c08a4b] text-xs sm:text-sm px-3.5 py-1.5 rounded-full shadow-lg animate-bounce whitespace-nowrap font-medium border border-[#c08a4b]/30">
+                        Bật nhạc 🎵
                     </span>
                 )}
-                <button
-                    onClick={togglePlay}
-                    className="w-12 h-12 bg-[#c08a4b] text-white rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 active:scale-95"
-                    aria-label={isPlaying ? 'Pause music' : 'Play music'}
-                >
-                    {isPlaying ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="6" y="4" width="4" height="16" />
-                            <rect x="14" y="4" width="4" height="16" />
-                        </svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
-                            <polygon points="5 3 19 12 5 21 5 3" />
-                        </svg>
+                <div className="relative">
+                    {/* Floating music note sparkles when playing */}
+                    {isPlaying && (
+                        <div aria-hidden="true" className="pointer-events-none absolute -top-8 inset-x-0 flex justify-center">
+                            <span className="text-amber-500 text-sm font-bold animate-ping opacity-75">♪</span>
+                        </div>
                     )}
-                </button>
+                    {/* Outer glowing pulsing ring when playing */}
+                    {isPlaying && (
+                        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 opacity-70 blur-sm animate-pulse pointer-events-none" />
+                    )}
+                    <button
+                        onClick={togglePlay}
+                        className={`relative w-12 h-12 bg-gradient-to-br from-[#d4af37] via-[#c08a4b] to-[#996515] text-white rounded-full flex items-center justify-center shadow-[0_6px_20px_rgba(192,138,75,0.45)] border-2 border-white/60 transition-transform hover:scale-110 active:scale-95 ${
+                            isPlaying ? 'animate-[spin_6s_linear_infinite]' : ''
+                        }`}
+                        aria-label={isPlaying ? 'Tạm dừng nhạc' : 'Phát nhạc cưới'}
+                    >
+                        {isPlaying ? (
+                            <div className="flex items-center gap-0.5 pointer-events-none">
+                                <span className="w-1 h-3.5 bg-white rounded-full animate-pulse" />
+                                <span className="w-1 h-5 bg-white rounded-full animate-pulse delay-75" />
+                                <span className="w-1 h-3 bg-white rounded-full animate-pulse delay-150" />
+                            </div>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                        )}
+                    </button>
+                </div>
             </div>
         </>
     )

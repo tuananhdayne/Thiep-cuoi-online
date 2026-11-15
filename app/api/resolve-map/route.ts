@@ -3,9 +3,26 @@ import https from 'https'
 
 export const dynamic = 'force-dynamic'
 
+const ALLOWED_MAP_HOSTS = [
+  'maps.app.goo.gl',
+  'goo.gl',
+  'maps.google.com',
+  'www.google.com',
+  'google.com'
+]
+
 function resolveRedirect(url: string): Promise<string> {
   return new Promise((resolve) => {
     try {
+      const parsed = new URL(url)
+      // Chặn SSRF: chỉ cho phép giao thức https và các tên miền bản đồ Google hợp lệ
+      if (
+        parsed.protocol !== 'https:' ||
+        !ALLOWED_MAP_HOSTS.some((h) => parsed.hostname === h || parsed.hostname.endsWith(`.${h}`))
+      ) {
+        return resolve(url)
+      }
+
       const req = https.request(url, { method: 'HEAD', timeout: 5000 }, (res) => {
         if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
           resolve(res.headers.location)

@@ -18,8 +18,9 @@ const getPreviewImageUrl = (item: unknown) => {
 
 function DemoPageContent() {
     const searchParams = useSearchParams()
-    const theme = searchParams.get('theme') || 'classic'
+    const theme = searchParams.get('theme') || 'burgundy-romance'
     const isEmbedded = searchParams.get('embedded') === '1'
+    const isOpen = searchParams.get('open') === '1' || isEmbedded
     const [TemplateToRender, setTemplateToRender] = useState<React.ComponentType<any> | null>(null)
     const [couple, setCouple] = useState<Couple | null>(null)
     const [previewGallery, setPreviewGallery] = useState<GalleryItem[]>([])
@@ -27,7 +28,7 @@ function DemoPageContent() {
 
     const validTheme = supportedThemes.includes(theme as (typeof supportedThemes)[number])
         ? theme
-        : 'classic'
+        : 'burgundy-romance'
 
     useEffect(() => {
         let active = true
@@ -100,12 +101,12 @@ function DemoPageContent() {
     const mockCouple: Couple = couple || {
         id: 0,
         slug: 'demo',
-        bride_name: 'Ngọc Lan',
-        groom_name: 'Minh Khang',
-        intro_description: 'Cùng nhau bắt đầu một chương mới của cuộc đời. Sự hiện diện của bạn là niềm vinh hạnh của chúng tôi.',
-        wedding_date: '2025-12-25',
+        bride_name: 'Bảo Ngọc',
+        groom_name: 'Hoàng Long',
+        intro_description: 'Cùng nhau bắt đầu một chương mới của cuộc đời. Sự hiện diện của quý khách là niềm vinh hạnh lớn nhất của chúng tôi.',
+        wedding_date: '2026-12-28',
         wedding_time: '18:00',
-        location: 'Trung tâm Tiệc cưới The Grand',
+        location: 'Trung tâm Hội nghị Tiệc cưới The Grand Palace',
         address: 'Quận 1, TP. HCM',
         theme: validTheme,
     }
@@ -113,17 +114,17 @@ function DemoPageContent() {
     const mockLocations = {
         id: '1',
         couple_id: couple?.id?.toString() || '0',
-        bride_event_title: couple?.bride_event_title || 'Lễ Vu Quy',
-        bride_event_date: couple?.bride_event_date || '2025-12-24',
+        bride_event_title: couple?.bride_event_title || 'Lễ Vu Quy (Nhà Gái)',
+        bride_event_date: couple?.bride_event_date || '2026-12-27',
         bride_event_time: couple?.bride_event_time || '09:00',
         bride_location: couple?.bride_location || 'Tư Gia Nhà Gái',
-        bride_address: couple?.bride_address || '123 Đường Hoa Hồng, Quận 1, TP. HCM',
+        bride_address: couple?.bride_address || '123 Đường Hoa Hồng, Phường Bến Nghé, Quận 1, TP. HCM',
         bride_google_map_embed: couple?.bride_google_map_embed || '',
-        groom_event_title: couple?.groom_event_title || 'Tiệc Cưới',
-        groom_event_date: couple?.groom_event_date || '2025-12-25',
+        groom_event_title: couple?.groom_event_title || 'Lễ Thành Hôn (Nhà Trai)',
+        groom_event_date: couple?.groom_event_date || '2026-12-28',
         groom_event_time: couple?.groom_event_time || '18:00',
-        groom_location: couple?.groom_location || 'Trung tâm Hội nghị The Grand',
-        groom_address: couple?.groom_address || '456 Đại lộ Hạnh Phúc, Quận 7, TP. HCM',
+        groom_location: couple?.groom_location || 'Trung tâm Hội nghị The Grand Palace',
+        groom_address: couple?.groom_address || '456 Đại lộ Hạnh Phúc, Phường Tân Phú, Quận 7, TP. HCM',
         groom_google_map_embed: couple?.groom_google_map_embed || ''
     }
 
@@ -178,7 +179,7 @@ function DemoPageContent() {
 
     const defaultGallery: GalleryItem[] = [
         { id: 1, image_url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1600&q=88' },
-        { id: 2, image_url: 'https://images.unsplash.com/photo-1529633965402-3b5bf2e4f9b1?auto=format&fit=crop&w=1400&q=85' },
+        { id: 2, image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1400&q=85' },
         { id: 3, image_url: 'https://images.unsplash.com/photo-1544078751-58fee2d8a03b?auto=format&fit=crop&w=1400&q=85' },
         { id: 4, image_url: 'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1400&q=85' },
     ]
@@ -207,28 +208,59 @@ function DemoPageContent() {
                 wishes={mockWishes}
                 weddingGift={giftToRender}
                 locations={locationsToRender}
+                defaultOpen={isOpen}
             />
 
             {/* Floating action bar to choose template, shown only when not embedded in an iframe */}
             {!isEmbedded && (
-                <div className="fixed top-4 inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[600px] z-[9999] bg-white/95 backdrop-blur-md border border-[#ad7748]/20 px-5 py-3 rounded-2xl shadow-[0_15px_45px_rgba(75,48,36,0.18)] flex items-center justify-between gap-4 text-[#3c2921] animate-fade-in-up">
-                    <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
-                        <span className="text-[10px] uppercase tracking-wider text-[#ad7547] font-semibold">Đang xem thử</span>
-                        <span className="text-sm font-semibold font-display">{getThemeDisplayName(theme)}</span>
+                <div className="fixed top-3 inset-x-2 sm:inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[740px] z-[9999] bg-stone-900/95 text-stone-100 backdrop-blur-md border border-amber-500/30 px-4 py-2.5 rounded-2xl shadow-[0_15px_45px_rgba(0,0,0,0.5)] flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                            <span className="text-[11px] uppercase tracking-wider text-amber-300 font-semibold">Xem thử 10 Mẫu Chung Đôi:</span>
+                            <span className="text-xs sm:text-sm font-bold text-white font-display truncate max-w-[200px] sm:max-w-none">{getThemeDisplayName(theme)}</span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                            <Link
+                                href="/"
+                                className="text-xs text-stone-300 hover:text-white transition px-2.5 py-1.5 rounded-lg hover:bg-stone-800"
+                            >
+                                Trang chủ
+                            </Link>
+                            <Link
+                                href={`/create?theme=${theme}`}
+                                className="bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 text-xs font-bold px-3.5 py-1.5 rounded-full shadow transition hover:brightness-110 active:scale-95"
+                            >
+                                Chọn mẫu này
+                            </Link>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href="/"
-                            className="text-xs font-semibold text-[#8c7161] hover:text-[#513426] transition px-3 py-2 rounded-lg hover:bg-gray-100/60"
-                        >
-                            Quay lại
-                        </Link>
-                        <Link
-                            href={`/create?theme=${theme}`}
-                            className="bg-[#513426] text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-[0_4px_12px_rgba(81,52,38,0.2)] transition hover:bg-[#684531] hover:-translate-y-0.5"
-                        >
-                            Chọn mẫu này
-                        </Link>
+                    {/* Quick switch tabs for 10 Chung Đôi templates */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar text-[11px] border-t border-white/10">
+                        {[
+                            { key: 'burgundy-romance', label: '1. Đỏ Rượu' },
+                            { key: 'imperial-harmony', label: '2. Song Hỷ Đỏ' },
+                            { key: 'spring-garden', label: '3. Vườn Xuân' },
+                            { key: 'golden-vintage', label: '4. Vintage Nâu' },
+                            { key: 'sunset-blush', label: '5. Tơ Duyên Hồng' },
+                            { key: 'crystal-luxury', label: '6. Cẩm Thạch Vàng' },
+                            { key: 'ocean-breeze', label: '7. Biển Xanh' },
+                            { key: 'lavender-dream', label: '8. Oải Hương Tím' },
+                            { key: 'noir-prestige', label: '9. Baroque Dạ Vũ' },
+                            { key: 'lotus-purity', label: '10. Sen Trắng' },
+                        ].map((item) => (
+                            <Link
+                                key={item.key}
+                                href={`/demo?theme=${item.key}`}
+                                className={`px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
+                                    theme === item.key
+                                        ? 'bg-amber-400 text-stone-950 font-bold shadow-sm'
+                                        : 'bg-stone-800/80 text-stone-300 hover:bg-stone-700 hover:text-white'
+                                }`}
+                            >
+                                {item.label}
+                            </Link>
+                        ))}
                     </div>
                 </div>
             )}

@@ -34,10 +34,23 @@ export async function POST(req: Request) {
         }
 
         if (files.length > 15) {
-            return NextResponse.json({ error: 'Maximum 15 images allowed' }, { status: 400 })
+            return NextResponse.json({ error: 'Tối đa 15 ảnh mỗi lần tải lên' }, { status: 400 })
         }
 
-        const uploadPromises = files.map(async (file): Promise<UploadResult> => {
+        // Validate file types and sizes to prevent memory overflow and malicious files
+        for (const file of files) {
+            if (file.size > 15 * 1024 * 1024) {
+                return NextResponse.json({ error: `File ${file.name} vượt quá giới hạn 15MB.` }, { status: 400 })
+            }
+            if (file.type && !file.type.startsWith('image/')) {
+                return NextResponse.json({ error: `File ${file.name} không phải là định dạng ảnh hợp lệ.` }, { status: 400 })
+            }
+        }
+
+        const results: UploadResult[] = []
+
+        // Process images sequentially to avoid Vercel Serverless Function OOM (Out Of Memory)
+        for (const file of files) {
             const arrayBuffer = await file.arrayBuffer()
             const buffer = Buffer.from(new Uint8Array(arrayBuffer))
 
@@ -96,16 +109,14 @@ export async function POST(req: Request) {
                 processAndUpload(1200, 's1200')
             ])
 
-            return {
+            results.push({
                 original,
                 '350': s350,
                 '550': s550,
                 '750': s750,
                 '1200': s1200
-            }
-        })
-
-        const results = await Promise.all(uploadPromises)
+            })
+        }
 
         return NextResponse.json({ success: true, results })
     } catch (error: any) {
