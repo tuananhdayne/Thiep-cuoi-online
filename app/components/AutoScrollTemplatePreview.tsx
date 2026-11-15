@@ -5,15 +5,21 @@ import { useEffect, useRef } from 'react'
 type AutoScrollTemplatePreviewProps = {
   src: string
   title: string
-  autoScroll?: boolean
+  autoScroll?: boolean // If true, continuous auto-scroll
+  hoverScroll?: boolean // If true (default true), auto-scrolls on hover/pointer enter
+  interactive?: boolean // If true, allows pointer events inside iframe
   previewData?: unknown
+  onPreviewClick?: () => void
 }
 
 export default function AutoScrollTemplatePreview({
   src,
   title,
   autoScroll = false,
+  hoverScroll = true,
+  interactive = false,
   previewData,
+  onPreviewClick,
 }: AutoScrollTemplatePreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -54,10 +60,6 @@ export default function AutoScrollTemplatePreview({
     const startAutoScroll = () => {
       if (isAutoScrolling) return
       isAutoScrolling = true
-      // ensure we start from top when starting fresh
-      try {
-        iframeRef.current?.contentWindow?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-      } catch {}
       clearTimers()
 
       intervalId = window.setInterval(() => {
@@ -76,12 +78,12 @@ export default function AutoScrollTemplatePreview({
           if (Date.now() < pausedUntil || isResetting) return
 
           const current = win.scrollY
-          const next = current + 0.6
+          const next = current + 0.95
 
           if (next >= maxScroll - 1) {
             win.scrollTo({ top: maxScroll, left: 0, behavior: 'auto' })
             isResetting = true
-            pausedUntil = Date.now() + 1200
+            pausedUntil = Date.now() + 1500
 
             resetTimeoutId = window.setTimeout(() => {
               try {
@@ -89,9 +91,9 @@ export default function AutoScrollTemplatePreview({
                 frameAgain?.contentWindow?.scrollTo({ top: 0, left: 0, behavior: 'auto' })
               } finally {
                 isResetting = false
-                pausedUntil = Date.now() + 400
+                pausedUntil = Date.now() + 600
               }
-            }, 1200)
+            }, 1500)
           } else {
             win.scrollTo({ top: next, left: 0, behavior: 'auto' })
           }
@@ -99,6 +101,11 @@ export default function AutoScrollTemplatePreview({
           clearTimers()
         }
       }, 16)
+    }
+
+    const stopAutoScroll = () => {
+      clearTimers()
+      isAutoScrolling = false
     }
 
     const onLoad = () => {
@@ -131,7 +138,7 @@ export default function AutoScrollTemplatePreview({
       } catch {
         return
       }
-      // auto-scroll immediately if autoScroll is enabled, otherwise wait for user interaction
+
       if (autoScroll) {
         startAutoScroll()
       }
@@ -139,24 +146,20 @@ export default function AutoScrollTemplatePreview({
 
     iframe.addEventListener('load', onLoad)
 
-    if (!autoScroll) {
-      // When autoScroll is false, don't attach event listeners - user can scroll freely
-      return () => {
-        iframe.removeEventListener('load', onLoad)
-        clearTimers()
+    const container = containerRef.current
+    const handlePointerEnter = () => {
+      if (hoverScroll) startAutoScroll()
+    }
+    const handlePointerDown = () => {
+      if (hoverScroll) startAutoScroll()
+    }
+    const handlePointerLeave = () => {
+      if (hoverScroll && !autoScroll) {
+        stopAutoScroll()
       }
     }
 
-    const container = containerRef.current
-    const handlePointerEnter = () => startAutoScroll()
-    const handlePointerDown = () => startAutoScroll()
-    const handlePointerLeave = () => {
-      // stop when pointer leaves preview area
-      clearTimers()
-      isAutoScrolling = false
-    }
-
-    if (container) {
+    if (container && hoverScroll) {
       container.addEventListener('pointerenter', handlePointerEnter)
       container.addEventListener('pointerdown', handlePointerDown)
       container.addEventListener('pointerleave', handlePointerLeave)
@@ -164,25 +167,29 @@ export default function AutoScrollTemplatePreview({
 
     return () => {
       iframe.removeEventListener('load', onLoad)
-      if (container) {
+      if (container && hoverScroll) {
         container.removeEventListener('pointerenter', handlePointerEnter)
         container.removeEventListener('pointerdown', handlePointerDown)
         container.removeEventListener('pointerleave', handlePointerLeave)
       }
       clearTimers()
     }
-  }, [src, autoScroll])
+  }, [src, autoScroll, hoverScroll])
 
   return (
-    <div ref={containerRef} className="h-full w-full">
+    <div
+      ref={containerRef}
+      onClick={onPreviewClick}
+      className={`h-full w-full relative ${onPreviewClick ? 'cursor-pointer' : ''}`}
+    >
       <iframe
         ref={iframeRef}
         src={src}
         title={title}
         loading="lazy"
-        className={`h-full w-full border-0 ${autoScroll ? 'pointer-events-none' : ''}`}
-        tabIndex={-1}
-        aria-hidden="true"
+        className={`h-full w-full border-0 ${interactive ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        tabIndex={interactive ? 0 : -1}
+        aria-hidden={!interactive}
       />
     </div>
   )

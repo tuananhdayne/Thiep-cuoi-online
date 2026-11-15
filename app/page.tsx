@@ -2,228 +2,23 @@ import Link from 'next/link'
 import Image from 'next/image'
 import PetalEffect from './[slug]/components/PetalEffect'
 import AutoScrollTemplatePreview from './components/AutoScrollTemplatePreview'
-import { getThemeDisplayName, type SupportedTheme } from './[slug]/templates/templateLoader'
-
-type TemplateCard = {
-  theme: SupportedTheme
-  eyebrow: string
-  description: string
-  palette: string
-  frame: string
-  badge: string
-  button: string
-  featured?: boolean
-}
-
-const templates: TemplateCard[] = [
-  {
-    theme: 'burgundy-romance',
-    eyebrow: 'Minimalism · Đỏ Rượu Vang',
-    description: 'Phong cách tối giản hiện đại với sắc đỏ rượu vang quý phái, mở phong bì 3D nghệ thuật, con dấu sáp vàng và phom vòm thanh lịch.',
-    palette: 'from-[#511419] via-[#8B1E2D] to-[#FFF7EB]',
-    frame: 'border-[#511419]/40 shadow-[0_24px_70px_rgba(81,20,25,0.35)]',
-    badge: 'bg-[#511419] text-[#ECE4D8] border-[#C9A24A]/40',
-    button: 'from-[#511419] to-[#8C3A3F]',
-    featured: true,
-  },
-  {
-    theme: 'imperial-harmony',
-    eyebrow: 'Song Hỷ · Đỏ Hoàng Gia',
-    description: 'Hỷ sự truyền thống Á Đông với sắc đỏ hoàng triều, dấu sáp Song Hỷ 囍 dát vàng, hoa văn cung đình và lịch hoàng đạo cát tường.',
-    palette: 'from-[#8C0000] via-[#920002] to-[#FFE8A4]',
-    frame: 'border-[#FFE8A4]/40 shadow-[0_24px_70px_rgba(140,0,0,0.35)]',
-    badge: 'bg-[#8C0000] text-[#FFE8A4] border-[#FFE8A4]/50',
-    button: 'from-[#8C0000] to-[#FFE8A4] text-black',
-    featured: true,
-  },
-  {
-    theme: 'spring-garden',
-    eyebrow: 'Vườn Xuân · Xanh Sage Botanical',
-    description: 'Tiệc cưới sân vườn ngoài trời với sắc xanh sage dịu mát, lá bạch đàn rơi bồng bềnh, phong bì màu nước và gợi ý dress code.',
-    palette: 'from-[#5D6A57] via-[#697A62] to-[#F6F1E8]',
-    frame: 'border-[#5D6A57]/40 shadow-[0_24px_60px_rgba(93,106,87,0.25)]',
-    badge: 'bg-[#5D6A57] text-white border-[#BDCDC1]/40',
-    button: 'from-[#5D6A57] to-[#697A62]',
-  },
-  {
-    theme: 'golden-vintage',
-    eyebrow: 'Minimalism · Nâu Mocha Cổ Điển',
-    description: 'Sắc nâu mocha và giấy da ngả vàng hoài niệm, dấu sáp cổ thư và viền vàng đồng ấm áp chuẩn phong cách châu Âu thanh lịch.',
-    palette: 'from-[#7C6A60] via-[#827771] to-[#FFF7F3]',
-    frame: 'border-[#7C6A60]/40 shadow-[0_24px_60px_rgba(124,106,96,0.25)]',
-    badge: 'bg-[#7C6A60] text-[#FFF7F3] border-[#E1BC7C]/40',
-    button: 'from-[#7C6A60] to-[#E1BC7C]',
-  },
-  {
-    theme: 'sunset-blush',
-    eyebrow: 'Tơ Duyên · Hồng San Hô',
-    description: 'Gam màu hồng san hô ngọt ngào, ánh ráng chiều ấm áp, mở phong bì hoa đào bồng bềnh và khung ảnh vòm lãng mạn.',
-    palette: 'from-[#E66474] via-[#DDA9B8] to-[#FEFBF4]',
-    frame: 'border-[#E66474]/40 shadow-[0_24px_60px_rgba(230,100,116,0.25)]',
-    badge: 'bg-[#E66474] text-white border-[#F3DFC3]/40',
-    button: 'from-[#E66474] to-[#842E35]',
-  },
-  {
-    theme: 'crystal-luxury',
-    eyebrow: 'Cẩm Thạch · Vàng Hổ Phách',
-    description: 'Vân cẩm thạch sang trọng hòa quyện cùng sắc vàng hổ phách, dấu sáp kim cương và không gian tiệc cưới xa hoa tột bậc.',
-    palette: 'from-[#1E1E1E] via-[#A78555] to-[#FFFDF8]',
-    frame: 'border-[#A78555]/40 shadow-[0_24px_60px_rgba(167,133,85,0.25)]',
-    badge: 'bg-[#1E1E1E] text-[#A78555] border-[#A78555]/40',
-    button: 'from-[#A78555] to-[#1E1E1E]',
-  },
-  {
-    theme: 'ocean-breeze',
-    eyebrow: 'Minimalism · Lam Đậm Đại Dương',
-    description: 'Sắc xanh navy sâu thẳm phối viền kem ngà, phong bì 3D đại dương lộng gió, con dấu vỏ sò và dress code biển thanh lịch.',
-    palette: 'from-[#00224C] via-[#0F4C81] to-[#F7F5EE]',
-    frame: 'border-[#00224C]/40 shadow-[0_24px_60px_rgba(0,34,76,0.25)]',
-    badge: 'bg-[#00224C] text-[#F7F5EE] border-[#B58B2F]/40',
-    button: 'from-[#00224C] to-[#B58B2F]',
-  },
-  {
-    theme: 'lavender-dream',
-    eyebrow: 'Minimalism · Tím Oải Hương',
-    description: 'Sắc tím lavender dịu dàng của thảo nguyên miền Nam nước Pháp, cánh hoa bay nhẹ nhàng và thông điệp tình yêu son sắt.',
-    palette: 'from-[#7869A0] via-[#C4B5DD] to-white',
-    frame: 'border-[#7869A0]/40 shadow-[0_24px_60px_rgba(120,105,160,0.25)]',
-    badge: 'bg-[#7869A0] text-white border-[#C4B5DD]/40',
-    button: 'from-[#7869A0] to-[#5D5082]',
-  },
-  {
-    theme: 'noir-prestige',
-    eyebrow: 'Baroque V2 · Đỏ Đậm Dạ Vũ',
-    description: 'Tông đỏ đen rượu vang baroque kết hợp vàng champagne hoàng gia, dấu sáp vương miện và phong cách tiệc cưới quý tộc lộng lẫy.',
-    palette: 'from-[#2B0303] via-[#511419] to-[#FFDFAF]',
-    frame: 'border-[#FFDFAF]/40 shadow-[0_24px_70px_rgba(43,3,3,0.6)]',
-    badge: 'bg-[#2B0303] text-[#FFDFAF] border-[#FFDFAF]/50',
-    button: 'from-[#FFDFAF] to-[#C59D5F] text-[#2B0303]',
-  },
-  {
-    theme: 'lotus-purity',
-    eyebrow: 'Liên Hoa V2 · Xanh Sen Ngọc',
-    description: 'Vẻ đẹp thanh tao của đóa sen ngọc bích Đông Dương, hòa quyện cùng sắc xanh cốm non và nét hoài cổ tao nhã thuần khiết.',
-    palette: 'from-[#124D00] via-[#5E813C] to-[#FFFBED]',
-    frame: 'border-[#5E813C]/40 shadow-[0_24px_60px_rgba(18,77,0,0.25)]',
-    badge: 'bg-[#124D00] text-[#FFFBED] border-[#5E813C]/40',
-    button: 'from-[#124D00] to-[#5E813C]',
-  },
-  {
-    theme: 'classic',
-    eyebrow: 'Ấm áp · Trang trọng',
-    description: 'Sắc nâu và vàng cổ điển, dành cho một lễ cưới trang trọng nhưng vẫn gần gũi.',
-    palette: 'from-[#f8ecdc] via-[#fffaf3] to-[#ead2b5]',
-    frame: 'border-[#6b4632]/20 shadow-[0_24px_55px_rgba(91,58,41,0.2)]',
-    badge: 'bg-white/80 text-[#654430] border-[#8f6246]/15',
-    button: 'from-[#6b4632] to-[#b77d47]',
-  },
-  {
-    theme: 'heritage',
-    eyebrow: 'Tinh hoa Việt · Thanh nhã',
-    description: 'Hoa văn truyền thống trên nền ngọc trầm, cân bằng giữa nét Việt và thẩm mỹ hiện đại.',
-    palette: 'from-[#dcece7] via-[#f2f8f5] to-[#c7ddd5]',
-    frame: 'border-[#174a43]/20 shadow-[0_24px_55px_rgba(23,74,67,0.2)]',
-    badge: 'bg-white/80 text-[#174a43] border-[#174a43]/15',
-    button: 'from-[#174a43] to-[#2a8b7e]',
-  },
-  {
-    theme: 'midnight',
-    eyebrow: 'Điện ảnh · Sang trọng',
-    description: 'Nền đêm sâu cùng ánh kim tinh tế, phù hợp với tiệc tối và không gian cao cấp.',
-    palette: 'from-[#121b26] via-[#1c2937] to-[#0a1017]',
-    frame: 'border-[#d4af7a]/25 shadow-[0_24px_60px_rgba(0,0,0,0.45)]',
-    badge: 'bg-white/10 text-[#f5e8d2] border-white/10',
-    button: 'from-[#b98c52] to-[#e0bd83]',
-  },
-  {
-    theme: 'elegance',
-    eyebrow: 'Tân cổ điển · Tinh tế',
-    description: 'Nhiều khoảng thở, typography thanh lịch và những đường viền vàng đồng nhẹ nhàng.',
-    palette: 'from-[#eee9df] via-[#faf8f4] to-[#ddd3c1]',
-    frame: 'border-[#b39a6a]/20 shadow-[0_24px_55px_rgba(45,42,38,0.17)]',
-    badge: 'bg-white/80 text-[#3b3731] border-[#b39a6a]/20',
-    button: 'from-[#75654a] to-[#b39a6a]',
-  },
-  {
-    theme: 'luxury',
-    eyebrow: 'Hỷ sắc · Quyền quý',
-    description: 'Đỏ đô và vàng kim tạo nên không khí hỷ sự truyền thống, nổi bật và đầy trang trọng.',
-    palette: 'from-[#8f2028] via-[#b7373f] to-[#f0cda0]',
-    frame: 'border-[#f5d79b]/45 shadow-[0_24px_60px_rgba(112,25,31,0.28)]',
-    badge: 'bg-[#fff5dc]/90 text-[#8b2229] border-[#f1d39a]/60',
-    button: 'from-[#a62932] to-[#d7a447]',
-  },
-  {
-    theme: 'romance',
-    eyebrow: 'Lãng mạn · Huyền ảo',
-    description: 'Glassmorphism, sắc hồng đêm và hiệu ứng ánh sáng cho một câu chuyện tình đầy cảm xúc.',
-    palette: 'from-[#160e1c] via-[#2c1737] to-[#120a18]',
-    frame: 'border-rose-300/20 shadow-[0_24px_60px_rgba(190,60,110,0.3)]',
-    badge: 'bg-rose-300/10 text-rose-100 border-rose-200/15',
-    button: 'from-[#a83f69] to-[#e06f93]',
-  },
-  {
-    theme: 'minimalist',
-    eyebrow: 'Tối giản · Thời thượng',
-    description: 'Bố cục sạch, chữ đẹp và đường nét chuẩn mực để mọi thông tin luôn dễ đọc và nổi bật.',
-    palette: 'from-[#e8e5de] via-[#fdfbf7] to-[#d9d5cc]',
-    frame: 'border-black/10 shadow-[0_24px_55px_rgba(0,0,0,0.14)]',
-    badge: 'bg-white/80 text-[#2d3748] border-black/10',
-    button: 'from-[#26313e] to-[#596777]',
-  },
-  {
-    theme: 'pastel',
-    eyebrow: 'Hàn Quốc · Nhẹ nhàng',
-    description: 'Sage, nude và watercolor mềm mại cho một tấm thiệp trong trẻo, trẻ trung và giàu cảm xúc.',
-    palette: 'from-[#e3eeea] via-[#fbf8f3] to-[#eddcdd]',
-    frame: 'border-[#8ca89f]/20 shadow-[0_24px_55px_rgba(107,122,118,0.18)]',
-    badge: 'bg-white/80 text-[#60736e] border-[#8ca89f]/20',
-    button: 'from-[#78978f] to-[#a8c3bc]',
-  },
-  {
-    theme: 'viet-silk',
-    eyebrow: 'Gấm Việt · Hoa sen',
-    description: 'Đỏ son, kem lụa và vàng đồng kết hợp hoa sen, mây cổ và tinh thần thiệp hỷ Việt Nam.',
-    palette: 'from-[#f0d7b0] via-[#fff4df] to-[#a92f35]',
-    frame: 'border-[#e2bd78]/50 shadow-[0_24px_60px_rgba(111,35,37,0.28)]',
-    badge: 'bg-[#fff5df]/90 text-[#7d1f25] border-[#d7ad69]/50',
-    button: 'from-[#7d1f25] to-[#b78449]',
-  },
-  {
-    theme: 'botanical',
-    eyebrow: 'Garden wedding · Lãng mạn',
-    description: 'Khu vườn châu Âu với eucalyptus, olive, hoa trắng và bảng màu sage dịu nhẹ, thanh lịch.',
-    palette: 'from-[#dce4d5] via-[#f8f4e9] to-[#d9c8b4]',
-    frame: 'border-[#cbd5c2]/60 shadow-[0_24px_60px_rgba(74,86,65,0.22)]',
-    badge: 'bg-[#fffdf7]/90 text-[#4d5a45] border-[#aab8a0]/45',
-    button: 'from-[#647258] to-[#a8976d]',
-  },
-  {
-    theme: 'midnight-elegance',
-    eyebrow: 'Ballroom · Champagne glow',
-    description: 'Dạ tiệc cưới buổi tối với navy sâu, đen than, ánh pha lê và vàng champagne sang trọng.',
-    palette: 'from-[#070b12] via-[#0f172a] to-[#d4af7f]',
-    frame: 'border-[#d4af7f]/30 shadow-[0_24px_70px_rgba(0,0,0,0.45)]',
-    badge: 'bg-[#111827]/80 text-[#f8f8f2] border-[#d4af7f]/30',
-    button: 'from-[#111827] to-[#d4af7f]',
-  },
-]
+import TemplateCatalog from './components/TemplateCatalog'
 
 const features = [
   {
     number: '01',
     title: 'Thiết kế có gu',
-    text: 'Nhiều phong cách được chăm chút cho từng không khí lễ cưới.',
+    text: '21+ phong cách được chăm chút tỉ mỉ cho từng không khí lễ cưới.',
   },
   {
     number: '02',
     title: 'Tạo trong vài phút',
-    text: 'Nhập thông tin, tải ảnh và xem trước ngay trước khi xuất bản.',
+    text: 'Nhập thông tin, tải ảnh và xem trước tức thì trước khi xuất bản.',
   },
   {
     number: '03',
-    title: 'Đủ tiện ích',
-    text: 'Album ảnh, bản đồ, RSVP, lời chúc và hộp mừng cưới trong một nơi.',
+    title: 'Đầy đủ tiện ích',
+    text: 'Mở phong bì 3D, album ảnh, bản đồ dẫn đường, RSVP, lời chúc và hộp mừng cưới mừng tân hôn.',
   },
 ]
 
@@ -285,7 +80,7 @@ export default function Home() {
             </h1>
 
             <p className="mt-8 max-w-xl text-base leading-8 text-[#735b4d] md:text-lg">
-              Tạo thiệp cưới trực tuyến mang dấu ấn riêng, đẹp trên mọi thiết bị và sẵn sàng chia sẻ đến những người bạn yêu quý.
+              Tạo thiệp cưới trực tuyến mang dấu ấn riêng với hiệu ứng mở phong bì 3D, cánh hoa bay bồng bềnh, âm nhạc lãng mạn và tối ưu hoàn hảo trên mọi thiết bị.
             </p>
 
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
@@ -300,22 +95,22 @@ export default function Home() {
                 href="#templates"
                 className="inline-flex items-center justify-center rounded-full border border-[#7d5d49]/20 bg-white/65 px-7 py-4 text-sm font-semibold text-[#5b4032] backdrop-blur-md transition hover:border-[#ad7547]/50 hover:bg-white"
               >
-                Khám phá bộ sưu tập
+                Khám phá 21+ mẫu thiệp
               </a>
             </div>
 
             <div className="mt-12 flex flex-wrap gap-x-9 gap-y-4 border-t border-[#775541]/10 pt-7">
               <div>
-                <p className="font-display text-2xl text-[#4b3024]">11</p>
-                <p className="text-xs text-[#8c7161]">Giao diện cao cấp</p>
+                <p className="font-display text-2xl text-[#4b3024]">21+</p>
+                <p className="text-xs text-[#8c7161]">Mẫu thiệp đa phong cách</p>
+              </div>
+              <div>
+                <p className="font-display text-2xl text-[#4b3024]">10</p>
+                <p className="text-xs text-[#8c7161]">Mẫu phong bì 3D hot</p>
               </div>
               <div>
                 <p className="font-display text-2xl text-[#4b3024]">100%</p>
-                <p className="text-xs text-[#8c7161]">Tối ưu di động</p>
-              </div>
-              <div>
-                <p className="font-display text-2xl text-[#4b3024]">5 phút</p>
-                <p className="text-xs text-[#8c7161]">Để có thiệp đầu tiên</p>
+                <p className="text-xs text-[#8c7161]">Tối ưu di động & Chia sẻ tức thì</p>
               </div>
             </div>
           </div>
@@ -340,7 +135,11 @@ export default function Home() {
             <div className="absolute bottom-0 right-0 h-[480px] w-[58%] rotate-[5deg] overflow-hidden rounded-[38px] border-[10px] border-[#1e1915] bg-white shadow-[0_35px_90px_rgba(0,0,0,0.3)] relative">
               {/* Phone Notch */}
               <div className="absolute top-2.5 left-1/2 transform -translate-x-1/2 w-16 h-3.5 bg-[#1e1915] rounded-full z-20 pointer-events-none" />
-              <AutoScrollTemplatePreview src="/demo?theme=burgundy-romance&embedded=1" title="Thiệp cưới mẫu nổi bật" />
+              <AutoScrollTemplatePreview
+                src="/demo?theme=burgundy-romance&embedded=1"
+                title="Thiệp cưới mẫu nổi bật"
+                autoScroll={true}
+              />
             </div>
 
             <div className="absolute right-3 top-4 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-[0_16px_40px_rgba(74,45,31,0.12)] backdrop-blur-xl">
@@ -379,7 +178,7 @@ export default function Home() {
       <section id="templates" className="relative bg-[#fffdf9] px-5 py-24 md:px-8 md:py-32">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-[#f8f3ec] to-transparent" />
         <div className="relative mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-end mb-12">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#ad7547]">Bộ sưu tập giao diện</p>
               <h2 className="mt-5 font-display text-4xl leading-tight tracking-[-0.03em] text-[#40291f] md:text-6xl">
@@ -389,66 +188,13 @@ export default function Home() {
             </div>
             <div className="lg:pb-2">
               <p className="max-w-2xl text-sm leading-7 text-[#7b6253] md:text-base">
-                Mỗi mẫu là một không khí riêng. Di chuột vào bản xem trước để khám phá toàn bộ thiệp, hoặc mở bản đầy đủ trước khi bắt đầu chỉnh sửa.
+                Mỗi mẫu là một thế giới cảm xúc riêng. Lọc theo phong cách bạn yêu thích, di chuột để xem thiệp tự động cuộn hoặc bấm <strong>Xem nhanh</strong> để trải nghiệm trực tiếp trên điện thoại ảo.
               </p>
-              <div className="mt-5 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#9a7a64]">
-                <span className="h-px w-10 bg-[#bd8754]" />
-                Preview tự động cuộn
-              </div>
             </div>
           </div>
 
-          <div className="mt-16 grid grid-cols-1 gap-7 md:grid-cols-2">
-            {templates.map((template, index) => (
-              <article
-                key={template.theme}
-                className={`group overflow-hidden rounded-[32px] border border-[#5c3b28]/10 bg-white shadow-[0_14px_50px_rgba(76,50,36,0.07)] transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_28px_80px_rgba(76,50,36,0.14)] ${
-                  template.featured ? 'md:col-span-2' : ''
-                }`}
-              >
-                <div className={`grid ${template.featured ? 'lg:grid-cols-[0.8fr_1.2fr]' : ''}`}>
-                  <div className={`relative flex min-h-[560px] items-center justify-center overflow-hidden bg-gradient-to-br ${template.palette} px-6 py-12`}>
-                    <div className="absolute inset-0 opacity-[0.05] [background-image:radial-gradient(#3c2921_0.7px,transparent_0.7px)] [background-size:16px_16px]" />
-                    <span className={`absolute left-5 top-5 z-10 rounded-full border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] backdrop-blur-md ${template.badge}`}>
-                      {String(index + 1).padStart(2, '0')} · {getThemeDisplayName(template.theme)}
-                    </span>
-                    <div className={`relative h-[500px] w-[260px] overflow-hidden rounded-[34px] border-[9px] border-[#1e1915] bg-[#1e1915] transition duration-500 group-hover:scale-[1.025] shadow-xl`}>
-                      {/* Phone Notch */}
-                      <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-14 h-3 bg-[#1e1915] rounded-full z-20 pointer-events-none" />
-                      <AutoScrollTemplatePreview
-                        src={`/demo?theme=${template.theme}&embedded=1`}
-                        title={`${getThemeDisplayName(template.theme)} preview`}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={`flex flex-col justify-between p-7 md:p-9 ${template.featured ? 'lg:p-12' : ''}`}>
-                    <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#ae8060]">{template.eyebrow}</p>
-                      <h3 className="mt-3 font-display text-3xl tracking-[-0.02em] text-[#40291f]">{getThemeDisplayName(template.theme)}</h3>
-                      <p className="mt-4 text-sm leading-7 text-[#7b6253]">{template.description}</p>
-                    </div>
-
-                    <div className="mt-8 flex gap-3">
-                      <Link
-                        href={`/demo?theme=${template.theme}`}
-                        target="_blank"
-                        className="flex-1 rounded-full border border-[#654634]/15 bg-[#faf7f2] px-4 py-3.5 text-center text-sm font-semibold text-[#604536] transition hover:border-[#ad7547]/40 hover:bg-white"
-                      >
-                        Xem đầy đủ
-                      </Link>
-                      <Link
-                        href={`/create?theme=${template.theme}`}
-                        className={`group/button flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:shadow-lg ${template.button}`}
-                      >
-                        Chọn mẫu <span className="transition-transform group-hover/button:translate-x-1"><ArrowIcon /></span>
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
+          {/* Interactive Template Catalog with Category Tabs, Quick View Modal, and Smooth Previews */}
+          <TemplateCatalog />
         </div>
       </section>
 
