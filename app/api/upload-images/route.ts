@@ -5,8 +5,8 @@ import { createClient } from '@supabase/supabase-js'
 export const maxDuration = 60 // Allows for longer execution times on hobby plan
 
 const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'dummy-key'
 )
 
 const BUCKET_NAME = process.env.NEXT_PUBLIC_SUPABASE_BUCKET || 'wedding-images'
