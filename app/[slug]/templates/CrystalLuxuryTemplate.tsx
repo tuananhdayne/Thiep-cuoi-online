@@ -230,7 +230,7 @@ export default function CrystalLuxuryTemplate({
               className="font-cursive-names text-4xl sm:text-6xl md:text-7xl font-normal tracking-wide text-current leading-tight my-2 relative z-10 drop-shadow-sm"
             >
               {couple.groom_name}
-              <span className="block font-heading-display text-2xl sm:text-3xl font-light my-0.5 opacity-80" style={{ color: '#C5A059' }}>
+              <span className="block font-heading-display text-2xl sm:text-3xl font-light my-0.5 opacity-80" style={{ color: '#855F12' }}>
                 &amp;
               </span>
               {couple.bride_name}
@@ -248,13 +248,13 @@ export default function CrystalLuxuryTemplate({
                 <p className="font-heading-display uppercase tracking-widest font-bold">NHÀ TRAI</p>
                 <p className="font-body-text opacity-80 mt-1">Ông: Đặng Văn Hùng</p>
                 <p className="font-body-text opacity-80">Bà: Hoàng Thị Mai</p>
-                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#C5A059' }}>Trưởng Nam</p>
+                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#855F12' }}>Trưởng Nam</p>
               </div>
               <div className="text-center border-l border-current/20 pl-4">
                 <p className="font-heading-display uppercase tracking-widest font-bold">NHÀ GÁI</p>
                 <p className="font-body-text opacity-80 mt-1">Ông: Vũ Quốc Tuấn</p>
                 <p className="font-body-text opacity-80">Bà: Nguyễn Thị Lan</p>
-                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#C5A059' }}>Quý Nữ</p>
+                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#855F12' }}>Quý Nữ</p>
               </div>
             </motion.div>
 
@@ -295,7 +295,7 @@ export default function CrystalLuxuryTemplate({
         >
           
           <div className="text-center mb-8 relative z-10">
-            <span className="text-xl" style={{ color: '#C5A059' }}>✦ ✦ ✦</span>
+            <span className="text-xl" style={{ color: '#855F12' }}>✦ ✦ ✦</span>
             <h2 className="font-heading-display text-2xl sm:text-3xl font-bold uppercase tracking-wider mt-1">
               THÔNG TIN LỄ CƯỚI
             </h2>
@@ -315,7 +315,7 @@ export default function CrystalLuxuryTemplate({
               className="bg-[#141312] rounded-2xl p-5 sm:p-6 border border-white/20 flex flex-col justify-between shadow-md"
             >
               <div>
-                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#C5A059' }}>
+                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#855F12' }}>
                   {locations?.bride_event_title || 'Lễ Vu Quy (Nhà Gái)'}
                 </span>
                 <h3 className="font-heading-display text-lg sm:text-xl font-bold mt-3">
@@ -329,7 +329,7 @@ export default function CrystalLuxuryTemplate({
                     <svg className="w-3.5 h-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     Thời gian:
                   </span>
-                  <span className="font-bold font-heading-display" style={{ color: '#C5A059' }}>
+                  <span className="font-bold font-heading-display" style={{ color: '#855F12' }}>
                     {formatTime(locations?.bride_event_time || couple.wedding_time)} -{' '}
                     {formatShortDate(locations?.bride_event_date || couple.wedding_date)}
                   </span>
@@ -363,7 +363,7 @@ export default function CrystalLuxuryTemplate({
               className="bg-[#141312] rounded-2xl p-5 sm:p-6 border border-white/20 flex flex-col justify-between shadow-md"
             >
               <div>
-                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#C5A059' }}>
+                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#855F12' }}>
                   {locations?.groom_event_title || 'Lễ Thành Hôn (Nhà Trai)'}
                 </span>
                 <h3 className="font-heading-display text-lg sm:text-xl font-bold mt-3">
@@ -377,7 +377,7 @@ export default function CrystalLuxuryTemplate({
                     <svg className="w-3.5 h-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     Thời gian:
                   </span>
-                  <span className="font-bold font-heading-display" style={{ color: '#C5A059' }}>
+                  <span className="font-bold font-heading-display" style={{ color: '#855F12' }}>
                     {formatTime(locations?.groom_event_time || couple.wedding_time)} -{' '}
                     {formatShortDate(locations?.groom_event_date || couple.wedding_date)}
                   </span>
@@ -436,7 +436,7 @@ export default function CrystalLuxuryTemplate({
                   whileHover={{ scale: 1.05 }}
                   className="bg-white/85 backdrop-blur-sm p-3 sm:p-4 rounded-2xl shadow-sm border border-current/20 flex flex-col items-center transition-shadow hover:shadow-md"
                 >
-                  <span className="font-heading-display text-2xl sm:text-3xl font-bold" style={{ color: '#C5A059' }}>
+                  <span className="font-heading-display text-2xl sm:text-3xl font-bold" style={{ color: '#855F12' }}>
                     {String(item.value).padStart(2, '0')}
                   </span>
                   <span className="font-body-text text-[10px] sm:text-xs opacity-70 uppercase font-medium mt-1">
@@ -548,7 +548,7 @@ export default function CrystalLuxuryTemplate({
               >
                 <div
                   className="w-10 h-10 rounded-full shadow-md  transition-transform hover:scale-110"
-                  style={{ backgroundColor: '#C5A059' }}
+                  style={{ backgroundColor: '#855F12' }}
                 />
                 <span className="text-[11px] font-body-text text-[#1F1E1D] font-medium">Vàng Hổ Phách</span>
               </motion.div>
@@ -625,12 +625,12 @@ export default function CrystalLuxuryTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#C5A059' }}
+                  style={{ color: '#855F12' }}
                 >
                   <img src="/images/themes/marble-yellow/medallion-candle.webp" alt="" className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow" />
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#C5A059' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#855F12' }}>
                     17:30
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -650,12 +650,12 @@ export default function CrystalLuxuryTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#C5A059' }}
+                  style={{ color: '#855F12' }}
                 >
                   <img src="/images/themes/marble-yellow/medallion-birdcage.webp" alt="" className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow" />
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#C5A059' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#855F12' }}>
                     18:30
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -675,12 +675,12 @@ export default function CrystalLuxuryTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#C5A059' }}
+                  style={{ color: '#855F12' }}
                 >
                   <img src="/images/themes/marble-yellow/medallion-alcohol.webp" alt="" className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow" />
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#C5A059' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#855F12' }}>
                     19:15
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -700,12 +700,12 @@ export default function CrystalLuxuryTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#C5A059' }}
+                  style={{ color: '#855F12' }}
                 >
                   <img src="/images/themes/marble-yellow/medallion-candle.webp" alt="" className="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow" />
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#C5A059' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#855F12' }}>
                     20:30
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -996,7 +996,7 @@ export default function CrystalLuxuryTemplate({
           <p className="font-heading-display uppercase tracking-widest font-bold">
             Cảm ơn quý khách đã chung vui cùng chúng tôi
           </p>
-          <p className="font-cursive-names text-2xl sm:text-3xl mt-2" style={{ color: '#C5A059' }}>
+          <p className="font-cursive-names text-2xl sm:text-3xl mt-2" style={{ color: '#855F12' }}>
             {couple.groom_name} &amp; {couple.bride_name}
           </p>
           <p className="font-badge-text text-[10px] uppercase tracking-[0.25em] opacity-60 mt-3">

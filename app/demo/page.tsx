@@ -330,8 +330,8 @@ function DemoPageContent() {
     const mockGallery: GalleryItem[] = hasPreviewData ? previewGallery : defaultGallery
 
     const mockWishes: Wish[] = [
-        { id: 1, name: 'Hội bạn thân', message: 'Chúc hai bạn trăm năm hạnh phúc, sớm sinh quý tử nhé!', created_at: new Date().toISOString() },
-        { id: 2, name: 'Đồng nghiệp', message: 'Mãi mãi yêu thương và đồng hành cùng nhau nhé anh chị.', created_at: new Date(Date.now() - 86400000).toISOString() },
+        { id: 1, name: 'Hội bạn thân', message: 'Chúc hai bạn trăm năm hạnh phúc, sớm sinh quý tử nhé!', created_at: '2026-11-15T10:00:00.000Z' },
+        { id: 2, name: 'Đồng nghiệp', message: 'Mãi mãi yêu thương và đồng hành cùng nhau nhé anh chị.', created_at: '2026-11-14T15:30:00.000Z' },
     ]
 
     if (!TemplateToRender) {
@@ -357,23 +357,23 @@ function DemoPageContent() {
 
             {/* Floating action bar to choose template, shown only when not embedded in an iframe */}
             {!isEmbedded && (
-                <div className="fixed top-3 inset-x-2 sm:inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[740px] z-[9999] bg-stone-900/95 text-stone-100 backdrop-blur-md border border-amber-500/30 px-4 py-2.5 rounded-2xl shadow-[0_15px_45px_rgba(0,0,0,0.5)] flex flex-col gap-2">
-                    <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                            <span className="text-[11px] uppercase tracking-wider text-amber-300 font-semibold">Xem thử 10 Mẫu Chung Đôi:</span>
-                            <span className="text-xs sm:text-sm font-bold text-white font-display truncate max-w-[200px] sm:max-w-none">{getThemeDisplayName(theme)}</span>
+                <div className="fixed top-3 inset-x-3 sm:inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-[740px] z-[9999] bg-stone-900/95 text-stone-100 backdrop-blur-md border border-amber-500/30 px-3.5 py-2.5 rounded-2xl shadow-[0_15px_45px_rgba(0,0,0,0.5)] flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-2 sm:gap-3 min-w-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                            <span className="hidden sm:inline text-[11px] uppercase tracking-wider text-amber-300 font-semibold shrink-0">Xem thử:</span>
+                            <span className="text-xs sm:text-sm font-bold text-white font-display truncate">{getThemeDisplayName(theme)}</span>
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                             <Link
                                 href="/"
-                                className="text-xs text-stone-300 hover:text-white transition px-2.5 py-1.5 rounded-lg hover:bg-stone-800"
+                                className="text-xs text-stone-300 hover:text-white transition px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg hover:bg-stone-800"
                             >
                                 Trang chủ
                             </Link>
                             <Link
                                 href={`/create?theme=${theme}`}
-                                className="bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 text-xs font-bold px-3.5 py-1.5 rounded-full shadow transition hover:brightness-110 active:scale-95"
+                                className="bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full shadow transition hover:brightness-110 active:scale-95 whitespace-nowrap"
                             >
                                 Chọn mẫu này
                             </Link>

@@ -527,12 +527,12 @@ export default function TemplateCatalog() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="mt-8 flex flex-wrap items-center gap-3 pt-4 border-t border-[#654634]/10">
+                    <div className="mt-8 flex flex-wrap items-center gap-2.5 pt-4 border-t border-[#654634]/10 sm:gap-3">
                       {/* Quick View Button */}
                       <button
                         type="button"
                         onClick={() => setQuickViewTheme(template.theme)}
-                        className="inline-flex items-center justify-center gap-2 rounded-full border border-[#654634]/20 bg-[#faf7f2] px-4 py-3 text-sm font-semibold text-[#604536] transition-all hover:border-[#ad7547] hover:bg-white hover:text-[#ad7547]"
+                        className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-full border border-[#654634]/20 bg-[#faf7f2] px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-semibold text-[#604536] transition-all hover:border-[#ad7547] hover:bg-white hover:text-[#ad7547]"
                       >
                         <EyeIcon /> Xem nhanh
                       </button>
@@ -542,7 +542,7 @@ export default function TemplateCatalog() {
                         href={`/demo?theme=${template.theme}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#654634]/15 bg-white px-3 py-3 text-xs font-medium text-[#7d5d49] transition hover:bg-[#faf6f0] hover:text-[#40291f]"
+                        className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-full border border-[#654634]/15 bg-white px-3 py-2.5 sm:px-3 sm:py-3 text-xs font-medium text-[#7d5d49] transition hover:bg-[#faf6f0] hover:text-[#40291f]"
                         title="Mở toàn màn hình tab mới"
                       >
                         <span>Tab mới</span>
@@ -552,7 +552,7 @@ export default function TemplateCatalog() {
                       {/* Choose & Create Button */}
                       <Link
                         href={`/create?theme=${template.theme}`}
-                        className={`group/button ml-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r px-5 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-[1.02] hover:shadow-xl ${template.button}`}
+                        className={`group/button w-full sm:w-auto sm:ml-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r px-5 py-3 text-sm font-semibold text-white shadow-md transition-all hover:scale-[1.02] hover:shadow-xl ${template.button}`}
                       >
                         Chọn mẫu này
                         <span className="transition-transform group-hover/button:translate-x-1">

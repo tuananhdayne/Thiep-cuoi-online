@@ -229,7 +229,7 @@ export default function SpringGardenTemplate({
               className="font-cursive-names text-4xl sm:text-6xl md:text-7xl font-normal tracking-wide text-current leading-tight my-2 relative z-10 drop-shadow-sm"
             >
               {couple.groom_name}
-              <span className="block font-heading-display text-2xl sm:text-3xl font-light my-0.5 opacity-80" style={{ color: '#D4AF37' }}>
+              <span className="block font-heading-display text-2xl sm:text-3xl font-light my-0.5 opacity-80" style={{ color: '#7D5F15' }}>
                 &amp;
               </span>
               {couple.bride_name}
@@ -247,13 +247,13 @@ export default function SpringGardenTemplate({
                 <p className="font-heading-display uppercase tracking-widest font-bold">NHÀ TRAI</p>
                 <p className="font-body-text opacity-80 mt-1">Ông: Đặng Văn Hùng</p>
                 <p className="font-body-text opacity-80">Bà: Hoàng Thị Mai</p>
-                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#D4AF37' }}>Trưởng Nam</p>
+                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#7D5F15' }}>Trưởng Nam</p>
               </div>
               <div className="text-center border-l border-current/20 pl-4">
                 <p className="font-heading-display uppercase tracking-widest font-bold">NHÀ GÁI</p>
                 <p className="font-body-text opacity-80 mt-1">Ông: Vũ Quốc Tuấn</p>
                 <p className="font-body-text opacity-80">Bà: Nguyễn Thị Lan</p>
-                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#D4AF37' }}>Quý Nữ</p>
+                <p className="font-quote-lora italic mt-1 font-semibold" style={{ color: '#7D5F15' }}>Quý Nữ</p>
               </div>
             </motion.div>
 
@@ -294,7 +294,7 @@ export default function SpringGardenTemplate({
         >
           
           <div className="text-center mb-8 relative z-10">
-            <span className="text-xl" style={{ color: '#D4AF37' }}>✦ ✦ ✦</span>
+            <span className="text-xl" style={{ color: '#7D5F15' }}>✦ ✦ ✦</span>
             <h2 className="font-heading-display text-2xl sm:text-3xl font-bold uppercase tracking-wider mt-1">
               THÔNG TIN LỄ CƯỚI
             </h2>
@@ -314,7 +314,7 @@ export default function SpringGardenTemplate({
               className="bg-[#133225] rounded-2xl p-5 sm:p-6 border border-white/20 flex flex-col justify-between shadow-md"
             >
               <div>
-                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#D4AF37' }}>
+                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#7D5F15' }}>
                   {locations?.bride_event_title || 'Lễ Vu Quy (Nhà Gái)'}
                 </span>
                 <h3 className="font-heading-display text-lg sm:text-xl font-bold mt-3">
@@ -328,7 +328,7 @@ export default function SpringGardenTemplate({
                     <svg className="w-3.5 h-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     Thời gian:
                   </span>
-                  <span className="font-bold font-heading-display" style={{ color: '#D4AF37' }}>
+                  <span className="font-bold font-heading-display" style={{ color: '#7D5F15' }}>
                     {formatTime(locations?.bride_event_time || couple.wedding_time)} -{' '}
                     {formatShortDate(locations?.bride_event_date || couple.wedding_date)}
                   </span>
@@ -362,7 +362,7 @@ export default function SpringGardenTemplate({
               className="bg-[#133225] rounded-2xl p-5 sm:p-6 border border-white/20 flex flex-col justify-between shadow-md"
             >
               <div>
-                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#D4AF37' }}>
+                <span className="font-badge-text px-3 py-1 rounded-full bg-white/10 text-[11px] font-bold uppercase tracking-wider border border-white/25 inline-block" style={{ color: '#7D5F15' }}>
                   {locations?.groom_event_title || 'Lễ Thành Hôn (Nhà Trai)'}
                 </span>
                 <h3 className="font-heading-display text-lg sm:text-xl font-bold mt-3">
@@ -376,7 +376,7 @@ export default function SpringGardenTemplate({
                     <svg className="w-3.5 h-3.5 shrink-0 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     Thời gian:
                   </span>
-                  <span className="font-bold font-heading-display" style={{ color: '#D4AF37' }}>
+                  <span className="font-bold font-heading-display" style={{ color: '#7D5F15' }}>
                     {formatTime(locations?.groom_event_time || couple.wedding_time)} -{' '}
                     {formatShortDate(locations?.groom_event_date || couple.wedding_date)}
                   </span>
@@ -435,7 +435,7 @@ export default function SpringGardenTemplate({
                   whileHover={{ scale: 1.05 }}
                   className="bg-white/85 backdrop-blur-sm p-3 sm:p-4 rounded-2xl shadow-sm border border-current/20 flex flex-col items-center transition-shadow hover:shadow-md"
                 >
-                  <span className="font-heading-display text-2xl sm:text-3xl font-bold" style={{ color: '#D4AF37' }}>
+                  <span className="font-heading-display text-2xl sm:text-3xl font-bold" style={{ color: '#7D5F15' }}>
                     {String(item.value).padStart(2, '0')}
                   </span>
                   <span className="font-body-text text-[10px] sm:text-xs opacity-70 uppercase font-medium mt-1">
@@ -589,7 +589,7 @@ export default function SpringGardenTemplate({
               >
                 <div
                   className="w-10 h-10 rounded-full shadow-md  transition-transform hover:scale-110"
-                  style={{ backgroundColor: '#D4AF37' }}
+                  style={{ backgroundColor: '#7D5F15' }}
                 />
                 <span className="text-[11px] font-body-text text-[#1B4332] font-medium">Vàng Kim</span>
               </motion.div>
@@ -624,12 +624,12 @@ export default function SpringGardenTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#D4AF37' }}
+                  style={{ color: '#7D5F15' }}
                 >
                   <svg className="w-5 h-5 shrink-0 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#D4AF37' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#7D5F15' }}>
                     17:30
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -649,12 +649,12 @@ export default function SpringGardenTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#D4AF37' }}
+                  style={{ color: '#7D5F15' }}
                 >
                   <svg className="w-5 h-5 shrink-0 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#D4AF37' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#7D5F15' }}>
                     18:30
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -674,12 +674,12 @@ export default function SpringGardenTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#D4AF37' }}
+                  style={{ color: '#7D5F15' }}
                 >
                   <svg className="w-5 h-5 shrink-0 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#D4AF37' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#7D5F15' }}>
                     19:15
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -699,12 +699,12 @@ export default function SpringGardenTemplate({
               >
                 <div
                   className="w-11 h-11 rounded-full flex items-center justify-center bg-white/10 shrink-0 shadow-inner"
-                  style={{ color: '#D4AF37' }}
+                  style={{ color: '#7D5F15' }}
                 >
                   <svg className="w-5 h-5 shrink-0 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <div className="flex-1">
-                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#D4AF37' }}>
+                  <span className="font-heading-display font-bold text-xs uppercase tracking-wider block" style={{ color: '#7D5F15' }}>
                     20:30
                   </span>
                   <span className="font-body-text text-sm font-semibold">
@@ -995,7 +995,7 @@ export default function SpringGardenTemplate({
           <p className="font-heading-display uppercase tracking-widest font-bold">
             Cảm ơn quý khách đã chung vui cùng chúng tôi
           </p>
-          <p className="font-cursive-names text-2xl sm:text-3xl mt-2" style={{ color: '#D4AF37' }}>
+          <p className="font-cursive-names text-2xl sm:text-3xl mt-2" style={{ color: '#7D5F15' }}>
             {couple.groom_name} &amp; {couple.bride_name}
           </p>
           <p className="font-badge-text text-[10px] uppercase tracking-[0.25em] opacity-60 mt-3">

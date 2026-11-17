@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabaseClient'
 import { Couple, GalleryItem, Wish, WeddingGift, Location, Story } from '../templates/types'
 import { loadTemplate } from '../templates/templateLoader'
@@ -41,12 +42,12 @@ export default async function GuestInvitePage({
           <p className="text-slate-600 text-sm leading-relaxed">
             Thiệp cưới của <strong>{couple.groom_name} &amp; {couple.bride_name}</strong> đã kết thúc thời gian lưu trữ.
           </p>
-          <a
+          <Link
             href="/"
             className="inline-block mt-4 px-6 py-2.5 bg-gradient-to-r from-amber-600 to-amber-700 text-white text-xs uppercase tracking-wider font-semibold rounded-full shadow hover:opacity-90 transition"
           >
             Về Trang Chủ
-          </a>
+          </Link>
         </div>
       </main>
     )
