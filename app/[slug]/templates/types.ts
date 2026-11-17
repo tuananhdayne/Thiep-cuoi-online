@@ -16,7 +16,7 @@ export type Location = {
 }
 
 export type Couple = {
-    id: number
+    id: string | number
     slug: string
     bride_name: string
     groom_name: string
@@ -61,8 +61,8 @@ export type Couple = {
 }
 
 export type WeddingGift = {
-    id: number
-    couple_id: number
+    id: string | number
+    couple_id: string | number
     is_enabled: boolean
     groom_bank_name?: string | null
     groom_bank_holder?: string | null
@@ -75,24 +75,24 @@ export type WeddingGift = {
 }
 
 export type GalleryItem = {
-    id: number
+    id: string | number
     image_url: string
     caption?: string | null
     sort_order?: number | null
 }
 
 export type Wish = {
-    id: number
+    id: string | number
     name: string | null
     message: string
     attendance?: 'yes' | 'no' | 'maybe' | null
-    couple_id?: number
+    couple_id?: string | number
     created_at: string
 }
 
 export type Story = {
-    id: number
-    couple_id?: number
+    id: string | number
+    couple_id?: string | number
     title: string
     story_date?: string | null
     description: string

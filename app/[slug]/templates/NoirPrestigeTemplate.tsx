@@ -115,14 +115,25 @@ export default function NoirPrestigeTemplate({
     }
 
     try {
-      if (couple.id && couple.id > 0) {
-        const { error } = await supabase.from('wishes').insert({
+      const isRealCouple = Boolean(couple.id && couple.id !== 0 && couple.id !== '0' && couple.id !== 'preview')
+      if (isRealCouple) {
+        const { error: wishError } = await supabase.from('wishes').insert({
           couple_id: couple.id,
           name: formName.trim(),
           message: formMessage.trim(),
-          attendance: formAttendance,
         })
-        if (error) throw error
+        if (wishError) throw wishError
+
+        if (formAttendance) {
+          await supabase.from('rsvp').insert({
+            couple_id: couple.id,
+            guest_name: formName.trim(),
+            attend_status: formAttendance,
+            guest_count: 1,
+            side: 'groom',
+            message: formMessage.trim() || null,
+          })
+        }
       }
 
       setLocalWishes((prev) => [newWishItem, ...prev])

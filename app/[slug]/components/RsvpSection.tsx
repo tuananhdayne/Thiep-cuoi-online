@@ -5,7 +5,7 @@ import Reveal from './Reveal'
 import { supabase } from '@/lib/supabaseClient'
 
 export type RsvpSectionProps = {
-    coupleId: number
+    coupleId: string | number
     guestName?: string
     brideAvatar?: string | null
     groomAvatar?: string | null

@@ -1,5 +1,5 @@
 type Wish = {
-  id: number
+  id: string | number
   name: string | null
   message: string
   created_at: string

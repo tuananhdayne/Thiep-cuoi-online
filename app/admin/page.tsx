@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 type Couple = {
-  id: number
+  id: string | number
   slug: string
   bride_name: string
   groom_name: string
@@ -28,7 +28,7 @@ export default function AdminPage() {
   const [couples, setCouples] = useState<Couple[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<string | number | null>(null)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -119,7 +119,7 @@ export default function AdminPage() {
     router.push(`/${slug}`)
   }
 
-  const handleSetExpiry = async (id: number) => {
+  const handleSetExpiry = async (id: string | number) => {
     const daysStr = window.prompt('Nhập số ngày thiệp sẽ tồn tại kể từ hôm nay (ví dụ: 30):', '30')
     if (daysStr === null) return // User cancelled
     
@@ -146,7 +146,7 @@ export default function AdminPage() {
     }
   }
 
-  const handleDelete = async (id: number, slug: string) => {
+  const handleDelete = async (id: string | number, slug: string) => {
     const ok = window.confirm(`Xoá thiệp "${slug}"? Hành động không thể hoàn tác.`)
     if (!ok) return
 

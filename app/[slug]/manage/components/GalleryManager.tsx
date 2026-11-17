@@ -11,7 +11,7 @@ type GalleryItem = {
 }
 
 type GalleryManagerProps = {
-  coupleId: number
+  coupleId: string | number
   slug: string
 }
 
@@ -26,7 +26,7 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
   const [items, setItems] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [actingId, setActingId] = useState<number | null>(null)
+  const [actingId, setActingId] = useState<string | number | null>(null)
 
   const sortedItems = useMemo(
     () => [...items].sort((a, b) => (formatOrder(a.sort_order) - formatOrder(b.sort_order))),

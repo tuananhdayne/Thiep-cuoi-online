@@ -5,14 +5,14 @@ import WishForm from './WishForm'
 import { supabase } from '@/lib/supabaseClient'
 
 type Wish = {
-  id: number
+  id: string | number
   name: string | null
   message: string
   created_at: string
 }
 
 type WishesProps = {
-  coupleId: number
+  coupleId: string | number
   initialWishes: Wish[]
 }
 

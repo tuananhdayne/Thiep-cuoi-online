@@ -4,7 +4,7 @@ import { FormEvent, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
 type WishFormProps = {
-  coupleId: number
+  coupleId: string | number
   guestName?: string
   onSubmitted?: () => Promise<void> | void
 }

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
 type MusicManagerProps = {
-    coupleId: number
+    coupleId: string | number
     initialMusicUrl: string | null
     initialMusicDelay: number | null
     initialMusicVolume: number | null

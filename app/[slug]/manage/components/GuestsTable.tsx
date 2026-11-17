@@ -4,15 +4,15 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
 type Guest = {
-  id: number
-  couple_id: number
+  id: string | number
+  couple_id: string | number
   guest_name: string
   guest_slug: string
   created_at: string
 }
 
 type GuestsTableProps = {
-  coupleId: number
+  coupleId: string | number
   baseSlug: string
   initialGuests: Guest[]
 }
@@ -27,8 +27,8 @@ const formatDateTime = (value: string) =>
 export default function GuestsTable({ coupleId, baseSlug, initialGuests }: GuestsTableProps) {
   const [guests, setGuests] = useState<Guest[]>(initialGuests || [])
   const [loading, setLoading] = useState(false)
-  const [copying, setCopying] = useState<number | null>(null)
-  const [deleting, setDeleting] = useState<number | null>(null)
+  const [copying, setCopying] = useState<string | number | null>(null)
+  const [deleting, setDeleting] = useState<string | number | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const total = useMemo(() => guests.length, [guests])

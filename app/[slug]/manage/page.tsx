@@ -17,7 +17,7 @@ async function getCouple(slug: string) {
   return data
 }
 
-async function getWishes(coupleId: number) {
+async function getWishes(coupleId: string | number) {
   const { data } = await supabase
     .from('wishes')
     .select('*')
@@ -26,7 +26,7 @@ async function getWishes(coupleId: number) {
   return data || []
 }
 
-async function getGuests(coupleId: number) {
+async function getGuests(coupleId: string | number) {
   const { data } = await supabase
     .from('guests')
     .select('*')
@@ -35,7 +35,7 @@ async function getGuests(coupleId: number) {
   return data || []
 }
 
-async function getRsvps(coupleId: number) {
+async function getRsvps(coupleId: string | number) {
   const { data } = await supabase
     .from('rsvp')
     .select('*')

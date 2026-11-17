@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 
 type InviteInputProps = {
-  coupleId: number
+  coupleId: string | number
   baseSlug: string
   onSaved?: () => void
 }

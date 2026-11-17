@@ -6,14 +6,14 @@ import Reveal from './Reveal'
 import { supabase } from '@/lib/supabaseClient'
 
 export type Wish = {
-  id: number
+  id: string | number
   name: string | null
   message: string
   created_at: string
 }
 
 type WishSectionProps = {
-  coupleId: number
+  coupleId: string | number
   initialWishes: Wish[]
   guestName?: string
 }

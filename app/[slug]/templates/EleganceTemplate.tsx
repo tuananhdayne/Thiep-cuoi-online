@@ -110,7 +110,7 @@ function EventCard({ title, date, time, venue, address, side, mapLink }: {
 }
 
 /* ─── RSVP form (client) ─── */
-function RsvpForm({ coupleId }: { coupleId: number }) {
+function RsvpForm({ coupleId }: { coupleId: string | number }) {
   const [name, setName] = useState('')
   const [count, setCount] = useState('1')
   const [side, setSide] = useState('groom')
