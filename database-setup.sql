@@ -55,16 +55,18 @@ CREATE POLICY "Prevent delete from client" ON admins
 -- ============================================
 -- 4. HÀNG ĐỦU TIÊN - ADMIN TÀI KHOẢN
 -- ============================================
--- ⚠️ THAY THẾ: '$2a$10$YOUR_BCRYPT_HASH_HERE' bằng Bcrypt hash của password
-
--- Hash của "1982004" (copy paste từ server):
--- $2a$10$2OfJSfRCcE2LqyV/LXe.Ju0aeKJ8k.zV2DXhH9mH8pP7.qL4G8nKi
+-- ⚠️ KHÔNG commit mật khẩu hoặc hash thật vào file này.
+-- Tạo bcrypt hash phía server rồi chạy INSERT dưới đây TRỰC TIẾP trên Supabase,
+-- thay các placeholder bằng giá trị thật (đừng lưu lại vào repo).
+--
+-- Gợi ý tạo hash (chạy local, KHÔNG commit):
+--   node -e "require('bcryptjs').hash(process.env.ADMIN_PW,10).then(console.log)"
 
 INSERT INTO admins (username, password_hash, email)
 VALUES (
   'admin',
-  '$2b$10$wwVbGpkLTCXVL5BYVo0shuxUVO.8xvJigz.HWxEnwlcTnKhifOjHu',
-  'tuananhnguyendinh198@gmail.com'
+  '$2a$10$REPLACE_WITH_REAL_BCRYPT_HASH',
+  'REPLACE_WITH_ADMIN_EMAIL'
 )
 ON CONFLICT (username) DO NOTHING;
 

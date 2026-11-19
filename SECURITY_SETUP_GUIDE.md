@@ -69,8 +69,8 @@ CREATE POLICY "Prevent delete from client" ON admins
 // Node.js - Chạy trong terminal
 const bcrypt = require('bcryptjs');
 
-// Hash password (1982004)
-bcrypt.hash('1982004', 10).then(hash => {
+// Hash password (YOUR_ADMIN_PASSWORD)
+bcrypt.hash('YOUR_ADMIN_PASSWORD', 10).then(hash => {
   console.log('Hashed password:', hash);
   // Copy hash này và dùng trong câu lệnh SQL
 });
@@ -86,13 +86,13 @@ bcrypt.hash('1982004', 10).then(hash => {
 INSERT INTO admins (username, password_hash, email)
 VALUES (
   'admin',
-  '$2a$10$...YOUR_HASHED_PASSWORD_HERE...',  -- Bcrypt hash của '1982004'
+  '$2a$10$...YOUR_HASHED_PASSWORD_HERE...',  -- Bcrypt hash của 'YOUR_ADMIN_PASSWORD'
   'admin@wedding.local'
 )
 ON CONFLICT (username) DO NOTHING;
 ```
 
-**Lấy Bcrypt Hash của Password (1982004):**
+**Lấy Bcrypt Hash của Password (YOUR_ADMIN_PASSWORD):**
 
 Chạy lệnh này ở máy tính của bạn:
 
@@ -101,12 +101,12 @@ Chạy lệnh này ở máy tính của bạn:
 npm install -g bcryptjs
 
 # Chạy script
-node -e "const bcrypt = require('bcryptjs'); bcrypt.hash('1982004', 10).then(h => console.log(h));"
+node -e "const bcrypt = require('bcryptjs'); bcrypt.hash('YOUR_ADMIN_PASSWORD', 10).then(h => console.log(h));"
 ```
 
-**Ví dụ hash của '1982004':**
+**Ví dụ hash của 'YOUR_ADMIN_PASSWORD':**
 ```
-$2a$10$2OfJSfRCcE2LqyV/LXe.Ju0aeKJ8k.zV2DXhH9mH8pP7.qL4G8nKi
+$2a$10$REPLACE_WITH_REAL_BCRYPT_HASH
 ```
 
 **Dán vào SQL:**
@@ -114,7 +114,7 @@ $2a$10$2OfJSfRCcE2LqyV/LXe.Ju0aeKJ8k.zV2DXhH9mH8pP7.qL4G8nKi
 INSERT INTO admins (username, password_hash, email)
 VALUES (
   'admin',
-  '$2a$10$2OfJSfRCcE2LqyV/LXe.Ju0aeKJ8k.zV2DXhH9mH8pP7.qL4G8nKi',
+  '$2a$10$REPLACE_WITH_REAL_BCRYPT_HASH',
   'admin@wedding.local'
 )
 ON CONFLICT (username) DO NOTHING;
@@ -211,7 +211,7 @@ Database query → bcrypt compare → session storage → ✅ Authenticated
 // Chỉ chạy trên SERVER - hacker KHÔNG thể thấy code này
 POST /api/admin/login
 
-Request: { username: "admin", password: "1982004" }
+Request: { username: "admin", password: "YOUR_ADMIN_PASSWORD" }
 
 Server Process:
 1. Lấy password_hash từ database
@@ -258,7 +258,7 @@ fetch('/').then(r => {
 # Test API
 curl -X POST http://localhost:3000/api/admin/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"1982004"}'
+  -d '{"username":"admin","password":"YOUR_ADMIN_PASSWORD"}'
 
 # Kết quả: { "success": true }
 ```
