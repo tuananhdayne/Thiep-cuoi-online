@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import SecurityProvider from "./components/SecurityProvider";
 
 export const metadata: Metadata = {
   title: "Thiệp Cưới Online Sang Trọng",
@@ -23,9 +22,7 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-[#fdf8f3] text-slate-900 font-body-text">
-        <SecurityProvider>
-          {children}
-        </SecurityProvider>
+        {children}
       </body>
     </html>
   );
