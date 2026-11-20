@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 type Couple = {
@@ -30,40 +29,45 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | number | null>(null)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (sessionStorage.getItem('adminAuth') === 'true') {
-        setIsAuthenticated(true)
+  // The server is the source of truth: fetching the list succeeds only with a
+  // valid signed admin cookie. 401 => not authenticated (show login).
+  const fetchCouples = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/admin/couples', { cache: 'no-store' })
+      if (res.status === 401) {
+        setIsAuthenticated(false)
+        return false
       }
-      setIsAuthChecking(false)
+      if (!res.ok) {
+        setError('Không thể tải danh sách thiệp.')
+        setIsAuthenticated(true)
+        return true
+      }
+      const data = await res.json()
+      setCouples(data.couples || [])
+      setIsAuthenticated(true)
+      return true
+    } catch {
+      setError('Đã xảy ra lỗi khi kết nối máy chủ.')
+      return false
+    } finally {
+      setLoading(false)
     }
   }, [])
 
   useEffect(() => {
-    if (!isAuthenticated) return
-
-    const fetchCouples = async () => {
-      setLoading(true)
-      const { data, error: fetchError } = await supabase
-        .from('couples')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (fetchError) {
-        setError('Không thể tải danh sách thiệp.')
-      } else {
-        setCouples(data || [])
-      }
-      setLoading(false)
-    }
-
-    fetchCouples()
-  }, [isAuthenticated])
+    ;(async () => {
+      await fetchCouples()
+      setIsAuthChecking(false)
+    })()
+  }, [fetchCouples])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoginError('')
-    
+
     try {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
@@ -76,9 +80,9 @@ export default function AdminPage() {
       const data = await res.json()
 
       if (res.ok && data.success) {
-        setIsAuthenticated(true)
-        sessionStorage.setItem('adminAuth', 'true')
         setLoginError('')
+        setPassword('')
+        await fetchCouples()
       } else {
         setLoginError(data.error || 'Tài khoản hoặc mật khẩu không chính xác.')
       }
@@ -87,9 +91,14 @@ export default function AdminPage() {
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' })
+    } catch {
+      /* ignore */
+    }
     setIsAuthenticated(false)
-    sessionStorage.removeItem('adminAuth')
+    setCouples([])
   }
 
   const formatDate = (value: string | null) =>
@@ -129,20 +138,22 @@ export default function AdminPage() {
       return
     }
 
-    const expiresAt = new Date()
-    expiresAt.setDate(expiresAt.getDate() + days)
-    const expiresIso = expiresAt.toISOString()
-
-    const { error: updateError } = await supabase
-      .from('couples')
-      .update({ expires_at: expiresIso })
-      .eq('id', id)
-
-    if (updateError) {
-      alert('Thiết lập hạn sử dụng thất bại. Vui lòng thử lại.')
-    } else {
-      setCouples((prev) => prev.map((c) => c.id === id ? { ...c, expires_at: expiresIso } : c))
-      alert(`Đã thiết lập thiệp sẽ tự động xoá vào: ${expiresAt.toLocaleDateString('vi-VN')}`)
+    try {
+      const res = await fetch(`/api/admin/couples/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        alert(data.error || 'Thiết lập hạn sử dụng thất bại. Vui lòng thử lại.')
+        return
+      }
+      const expiresIso = data.expires_at as string
+      setCouples((prev) => prev.map((c) => (c.id === id ? { ...c, expires_at: expiresIso } : c)))
+      alert(`Đã thiết lập thiệp sẽ tự động xoá vào: ${new Date(expiresIso).toLocaleDateString('vi-VN')}`)
+    } catch {
+      alert('Đã xảy ra lỗi khi kết nối máy chủ.')
     }
   }
 
@@ -151,17 +162,34 @@ export default function AdminPage() {
     if (!ok) return
 
     setDeletingId(id)
-    const { error: deleteError } = await supabase
-      .from('couples')
-      .delete()
-      .eq('id', id)
-
-    if (deleteError) {
-      alert('Xoá thất bại. Vui lòng thử lại.')
-    } else {
-      setCouples((prev) => prev.filter((c) => c.id !== id))
+    try {
+      const res = await fetch(`/api/admin/couples/${id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        alert(data.error || 'Xoá thất bại. Vui lòng thử lại.')
+      } else {
+        setCouples((prev) => prev.filter((c) => c.id !== id))
+      }
+    } catch {
+      alert('Đã xảy ra lỗi khi kết nối máy chủ.')
+    } finally {
+      setDeletingId(null)
     }
-    setDeletingId(null)
+  }
+
+  const handleManageLink = async (id: string | number) => {
+    try {
+      const res = await fetch(`/api/admin/couples/${id}/manage-link`, { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        alert(data.error || 'Không tạo được link quản lý.')
+        return
+      }
+      const url = `${window.location.origin}/${data.slug}/manage?token=${data.token}`
+      window.prompt('Link quản lý bí mật (gửi cho chủ thiệp — chỉ hiển thị 1 lần):', url)
+    } catch {
+      alert('Đã xảy ra lỗi khi kết nối máy chủ.')
+    }
   }
 
   const empty = useMemo(() => !loading && couples.length === 0, [loading, couples])
@@ -306,6 +334,12 @@ export default function AdminPage() {
                             className="rounded-full bg-[#f9eddc] px-3 py-2 text-xs font-semibold text-[#b9772b] hover:bg-[#f3e0c5] transition"
                           >
                             Copy link
+                          </button>
+                          <button
+                            onClick={() => handleManageLink(c.id)}
+                            className="rounded-full bg-[#e0ecf7] px-3 py-2 text-xs font-semibold text-[#2a5b8c] hover:bg-[#cfe0f2] transition"
+                          >
+                            Link quản lý
                           </button>
                           <button
                             onClick={() => handleSetExpiry(c.id)}

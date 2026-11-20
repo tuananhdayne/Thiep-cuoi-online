@@ -1,26 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 
 type InviteInputProps = {
   coupleId: string | number
   baseSlug: string
   onSaved?: () => void
-}
-
-const slugifyGuest = (name: string) => {
-  const cleaned = name.trim()
-  if (!cleaned) return ''
-  return cleaned
-    .replace(/Đ/g, 'D')
-    .replace(/đ/g, 'd')
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .replace(/--+/g, '-')
 }
 
 export default function InviteInput({ coupleId, baseSlug, onSaved }: InviteInputProps) {
@@ -48,70 +33,20 @@ export default function InviteInput({ coupleId, baseSlug, onSaved }: InviteInput
     setError(null)
 
     try {
-      // Query existing guests for this couple to check for conflicts
-      const { data: existingGuests, error: fetchError } = await supabase
-        .from('guests')
-        .select('guest_name, guest_slug')
-        .eq('couple_id', coupleId)
+      const res = await fetch('/api/manage/guests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coupleId, names: Array.from(new Set(parsedGuests)) }),
+      })
+      const data = await res.json().catch(() => ({}))
 
-      if (fetchError) {
-        setError('Không thể kiểm tra danh sách khách hiện tại. Vui lòng thử lại.')
-        setLoading(false)
+      if (!res.ok) {
+        setError(data.error || 'Không thể lưu danh sách khách. Vui lòng thử lại.')
         return
       }
 
-      const usedSlugs = new Set<string>()
-      if (existingGuests) {
-        existingGuests.forEach((g) => {
-          if (g.guest_slug) {
-            usedSlugs.add(g.guest_slug)
-          }
-        })
-      }
-
-      const rows = []
-      for (const guestName of Array.from(new Set(parsedGuests))) {
-        const existing = existingGuests?.find(
-          (g) => g.guest_name?.trim().toLowerCase() === guestName.toLowerCase()
-        )
-
-        if (existing) {
-          // If guest name already exists, skip it since it is already saved in the database.
-          // This avoids trying to update an existing row, which is blocked by RLS policies for anonymous users.
-          continue
-        }
-
-        const baseSlug = slugifyGuest(guestName)
-        let finalSlug = baseSlug
-        let suffix = 1
-
-        // Resolve collision by appending an incrementing suffix
-        while (usedSlugs.has(finalSlug)) {
-          finalSlug = `${baseSlug}-${suffix}`
-          suffix++
-        }
-
-        usedSlugs.add(finalSlug)
-        rows.push({
-          couple_id: coupleId,
-          guest_name: guestName,
-          guest_slug: finalSlug,
-        })
-      }
-
-      if (rows.length > 0) {
-        const { error: insertError } = await supabase
-          .from('guests')
-          .insert(rows)
-
-        if (insertError) {
-          setError('Không thể lưu danh sách khách. Vui lòng thử lại.')
-          setLoading(false)
-          return
-        }
-      }
-
       setMessage('Đã lưu danh sách khách mời.')
+      setNames('')
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('guests-refresh'))
       }

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabaseClient'
+import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin'
 import { Couple, GalleryItem, Wish, WeddingGift, Location, Story } from '../templates/types'
 import { loadTemplate } from '../templates/templateLoader'
 

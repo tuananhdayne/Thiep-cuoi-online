@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 
 type Guest = {
   id: string | number
@@ -35,19 +34,22 @@ export default function GuestsTable({ coupleId, baseSlug, initialGuests }: Guest
 
   const refresh = async () => {
     setLoading(true)
-    const { data, error: fetchError } = await supabase
-      .from('guests')
-      .select('*')
-      .eq('couple_id', coupleId)
-      .order('created_at', { ascending: false })
-
-    if (fetchError) {
+    try {
+      const res = await fetch(`/api/manage/guests?coupleId=${encodeURIComponent(String(coupleId))}`, {
+        cache: 'no-store',
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data.error || 'Không tải được danh sách khách.')
+      } else {
+        setGuests(data.guests || [])
+        setError(null)
+      }
+    } catch {
       setError('Không tải được danh sách khách.')
-    } else {
-      setGuests(data || [])
-      setError(null)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -81,17 +83,22 @@ export default function GuestsTable({ coupleId, baseSlug, initialGuests }: Guest
     const ok = window.confirm(`Xoá khách "${guest.guest_name}"?`)
     if (!ok) return
     setDeleting(guest.id)
-    const { error: deleteError } = await supabase
-      .from('guests')
-      .delete()
-      .eq('id', guest.id)
-
-    if (deleteError) {
+    try {
+      const res = await fetch(
+        `/api/manage/guests/${guest.id}?coupleId=${encodeURIComponent(String(coupleId))}`,
+        { method: 'DELETE' }
+      )
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Không xoá được khách này.')
+      } else {
+        setGuests((prev) => prev.filter((g) => g.id !== guest.id))
+      }
+    } catch {
       setError('Không xoá được khách này.')
-    } else {
-      setGuests((prev) => prev.filter((g) => g.id !== guest.id))
+    } finally {
+      setDeleting(null)
     }
-    setDeleting(null)
   }
 
   return (

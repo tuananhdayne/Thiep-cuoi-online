@@ -58,15 +58,15 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
     try {
       const currentMax = Math.max(0, ...items.map((i) => formatOrder(i.sort_order)))
       const payload = results.map((item, idx) => ({
-        couple_id: coupleId,
         image_url: item.original,
         sort_order: currentMax + idx + 1,
       }))
-      const { error: insertError } = await supabase
-        .from('gallery')
-        .insert(payload)
-
-      if (insertError) throw insertError
+      const res = await fetch('/api/manage/gallery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coupleId, items: payload }),
+      })
+      if (!res.ok) throw new Error('insert failed')
       await loadGallery()
     } catch (err) {
       console.error(err)
@@ -78,17 +78,29 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
     const ok = window.confirm('Xoá ảnh này khỏi album?')
     if (!ok) return
     setActingId(id)
-    const { error: deleteError } = await supabase
-      .from('gallery')
-      .delete()
-      .eq('id', id)
-
-    if (deleteError) {
+    try {
+      const res = await fetch(
+        `/api/manage/gallery/${id}?coupleId=${encodeURIComponent(String(coupleId))}`,
+        { method: 'DELETE' }
+      )
+      if (!res.ok) {
+        setError('Không xoá được ảnh.')
+      } else {
+        setItems((prev) => prev.filter((i) => i.id !== id))
+      }
+    } catch {
       setError('Không xoá được ảnh.')
-    } else {
-      setItems((prev) => prev.filter((i) => i.id !== id))
+    } finally {
+      setActingId(null)
     }
-    setActingId(null)
+  }
+
+  const updateOrder = async (id: number, sortOrder: number) => {
+    await fetch(`/api/manage/gallery/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coupleId, sort_order: sortOrder }),
+    })
   }
 
   const swapOrder = async (sourceId: number, targetId: number) => {
@@ -99,15 +111,8 @@ export default function GalleryManager({ coupleId, slug }: GalleryManagerProps) 
     const sourceOrder = formatOrder(source.sort_order)
     const targetOrder = formatOrder(target.sort_order)
 
-    await supabase
-      .from('gallery')
-      .update({ sort_order: targetOrder })
-      .eq('id', sourceId)
-
-    await supabase
-      .from('gallery')
-      .update({ sort_order: sourceOrder })
-      .eq('id', targetId)
+    await updateOrder(sourceId, targetOrder)
+    await updateOrder(targetId, sourceOrder)
   }
 
   const handleMove = async (id: number, direction: 'up' | 'down') => {
