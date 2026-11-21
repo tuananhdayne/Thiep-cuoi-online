@@ -204,7 +204,7 @@ export default function LuxuryTemplate({ couple, gallery, wishes, weddingGift, l
       location: groomVenue,
       address: groomAddr,
       map: groomMapLink,
-      side: 'groom',
+      side: 'unknown',
     },
   ]
 

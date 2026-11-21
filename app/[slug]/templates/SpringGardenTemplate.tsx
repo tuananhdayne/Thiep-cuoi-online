@@ -130,7 +130,7 @@ export default function SpringGardenTemplate({
             guest_name: formName.trim(),
             attend_status: formAttendance,
             guest_count: 1,
-            side: 'groom',
+            side: 'unknown',
             message: formMessage.trim() || null,
           })
         }

@@ -78,7 +78,7 @@ export default function RsvpManager({ rsvps }: { rsvps: RsvpRecord[] }) {
                                         <td className="py-4 px-4 text-[#7b5e4b]">{rsvp.guest_count}</td>
                                         <td className="py-4 px-4 text-[#7b5e4b]">
                                             <span className="bg-amber-100/50 text-amber-800 px-2 py-1 rounded-md text-xs">
-                                                {rsvp.side === 'groom' ? 'Nhà trai' : rsvp.side === 'bride' ? 'Nhà gái' : rsvp.side}
+                                                {rsvp.side === 'groom' ? 'Nhà trai' : rsvp.side === 'bride' ? 'Nhà gái' : 'Không rõ'}
                                             </span>
                                         </td>
                                         <td className="py-4 px-4 text-[#9a7d68] text-sm hidden md:table-cell">

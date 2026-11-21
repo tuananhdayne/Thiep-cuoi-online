@@ -609,7 +609,7 @@ function CreateForm() {
               <div className="rounded-[22px] bg-[#fff7ed] border border-[#f6e2c6] p-5 space-y-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Bride side</p>
+                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Nhà gái</p>
                     <h3 className="text-xl font-semibold text-[#5b3a29]">Thông tin nhà gái</h3>
                   </div>
                 </div>
@@ -665,7 +665,7 @@ function CreateForm() {
               <div className="rounded-[22px] bg-[#fdf5ff] border border-[#eddcf3] p-5 space-y-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Groom side</p>
+                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Nhà trai</p>
                     <h3 className="text-xl font-semibold text-[#5b3a29]">Thông tin nhà trai</h3>
                   </div>
                 </div>
@@ -744,7 +744,7 @@ function CreateForm() {
                   {/* Groom bank */}
                   <div className="rounded-[22px] bg-[#fdf5ff] border border-[#eddcf3] p-5 space-y-3 shadow-sm">
                     <div>
-                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Groom</p>
+                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Chú rể</p>
                       <h3 className="text-lg font-semibold text-[#5b3a29]">Mừng cưới đến chú rể</h3>
                     </div>
                     <input
@@ -782,7 +782,7 @@ function CreateForm() {
                   {/* Bride bank */}
                   <div className="rounded-[22px] bg-[#fff7ed] border border-[#f6e2c6] p-5 space-y-3 shadow-sm">
                     <div>
-                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Bride</p>
+                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Cô dâu</p>
                       <h3 className="text-lg font-semibold text-[#5b3a29]">Mừng cưới đến cô dâu</h3>
                     </div>
                     <input
