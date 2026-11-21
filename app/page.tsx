@@ -76,7 +76,12 @@ export default function Home() {
 
             <h1 className="font-display text-[3.5rem] leading-[1.02] tracking-[-0.02em] text-[#40291f] sm:text-7xl lg:text-[5.65rem]">
               Một tấm thiệp,
-              <span className="mt-2 block font-normal italic tracking-[0.005em] text-[#ad7547]">vạn lời yêu thương.</span>
+              <span
+                className="mt-2 block italic tracking-[0.01em] text-[#ad7547]"
+                style={{ fontFamily: '"Cormorant Garamond", "Lora", Georgia, serif', fontWeight: 600 }}
+              >
+                vạn lời yêu thương.
+              </span>
             </h1>
 
             <p className="mt-8 max-w-xl text-base leading-8 text-[#735b4d] md:text-lg">
