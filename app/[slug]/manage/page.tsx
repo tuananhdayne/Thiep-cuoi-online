@@ -80,16 +80,18 @@ export default async function ManagePage({
     return notFound()
   }
 
-  // Authorize: a token (from URL or cookie) must hash to the couple's stored hash.
-  // Legacy couples with no hash yet are allowed (so existing owners are not locked
-  // out) until they are migrated to a manage link.
+  // Authorize: a valid manage token (from URL or cookie) must hash to the couple's
+  // stored hash. This is enforced for ALL couples — including legacy ones with no
+  // hash yet — so that knowing the slug is never enough to read private data
+  // (guests/rsvp) or reach the edit forms. A legacy couple with no hash has no
+  // valid token, so it is denied until an admin generates a manage link for it
+  // (/admin -> "Link quản lý"). This matches the write routes (verifyManageAccess),
+  // which already require a valid token.
   const store = await cookies()
   const cookieToken = store.get(manageCookieName(couple.id))?.value
-  const hasHash = Boolean(couple.manage_token_hash)
-  const authorized = hasHash
-    ? manageTokenMatches(urlToken, couple.manage_token_hash) ||
-      manageTokenMatches(cookieToken, couple.manage_token_hash)
-    : true
+  const authorized =
+    manageTokenMatches(urlToken, couple.manage_token_hash) ||
+    manageTokenMatches(cookieToken, couple.manage_token_hash)
 
   if (!authorized) {
     return <Forbidden />
@@ -120,12 +122,6 @@ export default async function ManagePage({
             Quản lý thiệp cưới của {couple.bride_name} &amp; {couple.groom_name}
           </h1>
           <p className="text-sm text-[#9a7d68]">Sửa thông tin, chia sẻ thiệp, quản lý ảnh và nhận lời chúc.</p>
-          {!hasHash && (
-            <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-              ⚠️ Thiệp này chưa có link quản lý bí mật. Hãy liên hệ quản trị viên để tạo link bảo mật
-              cho thiệp của bạn.
-            </p>
-          )}
         </div>
 
         <InfoManager couple={couple} locations={locations || {}} />
