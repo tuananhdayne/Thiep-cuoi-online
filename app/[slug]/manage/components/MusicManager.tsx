@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type MusicManagerProps = {
     coupleId: string | number
@@ -8,6 +8,12 @@ type MusicManagerProps = {
     initialMusicDelay: number | null
     initialMusicVolume: number | null
     initialMusicAutoplay: boolean | null
+}
+
+type Track = { name: string; url: string }
+
+function prettyName(name: string) {
+    return name.replace(/\.[^/.]+$/, '')
 }
 
 export default function MusicManager({
@@ -24,6 +30,53 @@ export default function MusicManager({
 
     const [saving, setSaving] = useState(false)
     const [message, setMessage] = useState({ type: '', text: '' })
+
+    // Shared music library (from the wedding-music bucket).
+    const [tracks, setTracks] = useState<Track[]>([])
+    const [loadingTracks, setLoadingTracks] = useState(true)
+    const [tracksError, setTracksError] = useState('')
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+
+    useEffect(() => {
+        let active = true
+        fetch('/api/manage/music-list')
+            .then((r) => r.json())
+            .then((d) => {
+                if (!active) return
+                if (Array.isArray(d.tracks)) setTracks(d.tracks)
+                else setTracksError('Không tải được danh sách nhạc.')
+            })
+            .catch(() => active && setTracksError('Không tải được danh sách nhạc.'))
+            .finally(() => active && setLoadingTracks(false))
+        return () => {
+            active = false
+        }
+    }, [])
+
+    // Clean up any preview audio on unmount.
+    useEffect(() => {
+        return () => {
+            audioRef.current?.pause()
+            audioRef.current = null
+        }
+    }, [])
+
+    const togglePreview = (trackUrl: string) => {
+        if (previewUrl === trackUrl) {
+            audioRef.current?.pause()
+            audioRef.current = null
+            setPreviewUrl(null)
+            return
+        }
+        audioRef.current?.pause()
+        const audio = new Audio(trackUrl)
+        audio.volume = volume ? parseInt(volume, 10) / 100 : 0.3
+        audio.play().catch(() => {})
+        audio.onended = () => setPreviewUrl(null)
+        audioRef.current = audio
+        setPreviewUrl(trackUrl)
+    }
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -66,9 +119,70 @@ export default function MusicManager({
             </div>
 
             <form onSubmit={handleSave} className="space-y-4">
+                {/* Thư viện nhạc có sẵn */}
+                <div>
+                    <label className="block text-sm font-medium text-[#5b3a29] mb-2">
+                        Chọn từ thư viện nhạc
+                    </label>
+
+                    {loadingTracks ? (
+                        <p className="text-sm text-[#9a7d68]">Đang tải danh sách nhạc...</p>
+                    ) : tracksError ? (
+                        <p className="text-sm text-red-600">{tracksError}</p>
+                    ) : tracks.length === 0 ? (
+                        <p className="text-sm text-[#9a7d68]">Chưa có bài nhạc nào trong thư viện.</p>
+                    ) : (
+                        <ul className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                            {tracks.map((t) => {
+                                const selected = url.trim() === t.url
+                                const playing = previewUrl === t.url
+                                return (
+                                    <li
+                                        key={t.url}
+                                        className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 transition ${
+                                            selected
+                                                ? 'border-[#c08a4b] bg-[#fdf3e3]'
+                                                : 'border-[#eedfcc] bg-[#fffaf3] hover:bg-[#fdf6ec]'
+                                        }`}
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={() => togglePreview(t.url)}
+                                            aria-label={playing ? 'Dừng nghe thử' : 'Nghe thử'}
+                                            className="shrink-0 w-9 h-9 rounded-full bg-[#f3e6d8] text-[#5b3a29] flex items-center justify-center hover:bg-[#e9d8c3] transition"
+                                        >
+                                            {playing ? (
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+                                            ) : (
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                                            )}
+                                        </button>
+
+                                        <span className="flex-1 min-w-0 truncate text-sm text-[#5b3a29]">
+                                            {prettyName(t.name)}
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setUrl(t.url)}
+                                            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                                                selected
+                                                    ? 'bg-[#c08a4b] text-white'
+                                                    : 'bg-[#f3e6d8] text-[#5b3a29] hover:bg-[#e9d8c3]'
+                                            }`}
+                                        >
+                                            {selected ? '✓ Đang chọn' : 'Chọn'}
+                                        </button>
+                                    </li>
+                                )
+                            })}
+                        </ul>
+                    )}
+                </div>
+
                 <div>
                     <label className="block text-sm font-medium text-[#5b3a29] mb-1">
-                        Link nhạc (MP3)
+                        Hoặc dán link nhạc (MP3)
                     </label>
                     <input
                         type="text"
