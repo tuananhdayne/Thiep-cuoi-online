@@ -330,9 +330,27 @@ function CreateForm() {
       }
     }
 
+    // Per-couple secret manage token: store only its SHA-256 hash; show the
+    // plaintext to the creator once so they get a secret management link.
+    const manageToken = (() => {
+      const a = new Uint8Array(24)
+      crypto.getRandomValues(a)
+      return btoa(String.fromCharCode(...a))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '')
+    })()
+    const manageTokenHash = await (async () => {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(manageToken))
+      return Array.from(new Uint8Array(buf))
+        .map((x) => x.toString(16).padStart(2, '0'))
+        .join('')
+    })()
+
     const payload: Record<string, any> = {
       ...form,
       slug: finalSlug,
+      manage_token_hash: manageTokenHash,
     }
 
     // Clean up empty strings for date/time fields to prevent Postgres errors
@@ -459,6 +477,17 @@ function CreateForm() {
       return
     }
 
+    // Show the creator their secret management link ONCE. Without it (its token),
+    // the wedding cannot be managed, so they must save it now.
+    const manageUrl = `${window.location.origin}/${finalSlug}/manage?token=${manageToken}`
+    if (typeof window !== 'undefined') {
+      window.prompt(
+        'QUAN TRỌNG: Hãy LƯU LẠI link quản lý thiệp dưới đây (chỉ hiển thị 1 lần). ' +
+          'Dùng link này để sửa thông tin, thêm khách mời, xem lời chúc:',
+        manageUrl
+      )
+    }
+
     router.push(`/${finalSlug}`)
   }
 
@@ -580,7 +609,7 @@ function CreateForm() {
               <div className="rounded-[22px] bg-[#fff7ed] border border-[#f6e2c6] p-5 space-y-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Bride side</p>
+                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Nhà gái</p>
                     <h3 className="text-xl font-semibold text-[#5b3a29]">Thông tin nhà gái</h3>
                   </div>
                 </div>
@@ -636,7 +665,7 @@ function CreateForm() {
               <div className="rounded-[22px] bg-[#fdf5ff] border border-[#eddcf3] p-5 space-y-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Groom side</p>
+                    <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Nhà trai</p>
                     <h3 className="text-xl font-semibold text-[#5b3a29]">Thông tin nhà trai</h3>
                   </div>
                 </div>
@@ -715,7 +744,7 @@ function CreateForm() {
                   {/* Groom bank */}
                   <div className="rounded-[22px] bg-[#fdf5ff] border border-[#eddcf3] p-5 space-y-3 shadow-sm">
                     <div>
-                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Groom</p>
+                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#b172c4]">Chú rể</p>
                       <h3 className="text-lg font-semibold text-[#5b3a29]">Mừng cưới đến chú rể</h3>
                     </div>
                     <input
@@ -753,7 +782,7 @@ function CreateForm() {
                   {/* Bride bank */}
                   <div className="rounded-[22px] bg-[#fff7ed] border border-[#f6e2c6] p-5 space-y-3 shadow-sm">
                     <div>
-                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Bride</p>
+                      <p className="text-[13px] uppercase tracking-[0.22em] text-[#c58645]">Cô dâu</p>
                       <h3 className="text-lg font-semibold text-[#5b3a29]">Mừng cưới đến cô dâu</h3>
                     </div>
                     <input

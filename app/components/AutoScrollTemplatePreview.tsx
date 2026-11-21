@@ -213,7 +213,7 @@ export default function AutoScrollTemplatePreview({
     <div
       ref={containerRef}
       onClick={onPreviewClick}
-      className={`h-full w-full relative overflow-hidden bg-stone-900 ${onPreviewClick ? 'cursor-pointer' : ''}`}
+      className={`h-full w-full relative overflow-hidden bg-[#f5efe6] ${onPreviewClick ? 'cursor-pointer' : ''}`}
     >
       {isInView ? (
         <iframe
@@ -231,9 +231,9 @@ export default function AutoScrollTemplatePreview({
 
       {/* Elegant lightweight placeholder while offscreen or loading */}
       {(!isInView || !isLoaded) && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-stone-900 via-stone-850 to-stone-900 p-6 text-stone-400">
-          <div className="h-8 w-8 rounded-full border-2 border-amber-400/30 border-t-amber-400 animate-spin" />
-          <p className="mt-3 text-[11px] font-medium tracking-wider text-amber-200/60 uppercase">Đang tải xem trước...</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#faf6f0] via-[#f2e9db] to-[#ece0cf] p-6 text-[#9a7d68] animate-pulse">
+          <div className="h-8 w-8 rounded-full border-2 border-[#ad7547]/25 border-t-[#ad7547] animate-spin" />
+          <p className="mt-3 text-[11px] font-medium tracking-wider text-[#a6805f] uppercase">Đang tải xem trước...</p>
         </div>
       )}
     </div>

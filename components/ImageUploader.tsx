@@ -84,7 +84,7 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
 
         // Validate number of files
         if (files.length + selectedFiles.length > 15) {
-            setError('You can only upload a maximum of 15 images in total.')
+            setError('Bạn chỉ có thể tải lên tối đa 15 ảnh.')
             return
         }
 
@@ -145,11 +145,11 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
                 try {
                     data = JSON.parse(text);
                 } catch(e) {
-                    throw new Error(`Server error: ${text.substring(0, 100)}...`);
+                    throw new Error(`Lỗi máy chủ: ${text.substring(0, 100)}...`);
                 }
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Upload failed')
+                    throw new Error(data.error || 'Tải ảnh thất bại')
                 }
 
                 uploadedResults.push(...data.results);
@@ -173,9 +173,9 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
             <div className="space-y-4">
                 <div>
-                    <h3 className="text-lg font-medium text-gray-900">Upload Album Photos</h3>
+                    <h3 className="text-lg font-medium text-gray-900">Tải ảnh album</h3>
                     <p className="text-sm text-gray-500">
-                        JPG, PNG. Max 15 images. Images will be automatically optimized.
+                        JPG, PNG. Tối đa 15 ảnh. Ảnh sẽ được tự động tối ưu.
                     </p>
                 </div>
 
@@ -186,9 +186,9 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                             </svg>
                             {uploading && progress ? (
-                                <p className="mb-2 text-sm text-gray-500 font-medium">Uploading {progress.current} of {progress.total}...</p>
+                                <p className="mb-2 text-sm text-gray-500 font-medium">Đang tải {progress.current}/{progress.total}...</p>
                             ) : (
-                                <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Bấm để chọn ảnh</span> hoặc kéo thả vào đây</p>
                             )}
                         </div>
                         <input
@@ -212,13 +212,13 @@ export default function ImageUploader({ weddingId, onUploadSuccess }: ImageUploa
                 {previews.length > 0 && (
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                            <p className="text-sm font-medium text-gray-700">{files.length} of 15 selected</p>
+                            <p className="text-sm font-medium text-gray-700">Đã chọn {files.length}/15 ảnh</p>
                             <button
                                 onClick={handleUpload}
                                 disabled={uploading}
                                 className="bg-[#c08a4b] hover:bg-[#a6753c] text-white px-4 py-2 rounded-full text-sm font-medium transition disabled:opacity-50"
                             >
-                                {uploading ? 'Processing & Uploading...' : 'Upload Photos'}
+                                {uploading ? 'Đang xử lý & tải lên...' : 'Tải ảnh lên'}
                             </button>
                         </div>
 

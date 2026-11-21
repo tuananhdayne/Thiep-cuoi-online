@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import sharp from 'sharp'
 import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { getAdminSession } from '@/lib/requireAdmin'
+import { verifyManageAccess } from '@/lib/requireManage'
 
 export const maxDuration = 60 // Allows for longer execution times on hobby plan
 
@@ -27,6 +30,31 @@ export async function POST(req: Request) {
 
         if (!weddingId) {
             return NextResponse.json({ error: 'Missing weddingId' }, { status: 400 })
+        }
+
+        // Sanitize weddingId (used in the storage path) to prevent path traversal.
+        if (!/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,80}$/.test(weddingId)) {
+            return NextResponse.json({ error: 'weddingId không hợp lệ' }, { status: 400 })
+        }
+
+        // Authorization: if a couple with this slug already exists, only its
+        // manager (or an admin) may upload into its gallery. Uploads during the
+        // create flow (no couple yet) are allowed.
+        {
+            const { data: couple } = await supabaseAdmin
+                .from('couples')
+                .select('id')
+                .eq('slug', weddingId)
+                .maybeSingle()
+            if (couple) {
+                const [isAdmin, isManager] = await Promise.all([
+                    getAdminSession(),
+                    verifyManageAccess(couple.id),
+                ])
+                if (!isAdmin && !isManager) {
+                    return NextResponse.json({ error: 'Không có quyền tải ảnh cho thiệp này' }, { status: 403 })
+                }
+            }
         }
 
         if (!files || files.length === 0) {

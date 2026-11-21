@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 
 type MusicManagerProps = {
     coupleId: string | number
@@ -39,12 +38,15 @@ export default function MusicManager({
                 music_autoplay: autoplay,
             }
 
-            const { error } = await supabase
-                .from('couples')
-                .update(payload)
-                .eq('id', coupleId)
-
-            if (error) throw error
+            const res = await fetch('/api/manage/couple', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coupleId, fields: payload }),
+            })
+            if (!res.ok) {
+                const d = await res.json().catch(() => ({}))
+                throw new Error(d.error || 'save failed')
+            }
 
             setMessage({ type: 'success', text: 'Cập nhật nhạc nền thành công!' })
         } catch (error) {

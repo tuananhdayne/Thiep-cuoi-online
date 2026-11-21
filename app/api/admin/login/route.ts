@@ -1,44 +1,48 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import bcrypt from 'bcryptjs'
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'dummy-key'
-
-const supabase = createClient(supabaseUrl, supabaseKey)
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import {
+  ADMIN_COOKIE,
+  SESSION_MAX_AGE,
+  createSessionToken,
+} from '@/lib/adminSession'
 
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json()
 
-    // Validate input
     if (!username || !password) {
       return NextResponse.json({ error: 'Thiếu tài khoản hoặc mật khẩu' }, { status: 400 })
     }
 
-    // Fetch admin from database with password hash
-    const { data: admin, error: fetchError } = await supabase
+    const { data: admin, error: fetchError } = await supabaseAdmin
       .from('admins')
       .select('id, username, password_hash')
       .eq('username', username)
       .single()
 
     if (fetchError || !admin) {
-      // Return generic error to prevent user enumeration
+      // Generic error to prevent user enumeration
       return NextResponse.json({ error: 'Tài khoản hoặc mật khẩu không chính xác.' }, { status: 401 })
     }
 
-    // Compare password with hash using bcrypt
     const passwordMatch = await bcrypt.compare(password, admin.password_hash)
-
     if (!passwordMatch) {
       return NextResponse.json({ error: 'Tài khoản hoặc mật khẩu không chính xác.' }, { status: 401 })
     }
 
-    // Auth successful - client will save session
-    return NextResponse.json({ success: true })
-
-  } catch (err: any) {
+    // Issue a signed, httpOnly session cookie. The browser cannot forge this.
+    const token = createSessionToken(admin.username)
+    const res = NextResponse.json({ success: true })
+    res.cookies.set(ADMIN_COOKIE, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: SESSION_MAX_AGE,
+    })
+    return res
+  } catch (err) {
     console.error('Admin login error:', err)
     return NextResponse.json({ error: 'Lỗi máy chủ, vui lòng thử lại sau.' }, { status: 500 })
   }

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 export default function InfoManager({ couple, locations }: { couple: any, locations: any }) {
@@ -57,19 +56,25 @@ export default function InfoManager({ couple, locations }: { couple: any, locati
                 groom_google_map_embed: form.groom_google_map_embed,
             }
 
-            const { error: updateError } = await supabase
-                .from('couples')
-                .update(couplePayload)
-                .eq('id', couple.id)
+            const coupleRes = await fetch('/api/manage/couple', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coupleId: couple.id, fields: couplePayload }),
+            })
+            if (!coupleRes.ok) {
+                const d = await coupleRes.json().catch(() => ({}))
+                throw new Error(d.error || 'Cập nhật thông tin thất bại.')
+            }
 
-            if (updateError) throw updateError
-
-            const { error: locError } = await supabase
-                .from('locations')
-                .update(locationsPayload)
-                .eq('couple_id', couple.id)
-
-            if (locError) throw locError
+            const locRes = await fetch('/api/manage/locations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ coupleId: couple.id, fields: locationsPayload }),
+            })
+            if (!locRes.ok) {
+                const d = await locRes.json().catch(() => ({}))
+                throw new Error(d.error || 'Cập nhật địa điểm thất bại.')
+            }
 
             setIsEditing(false)
             router.refresh() // Refresh the page to reflect new generic data
